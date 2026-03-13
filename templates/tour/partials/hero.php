@@ -104,6 +104,15 @@ foreach ($gallery as $img) {
 
         <!-- 2) Image gallery -->
         <?php if ($has_gallery): ?>
+            <style type="text/css">
+                /* Style galerie hero (inline pour priorité sur cache/thème) */
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-grid { gap: 10px !important; overflow: visible !important; border-radius: 0 !important; }
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-main { border-radius: 10px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important; }
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-secondary { gap: 10px !important; overflow: visible !important; border-radius: 0 !important; }
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-secondary .ajtb-hero-gallery-item { border-radius: 10px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important; }
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-secondary .ajtb-hero-gallery-fill { border-radius: 10px !important; }
+                .ajtb-hero-gallery-wrap .ajtb-hero-gallery-more { border-radius: 10px !important; }
+            </style>
             <div class="ajtb-hero-gallery-wrap">
                 <!-- Desktop: 1 main + 4 secondary -->
                 <div class="ajtb-hero-gallery-grid" role="region" aria-label="<?php esc_attr_e('Galerie du voyage', 'ajinsafro-tour-bridge'); ?>">
@@ -119,9 +128,7 @@ foreach ($gallery as $img) {
                                  alt="<?php echo esc_attr($main['alt']); ?>" 
                                  loading="eager">
                         </a>
-                        <?php if (count($all_gallery) > 5): ?>
-                            <a href="#gallery" class="ajtb-hero-gallery-all-btn"><?php esc_html_e('Voir toutes les photos', 'ajinsafro-tour-bridge'); ?></a>
-                        <?php endif; ?>
+                        <a href="<?php echo count($all_gallery) > 5 ? '#gallery' : esc_url($main['url']); ?>" class="ajtb-hero-gallery-all-btn"><?php esc_html_e('Voir la galerie', 'ajinsafro-tour-bridge'); ?></a>
                     </div>
                     <div class="ajtb-hero-gallery-secondary">
                         <?php
@@ -166,9 +173,7 @@ foreach ($gallery as $img) {
                                  alt="<?php echo esc_attr($main['alt']); ?>" 
                                  loading="eager">
                         </a>
-                        <?php if (count($all_gallery) > 3): ?>
-                            <a href="#gallery" class="ajtb-hero-gallery-all-btn"><?php esc_html_e('Voir toutes les photos', 'ajinsafro-tour-bridge'); ?></a>
-                        <?php endif; ?>
+                        <a href="<?php echo count($all_gallery) > 3 ? '#gallery' : esc_url($main['url']); ?>" class="ajtb-hero-gallery-all-btn"><?php esc_html_e('Voir la galerie', 'ajinsafro-tour-bridge'); ?></a>
                     </div>
                     <div class="ajtb-hero-gallery-secondary ajtb-hero-gallery-secondary--tablet">
                         <?php foreach ($secondary_tablet as $i => $img): ?>

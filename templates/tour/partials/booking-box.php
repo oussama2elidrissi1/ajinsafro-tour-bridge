@@ -38,7 +38,7 @@ $current_season = $pricing['current_season'] ?? null;
                 <?php echo number_format($display_price, 0, ',', ' '); ?>
                 <small><?php echo esc_html($currency_symbol); ?></small>
             </span>
-            <span class="price-unit">/ personne</span>
+            <span class="price-unit">/ pppppppppp</span>
         </div>
 
         <?php if ($has_discount && $discount > 0): ?>
