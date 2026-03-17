@@ -59,17 +59,11 @@ $destinations_label = sprintf(_n('%d destination', '%d destinations', count($nor
 
 do_action('ajtb_before_destinations_section', $tour, $normalized);
 ?>
-<section class="ajtb-section ajtb-destinations-section ajtb-tab-panel ajtb-tab-panel-hidden" id="destinations">
-    <h2 class="ajtb-section-title">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        Destinations
-    </h2>
-    <p class="ajtb-destinations-intro"><?php echo esc_html($destinations_label); ?></p>
+<section class="ajtb-section ajtb-destinations-section ajtb-tab-panel ajtb-tab-panel-hidden padding20" id="destinations">
+    <h2 class="font16 latoBold appendBottom15"><?php esc_html_e('Destinations', 'ajinsafro-tour-bridge'); ?></h2>
+    <p class="font12 greyText appendBottom10"><?php echo esc_html($destinations_label); ?></p>
 
-    <div class="ajtb-destination-chips" aria-label="<?php esc_attr_e('Destinations du circuit', 'ajinsafro-tour-bridge'); ?>">
+    <div class="makeFlex flexWrap gap10" aria-label="<?php esc_attr_e('Destinations du circuit', 'ajinsafro-tour-bridge'); ?>">
         <?php foreach ($visible as $location): ?>
             <span class="ajtb-destination-chip" title="<?php echo esc_attr($location['path']); ?>">
                 <span class="ajtb-destination-country"><?php echo esc_html($location['country']); ?></span>

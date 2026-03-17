@@ -67,7 +67,7 @@
                       (activitiesCount > 1 ? "Activités" : "Activité")
                     : "Activités",
         };
-        $(".initerary-nav li[data-ajtb-tab]").each(function () {
+        $(".ajtb-day-details-bar__tabs .ajtb-tab-pill").each(function () {
             var tab = $(this).attr("data-ajtb-tab");
             if (tab && tabLabels[tab] !== undefined) {
                 $(this).text(tabLabels[tab]);
@@ -78,13 +78,13 @@
         var inclusEl = document.getElementById("ajtb-day-details-inclus-line");
         if (inclusEl) {
             var panel = document.querySelector(
-                '#itinerary .dayplan-wrapper[data-day="' + dayNum + '"]',
+                '#itinerary .ajtb-day-content-panel[data-day="' + dayNum + '"]',
             );
             var dayTitle =
                 (panel &&
-                    panel.querySelector(".dayplanheaderV2-info-heading") &&
+                    panel.querySelector(".ajtb-day-title-mmt") &&
                     panel
-                        .querySelector(".dayplanheaderV2-info-heading")
+                        .querySelector(".ajtb-day-title-mmt")
                         .textContent.trim()) ||
                 inclusEl.getAttribute("data-day-title") ||
                 "";
@@ -168,9 +168,9 @@
         // Day Details bar stays visible, just update global bar pills
         var $globalBar = $("#ajtb-global-summary-bar");
         if ($globalBar.length) {
-            $globalBar.find("li[data-ajtb-global-tab]").removeClass("active");
+            $globalBar.find(".ajtb-global-pill").removeClass("active");
             $globalBar
-                .find('li[data-ajtb-global-tab="' + globalActiveTab + '"]')
+                .find('[data-ajtb-global-tab="' + globalActiveTab + '"]')
                 .addClass("active");
         }
         applyGlobalFilter(globalActiveTab, opts);
@@ -221,7 +221,7 @@
     // Mettre à jour l'état actif des pills inclus quand l'onglet change
     function initScrollSpy() {
         var panels = document.querySelectorAll(
-            "#itinerary .dayplan-wrapper[data-day]",
+            "#itinerary .ajtb-day-content-panel[data-day]",
         );
         if (!panels.length) return;
 
@@ -353,7 +353,7 @@
         activeTab = tab;
         // Un seul set d'onglets : mettre à jour l'état actif
         $(
-            ".initerary-nav li[data-ajtb-tab]",
+            ".ajtb-day-details-bar__tabs .ajtb-tab-pill, .ajtb-top-bar__tabs .ajtb-tab-pill",
         ).each(function () {
             var $btn = $(this);
             var t = $btn.attr("data-ajtb-tab");
@@ -368,7 +368,7 @@
     function applyFilterToPanel(dayNum) {
         var panel = document.getElementById("aj-day-panel-" + dayNum);
         if (!panel) return;
-        var blocks = panel.querySelectorAll("[data-ajtb-tab]");
+        var blocks = panel.querySelectorAll(".ajtb-tab-block");
         blocks.forEach(function (block) {
             var tab = block.getAttribute("data-ajtb-tab");
             var show = activeTab === "programme" || tab === activeTab;
@@ -380,10 +380,10 @@
         opts = opts || {};
         // Show all days, filter by tab type across all days
         var panels = document.querySelectorAll(
-            "#itinerary .dayplan-wrapper",
+            "#itinerary .ajtb-day-content-panel",
         );
         panels.forEach(function (panel) {
-            var blocks = panel.querySelectorAll("[data-ajtb-tab]");
+            var blocks = panel.querySelectorAll(".ajtb-tab-block");
             blocks.forEach(function (block) {
                 var blockTab = block.getAttribute("data-ajtb-tab");
                 var show = false;
@@ -403,7 +403,7 @@
         // Scroll to first visible content only when user changes tab (not on initial page load)
         if (opts.scroll !== false) {
             var firstVisible = document.querySelector(
-                '#itinerary .dayplan-wrapper:not([style*="display: none"])',
+                '#itinerary .ajtb-day-content-panel:not([style*="display: none"])',
             );
             if (firstVisible) {
                 firstVisible.scrollIntoView({
@@ -435,7 +435,7 @@
 
         $(document).on(
             "click",
-            ".initerary-nav li[data-ajtb-tab]",
+            ".ajtb-day-details-bar__tabs .ajtb-tab-pill, .ajtb-top-bar__tabs .ajtb-tab-pill",
             function (e) {
                 e.preventDefault();
                 var tab = $(this).attr("data-ajtb-tab");
@@ -451,7 +451,7 @@
         );
 
         // Global bar clicks
-        $(document).on("click", "#ajtb-global-summary-bar li[data-ajtb-global-tab]", function (e) {
+        $(document).on("click", ".ajtb-global-pill", function (e) {
             e.preventDefault();
             var tab = $(this).attr("data-ajtb-global-tab");
             if (!tab) return;
@@ -460,7 +460,7 @@
     }
 
     function initDayPlanNav() {
-        var $panels = $("#itinerary .dayplan-wrapper");
+        var $panels = $("#itinerary .ajtb-day-content-panel");
         var $tabs = $("#itinerary .aj-day-plan-nav [data-aj-nav-day]");
         if ($panels.length && $tabs.length) {
             $panels.attr("role", "tabpanel");
@@ -530,7 +530,7 @@
             "#itinerary [data-aj-flight-remove]",
             function () {
                 var $card = $(this).closest(".aj-flight-card");
-                var $block = $card.closest(".commute-wrapper-v2, .card-separator-commute");
+                var $block = $card.closest(".ajtb-day-flight-block");
                 if ($block.length) {
                     $block.addClass("aj-flight-card--removed").slideUp(200);
                 } else {
@@ -993,7 +993,7 @@
         // Initial scroll check to set correct day
         setTimeout(function () {
             var panels = document.querySelectorAll(
-                "#itinerary .dayplan-wrapper[data-day]",
+                "#itinerary .ajtb-day-content-panel[data-day]",
             );
             if (panels.length) {
                 var headerH =

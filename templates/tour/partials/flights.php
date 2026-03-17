@@ -28,25 +28,20 @@ if (!$has_laravel_flights && !$has_wp_flights) {
     return;
 }
 ?>
-<section class="ajtb-section ajtb-section-flights" id="flights">
-    <h2 class="ajtb-section-title">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a2.5 2.5 0 0 1 0 5H3"></path>
-        </svg>
-        <?php esc_html_e('Informations Vols', 'ajinsafro-tour-bridge'); ?>
-    </h2>
-    <div id="ajtb-flights-container" class="ajtb-flights-container">
+<section class="ajtb-section padding20" id="flights">
+    <h2 class="font16 latoBold appendBottom15"><?php esc_html_e('Informations Vols', 'ajinsafro-tour-bridge'); ?></h2>
+    <div id="ajtb-flights-container">
         <?php if ($has_laravel_flights): ?>
-            <div class="ajtb-flights-list ajtb-flights-laravel" data-tour-id="<?php echo esc_attr($tour_id); ?>">
+            <div class="commute-wrapper-v2" data-tour-id="<?php echo esc_attr($tour_id); ?>">
                 <?php if (function_exists('ajtb_flights_have_content') && ajtb_flights_have_content($outboundList)): ?>
-                    <div class="ajtb-flight-group ajtb-flight-outbound">
-                        <h3 class="ajtb-flight-group-title"><?php esc_html_e('Vol Aller', 'ajinsafro-tour-bridge'); ?> (Jour 1)</h3>
+                    <div class="card-separator-commute">
+                        <h3 class="font14 latoBold appendBottom10"><?php esc_html_e('Vol Aller', 'ajinsafro-tour-bridge'); ?> (Jour 1)</h3>
                         <?php foreach ($outboundList as $flight): if (function_exists('ajtb_flight_has_content') && !ajtb_flight_has_content($flight)) { continue; } $show_remove = false; include AJTB_PLUGIN_DIR . 'templates/tour/partials/flight-card.php'; endforeach; ?>
                     </div>
                 <?php endif; ?>
                 <?php if (function_exists('ajtb_flights_have_content') && ajtb_flights_have_content($inboundList)): ?>
-                    <div class="ajtb-flight-group ajtb-flight-inbound">
-                        <h3 class="ajtb-flight-group-title"><?php esc_html_e('Vol Retour', 'ajinsafro-tour-bridge'); ?></h3>
+                    <div class="card-separator-commute">
+                        <h3 class="font14 latoBold appendBottom10"><?php esc_html_e('Vol Retour', 'ajinsafro-tour-bridge'); ?></h3>
                         <?php foreach ($inboundList as $flight): if (function_exists('ajtb_flight_has_content') && !ajtb_flight_has_content($flight)) { continue; } $show_remove = false; include AJTB_PLUGIN_DIR . 'templates/tour/partials/flight-card.php'; endforeach; ?>
                     </div>
                 <?php endif; ?>

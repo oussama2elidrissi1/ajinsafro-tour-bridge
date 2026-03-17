@@ -614,13 +614,46 @@ class Ajinsafro_Tour_Bridge {
             ? (string) filemtime(AJTB_PLUGIN_DIR . 'assets/js/day-plan.js')
             : AJTB_VERSION;
 
-        // Main CSS
+        // New design CSS (base + components from new_version)
+        $base_css_version = file_exists(AJTB_PLUGIN_DIR . 'assets/css/base.css')
+            ? (string) filemtime(AJTB_PLUGIN_DIR . 'assets/css/base.css')
+            : AJTB_VERSION;
+        $components_css_version = file_exists(AJTB_PLUGIN_DIR . 'assets/css/components.css')
+            ? (string) filemtime(AJTB_PLUGIN_DIR . 'assets/css/components.css')
+            : AJTB_VERSION;
+
+        wp_enqueue_style(
+            'ajtb-base-css',
+            AJTB_PLUGIN_URL . 'assets/css/base.css',
+            [],
+            $base_css_version
+        );
+        wp_enqueue_style(
+            'ajtb-components-css',
+            AJTB_PLUGIN_URL . 'assets/css/components.css',
+            ['ajtb-base-css'],
+            $components_css_version
+        );
+
+        // Lato font (used by new design)
+        wp_enqueue_style(
+            'ajtb-lato-font',
+            'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap',
+            [],
+            null
+        );
+
+        // Main CSS (legacy + overrides)
         wp_enqueue_style(
             'ajtb-tour-css',
             AJTB_PLUGIN_URL . 'assets/css/tour.css',
-            [],
+            ['ajtb-base-css', 'ajtb-components-css'],
             $tour_css_version
         );
+
+        // Inject CSS custom properties used by the new design theme
+        $theme_vars_css = ':root{--color-btn-primary-bg:linear-gradient(93deg,#53b2fe,#065af3);--color-btn-primary-border:#008cff;--color-btn-primary-color:#008cff;--color-btn-primary-bg2:#CCE8FF;--color-btn-updateBtn-bg:#008cff;--color-text-primary:#000;--color-btn-secondary-bg:#fff;--color-btn-secondary-text:#065af3;--color-btn-top-nav-bg:linear-gradient(93deg,#53b2fe,#065af3);--color-btn-top-nav-text:#fff;--color-label-primary:#008cff;--color-link-secondary:#008cff;--color-top-nav:#0a223d;--color-overlay-top-nav-form:rgba(255,255,255,.1);--color-body-bg:#fff;--color-body-bg-listing:#f2f2f2;--color-explore-links:#fff;--color-top-nav-input:#fff;--font-size-base-lg:20px;--font-size-base-md:16px;--font-size-base-sm:12px;--font-size-base-xl:24px;--font-size-btn-xl:20px;--font-size-btn-lg:18px;--font-size-btn-md:16px;--font-size-btn-sm:12px;--font-size-heading:32px;--font-size-sub-heading:16px;--font-size-page-header:40px;--font-weight:900;--radius-btn-top-nav:34px;--radius-btn-primary:34px;--radius-btn-secondary:34px;--details-left-section-box-shadow:0 2px 30px 0 rgba(0,0,0,.1);--details-main-nav-font-size:16px;--details-main-nav-font-weight:900;--details-itinerary-nav-margin-bottom:0;--details-itinerary-nav-bg-color:#ECF7FF;--details-itinerary-tab-color:#4a4a4a;--details-itinerary-tab-bg-color:transparent;--details-itinerary-tab-active-color:#008CFF;--details-itinerary-tab-active-bg-color:#fff;--details-dayplan-bg-color:#FFF;--details-dayplan-title-bg:linear-gradient(87deg,#f4d1ca 15%,#e2d9b2 100%);--details-dayplan-title-bg2:linear-gradient(67deg,#ff7f3f 0%,#ff3e5e 100%);--details-dayplan-title-color:#000;--details-dayplan-flight-upgrade-bg:linear-gradient(87deg,#ffc46880,#fdd9a180 100%);--details-dayplan-flight-upgrade-margin:10px 18px;--details-dayplan-flight-upgrade-border-radius:4px;--details-right-section-header-bg:#eaf5ff;--details-right-section-header-badge-bg:linear-gradient(247deg,#ff3e5e,#ff6d3f);--font-scale:1}';
+        wp_add_inline_style('ajtb-components-css', $theme_vars_css);
 
         // jQuery UI Datepicker (for travel dates calendar)
         wp_enqueue_script('jquery-ui-datepicker', false, ['jquery', 'jquery-ui-core'], false, true);

@@ -1,9 +1,9 @@
 <?php
 /**
- * Transfer Card partial – MakeMyTrip-style block.
+ * Transfer Card partial – New design: transfer-row-v2 with image, title, description, route.
  *
- * @var array $transfer Transfer row (from_label, to_label, pickup_time, dropoff_time, vehicle_type, notes, image_url)
- * @var string $label Optional; e.g. "Transfert Aeroport -> Hotel"
+ * @var array  $transfer Transfer row (from_label, to_label, pickup_time, dropoff_time, vehicle_type, notes, image_url)
+ * @var string $label    Optional; e.g. "Transfert Aeroport -> Hotel"
  * @package AjinsafroTourBridge
  */
 
@@ -49,7 +49,7 @@ foreach (['transfer_title', 'service_title', 'service_name', 'transfer_type', 't
     }
 }
 if ($section_title === '') {
-    $section_title = __('Transfert Partage', 'ajinsafro-tour-bridge');
+    $section_title = __('Transfert Partagé', 'ajinsafro-tour-bridge');
 }
 
 $transfer_name = '';
@@ -63,117 +63,72 @@ if ($transfer_name === '') {
     $transfer_name = $section_title;
 }
 
-$info_items = [];
-if (!empty($transfer['pickup_location'])) {
-    $info_items[] = (string) $transfer['pickup_location'];
-}
-if ($vehicle !== '') {
-    $info_items[] = __('Vehicule:', 'ajinsafro-tour-bridge') . ' ' . $vehicle;
-}
+$route_text = $from . ' → ' . $to;
+$description = $notes !== '' ? $notes : $card_label . ' - ' . $route_text;
 
-$chips = [];
-$cabin = '';
-$checkin = '';
-foreach (['cabin_kg', 'cabin_baggage', 'baggage_cabin_kg'] as $key) {
-    if (!empty($transfer[$key])) {
-        $cabin = trim((string) $transfer[$key]);
-        break;
-    }
-}
-foreach (['checkin_kg', 'checkin_baggage', 'baggage_checkin_kg'] as $key) {
-    if (!empty($transfer[$key])) {
-        $checkin = trim((string) $transfer[$key]);
-        break;
-    }
-}
-if ($cabin !== '' && $cabin !== $dash) {
-    $chips[] = __('Cabine:', 'ajinsafro-tour-bridge') . ' ' . $cabin;
-}
-if ($checkin !== '' && $checkin !== $dash) {
-    $chips[] = __('Soute:', 'ajinsafro-tour-bridge') . ' ' . $checkin;
-}
-if ($date_label !== '') {
-    $chips[] = $date_label;
-}
-
-$status_label = '';
-foreach (['status_label', 'status', 'state'] as $key) {
-    if (!empty($transfer[$key])) {
-        $status_label = trim((string) $transfer[$key]);
-        break;
-    }
-}
-if ($status_label === '') {
-    $status_label = __('Transfert confirme', 'ajinsafro-tour-bridge');
+$image_url = '';
+if (!empty($transfer['image_url'])) {
+    $image_url = trim((string) $transfer['image_url']);
 }
 
 $can_edit = current_user_can('edit_posts');
 ?>
-<div class="ajtb-transfer-card" data-transfer-id="<?php echo esc_attr((int) ($transfer['id'] ?? 0)); ?>">
-    <div class="ajtb-card-head">
-        <div class="ajtb-card-head-left">
-            <span class="ajtb-card-head-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
-                    <path d="M3 17h18"></path>
-                    <path d="M5 17a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2"></path>
-                    <path d="M7 10h10l2 5H5l2-5z"></path>
-                    <circle cx="7.5" cy="18.5" r="1.5"></circle>
-                    <circle cx="16.5" cy="18.5" r="1.5"></circle>
-                </svg>
-            </span>
-            <div class="ajtb-card-head-text">
-                <div class="ajtb-card-title"><?php echo esc_html($card_label); ?></div>
-                <div class="ajtb-card-subtitle"><?php echo esc_html($from); ?> &rarr; <?php echo esc_html($to); ?></div>
+<div class="transfer-wrapper-v2 transfer-header-left-bar" data-transfer-id="<?php echo esc_attr((int) ($transfer['id'] ?? 0)); ?>">
+    <div class="transfer-row-header paddingB15">
+        <div class="makeFlex">
+            <div class="header-width">
+                <span class="latoBold"><?php esc_html_e('TRANSFER', 'ajinsafro-tour-bridge'); ?></span>
+                <span class="header-span"></span>
+                <span><?php echo esc_html($card_label); ?></span>
             </div>
+            <span class="mmt-chevron-up appendTop2"></span>
         </div>
-        <?php if ($date_label !== ''): ?>
-            <div class="ajtb-card-date"><?php echo esc_html($date_label); ?></div>
-        <?php endif; ?>
-    </div>
-
-    <div class="ajtb-card-divider"></div>
-
-    <div class="ajtb-card-section">
-        <div class="ajtb-card-section-title"><?php echo esc_html($section_title); ?></div>
         <?php if ($can_edit): ?>
-            <button type="button" class="ajtb-card-action" data-aj-action="edit-transfer">
-                <?php esc_html_e('Modifier', 'ajinsafro-tour-bridge'); ?>
-            </button>
-        <?php endif; ?>
-    </div>
-
-    <div class="ajtb-card-body">
-        <div class="ajtb-card-main">
-            <div class="ajtb-card-name"><?php echo esc_html($transfer_name); ?></div>
-            <div class="ajtb-card-route"><?php echo esc_html($from); ?> &rarr; <?php echo esc_html($to); ?></div>
-            <?php if (!empty($info_items)): ?>
-                <div class="ajtb-card-info">
-                    <?php foreach ($info_items as $info): ?>
-                        <div class="ajtb-card-info-item"><?php echo esc_html($info); ?></div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <?php if (!empty($chips)): ?>
-            <div class="ajtb-card-chips">
-                <?php foreach ($chips as $chip): ?>
-                    <span class="ajtb-chip"><?php echo esc_html($chip); ?></span>
-                <?php endforeach; ?>
+            <div id="changeRemoveBtn" class="transfer-row-btns change-remove-btn-layout">
+                <span id="other" data-aj-action="edit-transfer"><?php esc_html_e('Modifier', 'ajinsafro-tour-bridge'); ?></span>
             </div>
         <?php endif; ?>
     </div>
-
-    <?php if (!empty($notes)): ?>
-        <div class="ajtb-card-notes"><?php echo wp_kses_post(nl2br($notes)); ?></div>
-    <?php endif; ?>
-
-    <div class="ajtb-card-footer">
-        <span class="ajtb-card-status">
-            <?php echo esc_html($status_label); ?>
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-        </span>
+    <div class="transfer-row-body">
+        <div class="transfer-card-img-top-bar">
+            <?php if ($image_url !== ''): ?>
+                <figure class="transfer-row-image-wrapper-v2">
+                    <div class="image-carousel-slide">
+                        <div class="imageLoaderContainer" style="width: 180px; height: 100px;">
+                            <img class="imgborder-transfer borderRadius16 vrtTop active" width="180" height="100" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($transfer_name); ?>" loading="lazy">
+                        </div>
+                    </div>
+                </figure>
+            <?php endif; ?>
+            <div class="transfer-row-details">
+                <div class="transfer-row-details-title appendBottom6">
+                    <span class="font18 latoBlack blackText"><?php echo esc_html($transfer_name); ?></span>
+                </div>
+                <div class="transfer-row-text-desc description-width-v2 font12 appendBottom6">
+                    <p class="descriptionContainer">
+                        <span class="activity-row-text-desc"><?php echo esc_html($description); ?></span>
+                    </p>
+                </div>
+                <?php if ($vehicle !== ''): ?>
+                    <div class="transfer-row-date-info appendTop2">
+                        <p class="font12 greyText"><?php echo esc_html(__('Véhicule:', 'ajinsafro-tour-bridge') . ' ' . $vehicle); ?></p>
+                    </div>
+                <?php endif; ?>
+                <div class="transfer-row-date-info appendTop2">
+                    <div class="icon-image-v2 paddingTop2">
+                        <svg width="12" height="12" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.0002 8.20024C15.0002 13.1185 9.10024 19.0002 8.20024 19.0002C7.30024 19.0002 1.00024 13.1185 1.00024 8.20024C1.00024 3.28202 4.13425 1.00024 8.00024 1.00024C11.8662 1.00024 15.0002 3.28202 15.0002 8.20024Z" stroke="#A2A2A2" stroke-linecap="round"></path>
+                            <ellipse cx="8.00054" cy="8.00024" rx="3.23077" ry="3" stroke="#A2A2A2" stroke-linecap="round"></ellipse>
+                        </svg>
+                    </div>
+                    <p class="appendLeft5"><?php echo esc_html($route_text); ?></p>
+                </div>
+                <?php if ($date_label !== ''): ?>
+                    <div class="transfer-row-date-info appendTop2">
+                        <p class="font12 greyText"><?php echo esc_html($date_label); ?></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>

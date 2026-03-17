@@ -98,7 +98,7 @@
         /**
          * Filter by "Starting from" only:
          * - #aj-flight-details .aj-flight-card
-         * - Programme Vol Aller: [data-aj-day-flight="outbound"][data-aj-day-number="1"] .aj-flight-card
+         * - Programme Vol Aller: .ajtb-day-flight-block.ajtb-day-flight-outbound[data-aj-day-number="1"] .aj-flight-card
          * Match by priority: id == data-departure-place-id OR code == data-departure-place-code OR name == data-departure-place-name (case-insensitive).
          * No filter on #flights section.
          */
@@ -510,14 +510,14 @@
             }
 
             var selectorOutbound =
-                '[data-aj-day-flight="outbound"][data-aj-day-number="1"] .aj-flight-card';
+                '.ajtb-day-flight-block.ajtb-day-flight-outbound[data-aj-day-number="1"] .aj-flight-card';
             var $cardsDetails = $("#aj-flight-details .aj-flight-card");
             var $cardsOutbound = $(selectorOutbound);
 
             var allCards = $cardsDetails.add($cardsOutbound);
 
             // Une seule carte: on garde la même carte et on change son contenu avec les infos du vol de la ville choisie
-            var $outboundBlocks = $('[data-aj-day-flight="outbound"][data-aj-day-number="1"]');
+            var $outboundBlocks = $('.ajtb-day-flight-block.ajtb-day-flight-outbound[data-aj-day-number="1"]');
             if (!showAll && selectedPlaceAndFlight) {
                 $outboundBlocks.removeClass("ajtb-flight-show-all");
                 var placeName = selectedPlaceAndFlight.place.name != null ? String(selectedPlaceAndFlight.place.name).trim() : "";
@@ -544,10 +544,10 @@
             }
 
             var $outboundLabels = $(
-                '[data-aj-day-flight="outbound"][data-aj-day-number="1"]'
+                '.ajtb-day-flight-block.ajtb-day-flight-outbound[data-aj-day-number="1"]'
             )
-                .closest(".commute-wrapper-v2, .card-separator-commute")
-                .find(".commute-header-left-bar h4, .font14.latoBold")
+                .closest(".ajtb-block-flight, .ajtb-day-flight-block")
+                .find(".ajtb-block-title, .ajtb-day-flight-label")
                 .first();
             $outboundLabels.each(function () {
                 var $label = $(this);

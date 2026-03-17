@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  style="--color-btn-primary-bg: linear-gradient(93deg, #53b2fe, #065af3); --color-btn-primary-border: #008cff; --color-btn-primary-color: #008cff; --color-btn-primary-bg2: #CCE8FF; --color-btn-updateBtn-bg: #008cff; --color-text-primary: #000; --color-btn-secondary-bg: #ffffff; --color-btn-secondary-text: #065af3; --color-btn-top-nav-bg: linear-gradient(93deg, #53b2fe, #065af3); --color-btn-top-nav-text: #ffffff; --color-label-primary: #008cff; --color-link-secondary: #008cff; --color-top-nav: #0a223d; --color-overlay-top-nav-form: rgba(255, 255, 255, 0.1); --color-body-bg: #fff; --color-body-bg-listing: #f2f2f2; --color-explore-links: #FFFFFF; --color-top-nav-input: #ffffff; --font-size-base-lg: 20px; --font-size-base-md: 16px; --font-size-base-sm: 12px; --font-size-base-xl: 24px; --font-size-btn-xl: 20px; --font-size-btn-lg: 18px; --font-size-btn-md: 16px; --font-size-btn-sm: 12px; --font-size-heading: 32px; --font-size-sub-heading: 16px; --font-size-page-header: 40px; --font-weight: 900; --radius-btn-top-nav: 34px; --radius-btn-primary: 34px; --radius-btn-secondary: 34px; --card-package-type-font-size: 10px; --card-package-name-font-size: 16px; --card-dest-info-font-size: 18px; --card-d-n-info-color: #ffffff; --card-d-n-info-bg-color: #000000; --card-includes-font-size: 12px; --card-sight-seeing-font-size: 14px; --card-actual-price-font-size: 12px; --card-current-price-font-size: 22px; --card-bottom-info-font-size: 12px; --card-badge-font-size: 10px; --card-badge-color: #BB8A11; --card-badge-bg-color: #FFEDD1; --topnav-input-wrap-border-color: none; --details-left-section-box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.1); --details-main-nav-font-size: 16px; --details-main-nav-font-weight: 900; --details-itinerary-nav-margin-bottom: 0; --details-itinerary-nav-bg-color: #ECF7FF; --details-itinerary-tab-color: #4a4a4a; --details-itinerary-tab-bg-color: transparent; --details-itinerary-tab-active-color: #008CFF; --details-itinerary-tab-active-bg-color: #ffffff; --review-bg-color: #0a223d; --review-top-header-nav-color: #9b9b9b; --details-dayplan-bg-color: #FFF; --details-dayplan-title-bg: linear-gradient(87deg, #f4d1ca 15%, #e2d9b2 100%); --details-dayplan-title-bg2: linear-gradient(67deg, #ff7f3f 0%, #ff3e5e 100%); --details-dayplan-title-color: #000000; --details-dayplan-flight-upgrade-bg: linear-gradient(87deg, #ffc46880, #fdd9a180 100%); --details-dayplan-flight-upgrade-margin: 10px 18px; --details-dayplan-flight-upgrade-border-radius: 4px; --details-right-section-header-bg: #eaf5ff; --details-right-section-header-badge-bg: linear-gradient(247deg, #ff3e5e, #ff6d3f); --thankyou-top-header-color: #000; --thankyou-successful-booking-color: linear-gradient(73deg, #4affcd, #7dbfcc); --font-scale: 1; --width: 1512;"
+  dir="ltr">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aji nsafro</title>
+  <meta http-equiv="Cache-control" content="no-cache">
+  <link href="./assets/styles/base.css" rel="stylesheet">
+  <link href="./assets/styles/components.css" rel="stylesheet">
+  <link href="./assets/styles/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="theme-wrapper">
+      <div class="listing-modifysearch_container">
+        <div class="listing-modifysearch_inner">
+          <div id="modifySearchDetails" class="modify-search_container showWithAnimate ">
+            <div class="modify-search_inner-container ">
+              <div class="">
+                <div class="modify-search_inputbox active">
+                  <div>
+                    <div class="makeFlex"><label for="fromCity" class="modify-search_inputlbl">STARTING FROM</label>
+                    </div><input id="fromCity" name="fromCity" type="text" class="modify-search_input "
+                      placeholder="Select" value="Fez, Morocco">
+                  </div>
+                </div>
+              </div>
+              <div class="modify-search_inputbox active">
+                <div>
+                  <div class="makeFlex"><label for="date" class="modify-search_inputlbl">TRAVELLING ON</label></div>
+                  <input id="date" name="date" type="text" class="modify-search_input "  placeholder="Select"
+                    value="Thu, 2 Jul 2026">
+                </div>
+              </div>
+              <div class="">
+                <div class="modify-search_inputbox active">
+                  <div>
+                    <div class="makeFlex"><label for="roomsAndGuests" class="modify-search_inputlbl">ROOMS &amp;
+                        GUESTS</label></div><input id="roomsAndGuests" name="roomsAndGuests" type="text"
+                      class="modify-search_input "placeholder="Select" value="2 Adults">
+                  </div>
+                </div>
+              </div><button class="primaryBtn big fill btn btn-top-nav btn-lg">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="warning-message-container"></div>
+      <div class="topSection newTopSection appendBottom20" id="__FPSC_ID_9_1773503253662" >
+        <div class="pageContainer">
+          <div class="appendBottom15 pageHeading" id="__FPSC_ID_10_1773503253662" >
+            <div class="message-banner hideMessageBanner successBannerColor">
+              <p class="message-banner-text"></p>
+            </div>
+            <div class="makeFlex"><span class="topHeading">Ouarzazate Group Tour Summer 2026</span></div>
+            <div class="topSubBar">
+              <div class="topSubHead">
+                <div class="makeFlex">
+                  <div class="packageTypeTagV2">
+                    <div class="group-icon"><svg width="13" height="9" viewBox="0 0 13 9" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M2.25704 8.47194C2.19729 8.42695 1.77027 8.10043 1.30974 7.7482C0.849206 7.39597 0.452797 7.0913 0.430936 7.07202L0.388672 7.03731L1.36804 6.28657C1.90727 5.87392 2.35323 5.53455 2.36051 5.53198C2.3678 5.52941 2.37363 5.69009 2.37363 5.90477C2.37363 6.18759 2.378 6.28786 2.39258 6.30328C2.43338 6.34828 3.08775 6.34185 3.37194 6.293C3.52788 6.266 3.64739 6.2133 3.76835 6.11946C3.82227 6.07575 4.08169 5.85593 4.34256 5.63225L4.81767 5.22217L5.38022 5.72095C5.69064 5.99348 5.94423 6.22358 5.94423 6.2313C5.94423 6.24672 4.98527 7.08745 4.83661 7.20186C4.57137 7.40625 4.40086 7.49881 4.12249 7.59008C3.74066 7.71606 3.33696 7.7662 2.71466 7.7662C2.47565 7.7662 2.40278 7.77005 2.38966 7.78291C2.37946 7.79448 2.37217 7.9256 2.37072 8.17885L2.36634 8.5555L2.25704 8.47194Z"
+                          fill="#4A4A4A"></path>
+                        <path
+                          d="M10.5794 8.15961C10.5794 7.84953 10.5749 7.74708 10.5614 7.73615C10.5494 7.72796 10.3305 7.71976 9.99463 7.71566C9.27947 7.7061 9.04708 7.67468 8.67675 7.53808C8.26295 7.38509 7.98408 7.17883 7.35138 6.55867C7.03053 6.24586 4.30482 3.74885 3.96898 3.46199C3.63164 3.1724 3.55668 3.15191 2.8655 3.15055H2.43071L2.42621 3.57127C2.42471 3.84583 2.41722 3.99063 2.40822 3.98789C2.38123 3.9797 0.385677 2.39925 0.388675 2.38969C0.390175 2.38423 0.847458 2.01951 1.4037 1.5783L2.41572 0.777832L2.42021 1.17807C2.42171 1.41984 2.42921 1.58376 2.43821 1.59332C2.4502 1.60562 2.57764 1.61245 2.89999 1.61791C3.40525 1.62611 3.63164 1.6466 3.9315 1.71626C4.25235 1.79003 4.51622 1.90204 4.7756 2.07825C4.95552 2.19982 5.52675 2.70797 7.03353 4.08624C8.29294 5.23913 8.57031 5.49594 8.97511 5.88388C9.10855 6.01228 9.15053 6.0437 9.24499 6.08468C9.41291 6.15981 9.52086 6.1803 9.74725 6.18166C10.0966 6.18303 10.5494 6.168 10.5644 6.15434C10.5734 6.14615 10.5809 5.97403 10.5824 5.74045L10.5869 5.33885L11.5989 6.13932C12.1551 6.58053 12.6109 6.94661 12.6109 6.95344C12.6109 6.96301 10.7908 8.41231 10.6048 8.55164C10.5809 8.5694 10.5794 8.54208 10.5794 8.15961Z"
+                          fill="#4A4A4A"></path>
+                        <path
+                          d="M7.72938 3.72024C7.47398 3.50642 7.21859 3.29128 7.15988 3.24405C7.07915 3.17715 7.05566 3.14829 7.05566 3.12074C7.05566 3.09188 7.13492 3.01317 7.47985 2.69702C8.13889 2.09096 8.21962 2.02537 8.45886 1.89944C8.88158 1.67643 9.24853 1.60953 10.1233 1.59378L10.615 1.58591L10.6224 1.18187L10.6297 0.777832L11.6205 1.54525C12.165 1.96765 12.6112 2.31922 12.6112 2.32578C12.6112 2.33365 12.165 2.68522 11.6205 3.10762L10.6297 3.87635L10.6253 3.49199C10.6238 3.28078 10.6165 3.10369 10.6106 3.09844C10.596 3.08532 10.1292 3.06827 9.82977 3.06958C9.55089 3.0722 9.40999 3.09713 9.27495 3.17059C9.22064 3.19945 9.04157 3.35556 8.71132 3.66252C8.44565 3.90915 8.21962 4.11117 8.21081 4.11117C8.20053 4.10985 7.98477 3.93407 7.72938 3.72024Z"
+                          fill="#4A4A4A"></path>
+                      </svg></div>
+                    <div class="flexiPakageTip">
+                      <p class="latoBold appendBottom6">Highlights</p>
+                      <ul>
+                        <li>Make friends with co-travellers</li>
+                        <li>Save more</li>
+                      </ul>
+                    </div><span class="font11  widthMaxContent ">Group Package</span>
+                  </div>
+                  <div class="packageTypeTagV2">
+                    <div class="flexiPakageTip">
+                      <ul>
+                        <li>This is the approximate group size for this tour.</li>
+                        <li>This might change slightly at the time of actual booking.</li>
+                      </ul>
+                    </div><span class="font11  widthMaxContent">49 People Group</span>
+                  </div>
+                  <div class="packageTypeTagV2"><span class="font11  widthMaxContent"> 4N/5D</span></div>
+                  <p class="duration-text">4N Paris</p>
+                </div>
+                <div class="makeFlex hrtlCenter"></div>
+              </div>
+            </div>
+          </div>
+          <div class="_Header imageGalleryTopSection">
+            <div class="makeFlex">
+              <div class="imageGalleryLeft">
+                <div class="slideDetails" id="viewGallery"><span class="holidaySprite viewGalleryIcon"></span>VIEW
+                  GALLERY →</div>
+                <div class="imageLoaderContainer " style="width: 460px; height: 300px;"><img class=" active "
+                    width="460" height="300" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="around_the_destination" loading="lazy">
+                </div>
+              </div>
+              <div class="imageGalleryMiddle">
+                <div class="middleBlockLeft">
+                  <div class="imageLoaderContainer " style="width: 225px; height: 145px;"><img class=" active pointer"
+                      width="225" height="145" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                      alt="m_image1" loading="lazy"></div>
+                  <div class="imageLoaderContainer " style="width: 225px; height: 145px;"><img class=" active pointer"
+                      width="225" height="145" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="m_image2" loading="lazy"></div>
+                </div>
+                <div class="middleBlockRight">
+                  <div class="imageLoaderContainer " style="width: 225px; height: 145px;"><img class=" active pointer"
+                      width="225" height="145" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="m_image3" loading="lazy"></div>
+                  <div class="imageNameWrapper">
+                    <div class="imageLoaderContainer " style="width: 225px; height: 145px;"><img class=" active "
+                        width="225" height="145" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="m_image4" loading="lazy"></div>
+                    <div class="galleryImgContent">
+                      <p class="galleryImgInfo"><span class="latoBold">Activities &amp; Sightseeing</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="imageGalleryRight">
+                <div class="imageLoaderContainer " style="width: 285px; height: 300px;"><img class=" active "
+                    width="285" height="300" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="property_photo"
+                    loading="lazy"></div>
+                <div class="galleryImgContent">
+                  <p class="galleryImgInfo"><span class="latoBold">Property photos</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="tabItem" class="mainTab">
+            <div class="mainTabItem active">ITINERARY</div>
+            <div class="mainTabItem false">POLICIES</div>
+            <div class="mainTabItem false">SUMMARY</div>
+            <div class="flexOne">
+              <ul class="actionIcons makeFlex right appendTop15 appendRight15">
+                <li class="makeFlex perfectCenter cursorPointer"><span
+                    class="holidaySprite icon24 share appendRight3"></span>Share</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pageContainer makeFlex spaceBetween">
+        <div class="leftContainer">
+          <div class="left-section">
+            <div class="padding20">
+              <div class="holidayExpertIntroText latoIlalic latoBlack font16">Here’s a list of Activities &amp;
+                Inclusions in this package for you</div>
+              <div class="inclusions-wrapper appendTop12 font14 padding10 appendLeft15">
+                <ul class="inclusion-ul">
+                  <li><span class="latoBold">Tips: </span><span>To drivers and guides are included</span></li>
+                  <li><span class="latoBold">Tour Manager: </span><span>Service of an experienced MakeMyTrip Tour
+                      Manager</span></li>
+                  <li><span class="latoBold">Travel insurance: </span><span>valid for the duration of the holiday of
+                      tourists below 65 years of age</span></li>
+                </ul>
+              </div>
+              <div class="latoBold linkText font14  link-text cursorPointer">View All Inclusions</div>
+            </div>
+            <div class="package-features-V3">
+              <div class="font14 latoBold feature-stripV3">Included In this Package</div>
+              <div class="makeFlex">
+                <div class="addon-btn-border appendRight20 pointer"><svg width="32" height="32" viewBox="0 0 32 32"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M16.186 16.031a4.178 4.178 0 0 0 4.174-4.173V9.732h-.696v2.126a3.482 3.482 0 0 1-3.478 3.478 3.482 3.482 0 0 1-3.477-3.478V9.732h-.696v2.126a4.177 4.177 0 0 0 4.173 4.173z"
+                      fill="#4A4A4A" stroke="#4A4A4A" stroke-width=".3"></path>
+                    <path
+                      d="M18.731 15.117h-.696v1.73h.696v-1.73zM14.336 15.117h-.695v1.73h.695v-1.73zM12.358 10.58a.349.349 0 0 0 .271-.13l1.191-1.479a.35.35 0 0 0 .077-.217v.422h4.578v-.422c0 .079.027.155.076.217l1.188 1.48a.349.349 0 0 0 .607-.126l.656-2.397a1.774 1.774 0 0 0-1.4-2.129 2.066 2.066 0 0 0-2.39-1.77l-4.144.69c-.56.093-1.05.4-1.376.866a2.094 2.094 0 0 0-.35 1.588l.677 3.133a.35.35 0 0 0 .34.274zm5.195-5.885a1.374 1.374 0 0 1 1.374 1.375c0 .192.156.395.348.395a1.071 1.071 0 0 1 1.05 1.298l-.47 1.72-.684-.852v.197a.348.348 0 0 0-.348-.347h-5.274a.348.348 0 0 0-.348.347v-.197l-.656.816-.521-2.41c-.066-.363.017-.741.236-1.053.219-.31.546-.517.922-.58l4.144-.69c.076-.012.151-.019.227-.019zM24.193 26.888c.186 0 .338-.175.338-.39v-4.314c0-1.127-.52-2.187-1.357-2.766l-2.9-2.01c-.16-.112-.367-.052-.463.133-.096.185-.044.425.115.536l2.9 2.01c.634.439 1.029 1.243 1.029 2.097v4.313c0 .216.151.391.338.391z"
+                      fill="#4A4A4A" stroke="#4A4A4A" stroke-width=".3"></path>
+                    <path d="M5.4 26.728h21.2" stroke="#4A4A4A" stroke-linecap="round"></path>
+                    <path
+                      d="M7.77 26.888a.398.398 0 0 0 .405-.39v-4.314a2.44 2.44 0 0 1 1.234-2.097l3.48-2.01a.382.382 0 0 0 .14-.536.414.414 0 0 0-.557-.134l-3.48 2.01c-1.004.58-1.628 1.64-1.628 2.767v4.313c0 .216.182.391.406.391zM18.288 20.56l.02-.001a.349.349 0 0 0 .252-.13l1.684-2.105a.348.348 0 0 0-.014-.45l-1.136-1.264a.347.347 0 0 0-.408-.08l-2.652 1.262a.349.349 0 0 0-.096.56l2.104 2.105a.343.343 0 0 0 .246.102zm1.228-2.44-1.257 1.57-1.482-1.482 1.973-.94.766.851z"
+                      fill="#4A4A4A" stroke="#4A4A4A" stroke-width=".3"></path>
+                    <path
+                      d="M14.079 20.56c.092 0 .18-.037.246-.102l2.105-2.105a.348.348 0 0 0-.097-.56l-2.652-1.263a.347.347 0 0 0-.407.081l-1.137 1.263a.347.347 0 0 0-.013.45l1.684 2.105a.349.349 0 0 0 .252.13h.019zm1.51-2.352-1.482 1.483-1.257-1.572.766-.85 1.974.94z"
+                      fill="#4A4A4A" stroke="#4A4A4A" stroke-width=".3"></path>
+                  </svg><span class="latoRegular font14 paddingLR10">Tour Manager - Europe</span><span
+                    class="mmt-chevron-right"></span></div>
+                <div class="addon-btn-border appendRight20 pointer"><svg width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#D8D8D8" fill-opacity=".01" d="M0 0h24v24H0z"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M17.858 20.947H7.184c-.654 0-1.184-.53-1.184-1.184V3.184C6 2.531 6.53 2 7.184 2h10.674c.654 0 1.184.53 1.184 1.184v16.58c0 .653-.53 1.183-1.184 1.183z"
+                      fill="#fff" stroke="#4A4A4A"></path>
+                    <path d="M9 17h6.29M10 15h4.547" stroke="#4A4A4A" stroke-linecap="round"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M15.286 6.153a.523.523 0 0 0-.739 0l-1.353 1.355-3.202-.74-.492.494 2.585 1.354L10.73 9.97l-.677-.382-.375.46 1.657 1.704.535-.331-.401-.713 1.355-1.354 1.354 2.585.493-.492-.739-3.202 1.354-1.354a.521.521 0 0 0 0-.74z"
+                      fill="#4A4A4A"></path>
+                  </svg><span class="latoRegular font14 paddingLR10">VISA Assistance</span><span
+                    class="mmt-chevron-right"></span></div>
+              </div>
+            </div>
+            <ul class="initerary-nav  " id="initeraryNav" data-testid="itinerary-nav">
+              <li class="active"><b class="appendRight3">5</b> Day Plan</li>
+              <li class="  "> <b class="appendRight3">2</b> Flights<b class="appendRight3"> &amp; </b> <b
+                  class="appendRight3">2</b> Transfers</li>
+              <li class="  "><b class="appendRight3">1</b> Hotel</li>
+              <li class="  "><b class="appendRight3">2</b> Activities</li>
+              <li class="  "><b class="appendRight3">7</b> Meals</li>
+            </ul>
+            <div class="dayplan-container">
+              <div class="dayplan-nav" data-testid="dayplan-nav">
+                <p class="pointer-list-title ">Day Plan</p>
+                <ul class="pointer-list ">
+                  <li class="active ">02 Jul, Thu</li>
+                  <li class="">03 Jul, Fri</li>
+                  <li class="">04 Jul, Sat</li>
+                  <li class="">05 Jul, Sun</li>
+                  <li class="">06 Jul, Mon</li>
+                </ul>
+              </div>
+              <div class="dayplan-details" data-testid="day-plan-details">
+                <div class="dayplan-wrapper" data-testid="day-plan-wrapper">
+                  <div id="dayplan1" day="1"></div>
+                  <div class="dayplanheaderV2">
+                    <div class="dayplanheaderV2-day font14 latoBold">Day 1</div>
+                    <div class="dayplanheaderV2-day-info latoBold">Arrival in Paris</div>
+                    <div class="dayplanheaderV2-info">
+                      <div class="dayplanheaderV2-info-heading latoBold appendLeft2">INCLUDED : </div>
+                      <div class="dayplanheaderV2-info-content">
+                        <div><svg width="12.8" height="12" viewBox="0 0 12 12" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M4.01119 11.5301H5.15244L8.00556 6.78053L11.144 6.78053C11.6176 6.78053 11.9999 6.38275 11.9999 5.88998C11.9999 5.39721 11.6176 4.99943 11.144 4.99943L8.00556 4.99943L5.15244 0.249825L4.01119 0.249825L5.43775 4.99943H2.29931L1.44338 3.81203H0.587439L1.15806 5.88998L0.587439 7.96793L1.44338 7.96793L2.29931 6.78053H5.43775L4.01119 11.5301Z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Flight</span></div>
+                        <div><svg width="12.8" height="12" viewBox="0 0 10 13" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M9.6585 12.0283V0.727993H3.32865V12.0283H5.90747V9.71692H7.07967V12.0283H9.6585ZM7.78308 1.49808H8.95527V2.78222H7.78308V1.49808ZM7.07962 1.49808H5.90743V2.78222H7.07962V1.49808ZM4.0319 1.49808H5.2041V2.78222H4.0319V1.49808ZM8.95527 3.55305H7.78308V4.83718H8.95527V3.55305ZM5.90743 3.55305H7.07962V4.83718H5.90743V3.55305ZM5.2041 3.55305H4.0319V4.83718H5.2041V3.55305ZM3.09439 12.0279V4.06627H0.75V12.0279H3.09439ZM2.39088 4.8374H1.45312V5.86471H2.39088V4.8374ZM7.78308 5.60749H8.95527V6.89162H7.78308V5.60749ZM7.07962 5.60749H5.90743V6.89162H7.07962V5.60749ZM4.0319 5.60749H5.2041V6.89162H4.0319V5.60749ZM2.39088 6.63498H1.45312V7.66228H2.39088V6.63498ZM7.78308 7.66194H8.95527V8.94607H7.78308V7.66194ZM7.07962 7.66194H5.90743V8.94607H7.07962V7.66194ZM4.0319 7.66194H5.2041V8.94607H4.0319V7.66194ZM2.39088 8.43307H1.45312V9.46038H2.39088V8.43307ZM1.45312 10.2306H2.39088V11.258H1.45312V10.2306Z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Hotel</span></div>
+                        <div><svg width="12.8" height="12" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M8.35 5.223c.955 0 1.729-.777 1.729-1.736 0-.461-.182-.903-.507-1.228a1.725 1.725 0 0 0-2.444 0 1.74 1.74 0 0 0-.507 1.228c0 .959.774 1.736 1.73 1.736zM6.127 4.82v.869H4.689V4.82h1.438zm4.044 1.634a2.158 2.158 0 0 0-1.146-.331L8.04 6.12c-.72 0-1.296.578-1.296 1.302l-.02 6.751L4.627 20.5l2.372-.275 2.213-4.986 1.229 1.08-.645 3.58 1.985-.232.81-3.407c.1-.423-.016-.869-.312-1.188l-1.718-1.859a2.177 2.177 0 0 1-.577-1.477c-.001-.93.006-1.67.014-2.47v-.001c.004-.418.008-.852.01-1.338l2.614 1.452h3.196c.244 0 .432-.19.432-.435v-.216a.427.427 0 0 0-.432-.435h-2.593a.431.431 0 0 1-.228-.066L10.17 6.454zM3.939 8.205l.891-1.648h1.297v7.38H4.614a.866.866 0 0 1-.864-.868v-4.2c0-.234.065-.465.19-.664zm11.036 2.042v9.003l.864-.1v-8.903h-.864zm.864-2.826v-.868h-.864v.868h.864z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Transfer</span></div>
+                        <div><svg width="12" height="12.8" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                              fill="#fff"></path>
+                            <g mask="url(#a0bdco1iia)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                            </path>
+                            <g mask="url(#oozokqdm0b)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                          </svg><span>1 Meal</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="greyText font12 lineHeight18 dayplan-description">
+                  <p>Your Paris Delight holiday package would begin with your arrival in the City of Lights – Paris. A
+                    MakeMyTrip Tour Manager / Representative would greet you at the airport and assist you with the
+                    transfer to the hotel. Rest of the day is at leisure and tonight, packed dinner will be provided.
+                    <br><br>Note: All group transportation during the tour will be provided by long-distance coaches
+                    unless mentioned otherwise on particular day/time.
+                  </p>
+                  </p>
+                  <div class="dayplan-description-readMore"><span>Read More </span></div>
+                  <ul class="dayplan-places-list">
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                            loading="lazy"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active "
+                            src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                            loading="lazy"></div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="card-separator-commute commute-wrapper-v2">
+                    <div class="commute-inner "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 28" fill="none"
+                        class=" flight-icon-v2">
+                        <path
+                          d="M10.8974 21.625H12.4574L16.3574 15.4671L20.6474 15.4671C21.2948 15.4671 21.8174 14.9514 21.8174 14.3125C21.8174 13.6736 21.2948 13.1579 20.6474 13.1579H16.3574L12.4574 7H10.8974L12.8474 13.1579L8.55738 13.1579L7.38738 11.6184H6.21738L6.99738 14.3125L6.21738 17.0066L7.38738 17.0066L8.55738 15.4671H12.8474L10.8974 21.625Z"
+                          fill="#4a4a4a"></path>
+                      </svg>
+                      <div class="commute-header-left-bar">
+                        <div class="flightListRow flexOne column">
+                          <div class="makeFlex">
+                            <ul class="flight-row firstFlightRow">
+                              <li class="highlight flight-row-container " data-testid="flight">
+                                <div class="flight-row-header ">
+                                  <div><span class="flight-row-title"><b>FLIGHT</b><span
+                                        class="header-span"></span><span>New Delhi to Paris</span></span><span
+                                      class="mmt-chevron-up"></span></div>
+                                  <div data-testid="changeRemoveBtn_flight" id="changeRemoveBtn"
+                                    class="flight-row-btns"><span id="remove">Remove</span></div>
+                                </div>
+                                <div class="flight-row-body card-img-top-bar-commute">
+                                  <div class="flight-row-airline-details"><svg width="42" height="42"
+                                      viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <circle cx="21" cy="21" r="21" fill="#EAF5FF"></circle>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M11.9688 22.9715L32.5094 12.7742C33.8954 12.0894 35.5806 12.592 36.3563 13.9226C37.2488 15.4563 36.5637 17.4185 34.9073 18.076L12.0357 27.0858C11.2863 27.3826 10.4331 27.2446 9.81758 26.7264L5.50995 23.0978C5.07551 22.7319 5.20676 22.0353 5.7462 21.8517L8.51033 20.9091C8.73345 20.8323 8.98151 20.8674 9.17576 21.0028L11.9688 22.9715Z"
+                                        fill="white"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M11.9688 22.9715L32.5094 12.7742C33.8954 12.0894 35.5806 12.592 36.3563 13.9226C37.2488 15.4563 36.5637 17.4185 34.9073 18.076L12.0357 27.0858C11.2863 27.3826 10.4331 27.2446 9.81758 26.7264L5.50995 23.0978C5.07551 22.7319 5.20676 22.0353 5.7462 21.8517L8.51033 20.9091C8.73345 20.8323 8.98151 20.8674 9.17576 21.0028L11.9688 22.9715Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M19.7889 19.0165L14.7831 16.5466C14.2515 16.2836 14.2358 15.5376 14.7555 15.2538L16.4408 14.3306C16.7689 14.151 17.1561 14.1041 17.5183 14.2017L25.2253 16.2771L19.7889 19.0165Z"
+                                        fill="#A9D4F6"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M19.7889 19.0165L14.7831 16.5466C14.2515 16.2836 14.2358 15.5376 14.7555 15.2538L16.4408 14.3306C16.7689 14.151 17.1561 14.1041 17.5183 14.2017L25.2253 16.2771L19.7889 19.0165Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M22.6911 23.0648L21.8747 28.696C21.7894 29.2832 22.4102 29.7206 22.9405 29.4485L25.1442 28.3171C25.4776 28.1452 25.7309 27.8536 25.8542 27.502L28.1642 20.8683L22.6911 23.0648Z"
+                                        fill="#A9D4F6"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M22.6911 23.0648L21.8747 28.696C21.7894 29.2832 22.4102 29.7206 22.9405 29.4485L25.1442 28.3171C25.4776 28.1452 25.7309 27.8536 25.8542 27.502L28.1642 20.8683L22.6911 23.0648Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                    </svg> </div>
+                                  <div class="flight-row-right-details">
+                                    <div class="flight-row-basic-details-v2">
+                                      <div class="">
+                                        <div class="flight-dates-v2">
+                                          <div class="flight-date-text font12">Thu, 02 Jul</div>
+                                          <div class="flight-row-airline-path-v2"><svg
+                                              xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                              viewBox="0 0 29 28" fill="none" class="flightJourneyV2 absolute">
+                                              <path
+                                                d="M10.8974 21.625H12.4574L16.3574 15.4671L20.6474 15.4671C21.2948 15.4671 21.8174 14.9514 21.8174 14.3125C21.8174 13.6736 21.2948 13.1579 20.6474 13.1579H16.3574L12.4574 7H10.8974L12.8474 13.1579L8.55738 13.1579L7.38738 11.6184H6.21738L6.99738 14.3125L6.21738 17.0066L7.38738 17.0066L8.55738 15.4671H12.8474L10.8974 21.625Z"
+                                                fill="#4a4a4a"></path>
+                                            </svg></div>
+                                          <div class="flight-date-text font12">Thu, 02 Jul</div>
+                                        </div>
+                                        <div class="flight-row-airports-v2">
+                                          <p>New Delhi</p>
+                                          <p>Paris</p>
+                                        </div>
+                                      </div>
+                                      <div class="flight-row-baggage-v2 baggage-border-commute">
+                                        <p><b><span class="flightIcon"><svg width="20" height="20" viewBox="0 0 20 20"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path opacity=".01" fill="#fff" d="M0 0h20v20H0z"></path>
+                                                <path clip-rule="evenodd"
+                                                  d="M3.333 8.104c0-.966.784-1.75 1.75-1.75h9.625c.967 0 1.75.784 1.75 1.75v5.98a1.75 1.75 0 0 1-1.75 1.75H5.085a1.75 1.75 0 0 1-1.75-1.75v-5.98z"
+                                                  stroke="#757575"></path>
+                                                <path
+                                                  d="M3.333 9.27h.292A2.625 2.625 0 0 0 6.25 6.647v-.292M16.459 9.27h-.292a2.625 2.625 0 0 1-2.625-2.624v-.292M7.708 6.354v-.437c0-.967.784-1.75 1.75-1.75h.876c.966 0 1.75.783 1.75 1.75v.437"
+                                                  stroke="#757575"></path>
+                                              </svg></span>Cabin :</b><span class="cabinBaggageText">7 KGS</span></p>
+                                        <p><b><span class="flightIcon"><svg width="20" height="20" viewBox="0 0 20 20"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                  d="M12.962 4.547h.783c.766 0 1.405.61 1.437 1.34v10.237c0 .289-.255.532-.559.532h-.702v.168c0 .32-.272.579-.607.579a.593.593 0 0 1-.607-.58v-.167H7.294v.168c0 .32-.272.579-.607.579a.593.593 0 0 1-.607-.58v-.167h-.703c-.303 0-.559-.243-.559-.533V5.887c0-.73.623-1.34 1.406-1.34H7.66v-.472c0-.823.702-1.478 1.549-1.478h1.549c.862 0 1.549.67 1.549 1.478v.472h.654zm-7.6 2.346v9.23h9.23v-9.23c-.99-.122-1.773-.868-1.9-1.813h-5.43c-.128.945-.91 1.69-1.9 1.813zm0-1.006c0-.441.383-.807.846-.807h.479c-.112.64-.655 1.158-1.325 1.264v-.457zm9.23.457v-.457c0-.441-.384-.807-.847-.807h-.48c.112.64.655 1.158 1.326 1.264zm-6.1-2.27c0-.365.318-.67.702-.67h1.549c.383 0 .702.305.702.67v.473H8.491v-.472z"
+                                                  fill="#757575"></path>
+                                                <path
+                                                  d="M15.182 5.887h.1v-.004l-.1.004zm-1.261 10.77v-.1h-.1v.1h.1zm-1.214 0h.1v-.1h-.1v.1zm-5.413 0v-.1h-.1v.1h.1zm-1.214 0h.1v-.1h-.1v.1zm1.58-12.11v.1h.1v-.1h-.1zm4.648 0h-.1v.1h.1v-.1zM5.362 16.123h-.1v.1h.1v-.1zm0-9.23-.013-.1-.088.011v.089h.1zm9.23 9.23v.1h.1v-.1h-.1zm0-9.23h.1v-.089l-.088-.01-.013.099zm-1.9-1.813.098-.013-.011-.087h-.088v.1zm-5.43 0v-.1h-.088l-.011.087.099.013zm-.575 0 .098.017.02-.117h-.118v.1zM5.362 6.344h-.1v.118l.115-.019-.015-.099zm9.23 0-.017.1.116.018v-.118h-.1zM13.265 5.08v-.1h-.12l.021.117.099-.017zm-1.82-.533v.1h.1v-.1h-.1zm-2.955 0h-.1v.1h.1v-.1zm5.254-.1h-.783v.2h.783v-.2zm1.537 1.436c-.034-.786-.719-1.436-1.537-1.436v.2c.715 0 1.308.569 1.337 1.245l.2-.009zm0 .75v-.746h-.2v.747h.2zm0 9.49v-9.49h-.2v9.49h.2zm-.659.633c.354 0 .659-.284.659-.633h-.2c0 .23-.206.433-.459.433v.2zm-.702 0h.702v-.2h-.702v.2zm.1.068v-.168h-.2v.168h.2zm-.707.679c.386 0 .707-.3.707-.68h-.2c0 .261-.223.48-.507.48v.2zm-.707-.68c0 .38.32.68.707.68v-.2a.493.493 0 0 1-.507-.48h-.2zm0-.167v.168h.2v-.168h-.2zm-5.313.1h5.413v-.2H7.294v.2zm.1.068v-.168h-.2v.168h.2zm-.707.679c.386 0 .707-.3.707-.68h-.2c0 .261-.223.48-.507.48v.2zm-.707-.68c0 .38.32.68.707.68v-.2a.493.493 0 0 1-.507-.48h-.2zm0-.167v.168h.2v-.168h-.2zm-.603.1h.703v-.2h-.703v.2zm-.659-.633c0 .35.305.633.66.633v-.2c-.253 0-.46-.203-.46-.433h-.2zm0-9.49v9.49h.2v-9.49h-.2zm0-.746v.747h.2v-.747h-.2zm1.506-1.44c-.834 0-1.506.65-1.506 1.44h.2c0-.672.575-1.24 1.306-1.24v-.2zm.782 0h-.782v.2h.782v-.2zm.655 0h-.655v.2h.655v-.2zm-.1-.372v.472h.2v-.472h-.2zM9.21 2.497c-.897 0-1.65.695-1.65 1.578h.2c0-.762.653-1.378 1.45-1.378v-.2zm1.549 0h-1.55v.2h1.55v-.2zm1.649 1.578c0-.866-.736-1.578-1.65-1.578v.2c.812 0 1.45.63 1.45 1.378h.2zm0 .472v-.472h-.2v.472h.2zm.554-.1h-.654v.2h.654v-.2zm-7.5 11.676v-9.23h-.2v9.23h.2zm9.13-.1h-9.23v.2h9.23v-.2zm-.1-9.13v9.23h.2v-9.23h-.2zm-1.9-1.8c.134.993.955 1.772 1.987 1.899l.025-.199c-.948-.116-1.692-.83-1.814-1.726l-.198.027zm-5.33.087h5.43v-.2h-5.43v.2zM5.374 6.992c1.032-.127 1.853-.906 1.987-1.898l-.198-.027c-.122.896-.866 1.61-1.814 1.726l.025.199zm.834-2.012c-.514 0-.947.406-.947.907h.2c0-.382.334-.707.747-.707v-.2zm.479 0h-.48v.2h.48v-.2zm-1.31 1.463c.71-.113 1.289-.661 1.408-1.346l-.197-.034c-.104.595-.611 1.082-1.242 1.183l.031.197zm-.115-.556v.457h.2v-.457h-.2zm9.23 0v.457h.2v-.457h-.2zm-.747-.707c.412 0 .746.325.746.707h.2c0-.5-.432-.907-.946-.907v.2zm-.48 0h.48v-.2h-.48v.2zm1.342 1.066c-.631-.1-1.139-.588-1.243-1.183l-.197.034c.12.685.698 1.233 1.409 1.346l.03-.197zM9.194 3.305c-.434 0-.803.345-.803.77h.2c0-.306.27-.57.603-.57v-.2zm1.549 0h-1.55v.2h1.55v-.2zm.802.77c0-.425-.368-.77-.802-.77v.2c.332 0 .602.264.602.57h.2zm0 .472v-.472h-.2v.472h.2zm-3.054.1h2.954v-.2H8.491v.2zm-.1-.572v.472h.2v-.472h-.2z"
+                                                  fill="#757575"></path>
+                                              </svg></span>Check-in :</b>20 KGS</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="info-container">
+                          <div class="info-container-single"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                              height="16" width="16"><span class="font12">Tentative Flight</span>
+                            <div class="makeFlex info-container-tooltip"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                height="16" width="16">
+                              <div class="font12">This is a tentative flight and may contain upto 2 stops. The details
+                                of the actual flight will be shared with you 3 days before departure.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator" data-testid="day-plan-section-transfer">
+                    <div class="flex-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="19"
+                        viewBox="0 0 18 12" fill="none" class="car-icon-no-commute">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M15.8864 3.41705H17.3999C17.649 3.41705 17.8408 3.64145 17.8209 3.88505V4.43345C17.8209 4.69745 17.6303 4.90025 17.3812 4.90025H16.4606C16.6525 5.57225 16.7671 6.34505 16.7671 7.24025V8.80505V11.4511C16.7671 11.7151 16.5752 11.9191 16.3261 11.9191H14.6981C14.4489 11.9191 14.2571 11.7151 14.2571 11.4511V10.2307C12.7237 10.3723 11.0184 10.4539 9.21722 10.4539C7.41602 10.4539 5.70948 10.3723 4.17734 10.2307V11.4511C4.17734 11.7151 3.98551 11.9191 3.73638 11.9191H2.10708C1.85795 11.9191 1.66612 11.7151 1.66612 11.4511V7.24145C1.66612 6.34505 1.78072 5.57345 1.97255 4.90145H1.05326C0.804134 4.90145 0.612305 4.69745 0.612305 4.43345V3.88505C0.612305 3.62105 0.804134 3.41705 1.05326 3.41705H2.54804C2.59548 3.34642 2.63805 3.27078 2.68057 3.19524L2.68057 3.19524L2.68058 3.19523C2.72401 3.11807 2.76738 3.04101 2.81585 2.96945C2.89308 2.84705 3.92821 1.40345 4.36917 0.813055C4.77027 0.285055 5.28846 0.0810547 5.86394 0.0810547H12.5705C13.146 0.0810547 13.6816 0.304255 14.0653 0.813055C14.5249 1.40345 15.1191 2.21705 15.4056 2.64425C15.4454 2.69626 15.4803 2.75401 15.5152 2.81174L15.5152 2.81176L15.5152 2.81179C15.5479 2.86595 15.5806 2.92009 15.6173 2.96945C15.688 3.07376 15.7485 3.17872 15.8138 3.292L15.8138 3.29204L15.8139 3.29206C15.8372 3.33254 15.8612 3.37409 15.8864 3.41705ZM6.05457 6.89536L6.51421 6.24496L6.51297 6.24376C6.62881 6.08176 6.57151 5.95936 6.39837 5.97976H2.98779C2.81465 5.97976 2.64275 6.12136 2.62282 6.32536L2.58545 6.83416C2.58545 7.01776 2.71873 7.17976 2.91056 7.17976H5.51894C5.70953 7.17976 5.93997 7.05856 6.05457 6.89536ZM7.89414 4.27209H3.94544C3.71624 4.27209 3.52441 4.06809 3.52441 3.82449C3.52441 3.71214 3.60521 3.58363 3.64835 3.51502L3.65894 3.49809C3.75486 3.33609 4.69283 2.03409 5.01919 1.60689C5.32686 1.20009 5.74789 1.03809 6.18885 1.03809H8.12333V1.11849C8.12333 1.38249 8.31516 1.58649 8.56429 1.58649H9.92454C10.1737 1.58649 10.3655 1.38249 10.3655 1.11849V1.03809H12.3212C12.7621 1.03809 13.1831 1.20009 13.4896 1.60689C13.8159 2.03409 14.2569 2.64489 14.4861 2.97009C14.506 2.99049 14.5247 3.01089 14.5247 3.03009C14.5502 3.06843 14.5772 3.10805 14.6048 3.1486L14.6048 3.14863C14.6808 3.26038 14.7617 3.37923 14.8311 3.49809L14.8388 3.51015C14.8811 3.57659 14.9657 3.70954 14.9657 3.82449C14.9657 4.06809 14.7738 4.27209 14.5446 4.27209H7.89414ZM12.8969 7.15888H15.5214H15.5227C15.7133 7.15888 15.8665 6.99688 15.8465 6.79288L15.8092 6.28408C15.7905 6.08128 15.6373 5.93848 15.4454 5.93848H12.0336C11.8418 5.93848 11.7845 6.06088 11.8991 6.22408L12.36 6.87448C12.4746 7.03768 12.705 7.15888 12.8969 7.15888Z"
+                          fill="#4a4a4a"></path>
+                      </svg>
+                      <div class="highlight  transfer-card-width transfer-row-v2" data-testid="transfer">
+                        <div class="transfer-wrapper-v2 transfer-header-left-bar">
+                          <div class="transfer-row-header paddingB15">
+                            <div class="makeFlex">
+                              <div class="header-width"><span class="latoBold">TRANSFER </span><span
+                                  class="header-span"> </span><span>Airport to hotel in Paris</span></div><span
+                                class="mmt-chevron-up appendTop2"></span>
+                            </div>
+                            <div id="changeRemoveBtn" class="transfer-row-btns change-remove-btn-layout"><span
+                                id="other">Modify</span></div>
+                          </div>
+                          <div class="transfer-row-body">
+                            <div class="transfer-card-img-top-bar">
+                              <figure class="transfer-row-image-wrapper-v2">
+                                <div class=" image-carousel-slide ">
+                                  <div class="imageLoaderContainer " style="width: 180px; height: 100px;"><img
+                                      class="imgborder-transfer borderRadius16 vrtTop active " width="180" height="100"
+                                      src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                                </div>
+                              </figure>
+                              <div class="transfer-row-details">
+                                <div class="transfer-row-details-title appendBottom6"><span
+                                    class="font18 latoBlack blackText">Shared Transfer</span></div>
+                                <div class="transfer-row-text-desc description-width-v2 font12 appendBottom6">
+                                  <p class="descriptionContainer"><span class="activity-row-text-desc">Airport to
+                                      Hotel Transfer - Paris</span></p>
+                                </div>
+                                <div class="transfer-row-date-info appendTop2">
+                                  <div class="icon-image-v2 paddingTop2"><svg width="12" height="12" viewBox="0 0 16 20"
+                                      fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                        d="M15.0002 8.20024C15.0002 13.1185 9.10024 19.0002 8.20024 19.0002C7.30024 19.0002 1.00024 13.1185 1.00024 8.20024C1.00024 3.28202 4.13425 1.00024 8.00024 1.00024C11.8662 1.00024 15.0002 3.28202 15.0002 8.20024Z"
+                                        stroke="#A2A2A2" stroke-linecap="round"></path>
+                                      <ellipse cx="8.00054" cy="8.00024" rx="3.23077" ry="3" stroke="#A2A2A2"
+                                        stroke-linecap="round"></ellipse>
+                                    </svg></div>
+                                  <p class="appendLeft5">Airport to Hotel</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator" data-testid="day-plan-section-hotel">
+                    <div class="hotel-card-v2-container hotel-icon-left-bar">
+                      <div class="hotel-header-row-container">
+                        <div class="hotel-header-row-lhs"><svg width="20" height="20" viewBox="0 0 10 13" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M9.6585 12.0283V0.727993H3.32865V12.0283H5.90747V9.71692H7.07967V12.0283H9.6585ZM7.78308 1.49808H8.95527V2.78222H7.78308V1.49808ZM7.07962 1.49808H5.90743V2.78222H7.07962V1.49808ZM4.0319 1.49808H5.2041V2.78222H4.0319V1.49808ZM8.95527 3.55305H7.78308V4.83718H8.95527V3.55305ZM5.90743 3.55305H7.07962V4.83718H5.90743V3.55305ZM5.2041 3.55305H4.0319V4.83718H5.2041V3.55305ZM3.09439 12.0279V4.06627H0.75V12.0279H3.09439ZM2.39088 4.8374H1.45312V5.86471H2.39088V4.8374ZM7.78308 5.60749H8.95527V6.89162H7.78308V5.60749ZM7.07962 5.60749H5.90743V6.89162H7.07962V5.60749ZM4.0319 5.60749H5.2041V6.89162H4.0319V5.60749ZM2.39088 6.63498H1.45312V7.66228H2.39088V6.63498ZM7.78308 7.66194H8.95527V8.94607H7.78308V7.66194ZM7.07962 7.66194H5.90743V8.94607H7.07962V7.66194ZM4.0319 7.66194H5.2041V8.94607H4.0319V7.66194ZM2.39088 8.43307H1.45312V9.46038H2.39088V8.43307ZM1.45312 10.2306H2.39088V11.258H1.45312V10.2306Z"
+                              fill="#4A4A4A"></path>
+                          </svg>
+                          <div class="hotel-header-details"><span><span class=" latoBold"></span><span
+                                class="latoBold font14">HOTEL</span></span><span><span class="header-span "></span><span
+                                class=" font14">4 Nights</span></span><span><span class="header-span "></span><span
+                                class=" font14">In Paris</span></span><span class="mmt-chevron-up"></span></div>
+                        </div>
+                      </div>
+                      <div class="hotel-content-container ">
+                        <div class="hotel-card-content">
+                          <div class="hotel-card-content__img-container">
+                            <div class=" image-carousel-slide ">
+                              <div class="imageLoaderContainer " style="width: 243px; height: 200px;"><img
+                                  class="main-img-border vrtTop active " width="243" height="200" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                  loading="lazy"></div>
+                            </div>
+                            <div class="hotel-card-content__image-gallery">
+                              <div class="hotel-card-content__gallery-thumbnail">
+                                <div class="imageLoaderContainer " style="width: 55px; height: 55px;"><img
+                                    class=" active " width="55" height="55" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                    alt="Hotel view 1" loading="lazy"></div>
+                              </div>
+                              <div class="hotel-card-content__gallery-thumbnail">
+                                <div class="imageLoaderContainer " style="width: 55px; height: 55px;"><img
+                                    class=" active " width="55" height="55" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                    alt="Hotel view 2" loading="lazy"></div>
+                              </div>
+                              <div class="hotel-card-content__gallery-thumbnail">
+                                <div class="imageLoaderContainer " style="width: 55px; height: 55px;"><img
+                                    class=" active " width="55" height="55" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" alt="Hotel view 3"
+                                    loading="lazy"></div>
+                              </div>
+                              <div class="hotel-card-content__gallery-thumbnail">
+                                <div class="imageLoaderContainer " style="width: 55px; height: 55px;"><img
+                                    class=" active " width="55" height="55" src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                    alt="Hotel view 4" loading="lazy"></div>
+                                <div class="hotel-card-content__view-all-overlay"><span
+                                    class="hotel-card-content__view-all-count">1+</span><span
+                                    class="hotel-card-content__view-all-text">View All</span></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="hotel-card-content__details ">
+                            <div class="hotel-card-content__details-upper-section">
+                              <div class="hotel-card-content__mmt-rating-info-container">
+                                <div class="hotel-card-content__mmt-rating-score">3.4</div><span
+                                  class="hotel-card-content__mmt-rating-label">Good</span><span
+                                  class="hotel-card-content__mmt-rating-count">(20 Ratings)</span>
+                              </div>
+                              <p class="hotel-card-content__title">B&amp;B HOTEL Paris Nord 2 CDG Aéroport <span
+                                  class="hotel-card-content__or-similar">(Or Similar) </span><span
+                                  class="holidaySprite rating_blank"><span
+                                    class="holidaySprite rating_fill ratingThree"></span></span></p>
+                              <p class="hotel-card-content__location">Roissy-en-France </p>
+                              <div class="hotel-card-content__additional-info">
+                                <div><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" height="14" width="14" alt=""></div>
+                                <p class="hotel-card-content__additional-info-text">1 Room | 2 Adults</p>
+                              </div>
+                              <div class="hotel-card-content__additional-info">
+                                <div><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" height="14" width="14" alt=""></div>
+                                <p class="hotel-card-content__additional-info-text">2nd Jul 2 PM - 6th Jul 12 PM, 4
+                                  Nights</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Dinner</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="add-activity-card-conatiner">
+                    <div class="makeFlex center"><svg xmlns="http://www.w3.org/2000/svg" width="49" height="48"
+                        viewBox="0 0 49 48" fill="none" class="ballon-icon-white-background">
+                        <circle cx="24.5" cy="24" r="24" fill="white"></circle>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M24.0242 11.5681C26.2298 11.5681 27.6863 16.9793 26.7521 21.6938L25.5109 27.9525H22.5375L21.2962 21.6938C20.3621 16.9793 21.8185 11.5681 24.0242 11.5681Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M25.6789 36.3529H22.2995C21.6829 36.3529 21.1815 35.865 21.1815 35.2625V31.3911H26.7968V35.2625C26.7968 35.865 26.2966 36.3529 25.6789 36.3529Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M26.215 35.2627C26.215 35.5509 25.9742 35.7858 25.6787 35.7858H22.2993C22.0038 35.7858 21.7642 35.5509 21.7642 35.2627V31.9586H26.215V35.2627ZM17.6101 15.4891C18.571 13.9595 20.1089 12.885 21.9143 12.4119C20.58 14.4474 20.0495 18.396 20.7243 21.8023L21.8329 27.3859H20.4683L17.3611 21.4369C16.3537 19.5091 16.4456 17.3408 17.6101 15.4891ZM24.9235 12.6723C26.1008 14.0646 26.9174 17.8691 26.1799 21.5862L25.0305 27.3854H23.0168L21.8675 21.5862C21.13 17.8691 21.9454 14.0646 23.1239 12.6723C23.7253 11.9587 24.3209 11.9587 24.9235 12.6723ZM30.4391 15.4901C31.6025 17.3418 31.6932 19.509 30.6869 21.4368L27.5809 27.3858H26.2152L27.3226 21.8022C27.9974 18.3959 27.4669 14.4473 26.1326 12.4106C27.9392 12.8849 29.4771 13.9594 30.4391 15.4901ZM20.8961 28.5203H22.0583H25.9902H27.1373L26.373 30.8236H21.6139L20.8961 28.5203ZM31.7222 21.9517C32.9181 19.6642 32.811 17.0919 31.4302 14.8964C29.8981 12.4569 27.1283 11 24.0234 11C20.9185 11 18.1499 12.4558 16.6178 14.8964C15.2369 17.0919 15.1311 19.6631 16.3246 21.9517L19.5691 28.165L20.6009 31.4759V35.2623C20.6009 36.1768 21.3629 36.92 22.2994 36.92H25.6788C26.6164 36.92 27.3784 36.1768 27.3784 35.2623V31.4805L28.4766 28.1707L31.7222 21.9517Z"
+                          fill="#0084FF"></path>
+                      </svg><span class="add-activity-content">
+                        <p class="add-more-text">Add Activities to your day</p>
+                        <p class="time-spend-text">Spend the day at leisure or add an activity, transfer or meal to
+                          your day</p>
+                      </span></div><span class="add-button">ADD TO DAY</span>
+                  </div>
+                </div>
+                <div class="dayplan-wrapper" data-testid="day-plan-wrapper">
+                  <div id="dayplan2" day="2"></div>
+                  <div class="dayplanheaderV2">
+                    <div class="dayplanheaderV2-day font14 latoBold">Day 2</div>
+                    <div class="dayplanheaderV2-day-info latoBold">Day at Leisure</div>
+                    <div class="dayplanheaderV2-info">
+                      <div class="dayplanheaderV2-info-heading latoBold appendLeft2">INCLUDED : </div>
+                      <div class="dayplanheaderV2-info-content">
+                        <div><svg width="12" height="12" viewBox="0 0 14 22" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M5.15177 3.89062C6.22126 3.89062 7.08826 3.01969 7.08827 1.94533C7.08827 1.4294 6.88425 0.934595 6.52109 0.569775C6.15792 0.204954 5.66537 0 5.15177 0C4.63818 0 4.14563 0.204954 3.78246 0.569775C3.4193 0.934595 3.21528 1.4294 3.21528 1.94533C3.21529 3.01969 4.08229 3.89062 5.15177 3.89062ZM2.6599 3.43913V4.41178H1.04953V3.43913H2.6599ZM7.1901 5.26891C6.80543 5.02746 6.35966 4.89842 5.90603 4.89842L4.80348 4.89614C3.99575 4.89614 3.35109 5.544 3.35111 6.35511L3.32846 13.9178L0.979701 21.0039L3.63672 20.6962L6.11595 15.111L7.49268 16.3212L6.77027 20.3314L8.99422 20.0711L9.90005 16.2546C10.0126 15.7799 9.88266 15.2806 9.5521 14.923L7.62695 12.8409C7.2113 12.3912 6.98019 11.7997 6.98019 11.1862C6.97949 10.1438 6.98735 9.31455 6.99585 8.41844V8.41842V8.41841V8.41839V8.41836C7.00029 7.95026 7.0049 7.46392 7.00855 6.91945L9.93598 8.54554H13.5159C13.7889 8.54554 14 8.33342 14 8.05917V7.81618C14 7.54197 13.7889 7.32985 13.5159 7.32985H10.6111C10.5208 7.32985 10.4324 7.30375 10.3558 7.25596L7.1901 5.26891ZM0.211806 7.23025L1.21031 5.38374H2.66268V13.6513H0.968247C0.433484 13.6513 0 13.2159 0 12.6787V7.9749C0 7.71161 0.072861 7.4534 0.211806 7.23025ZM12.573 9.51841V19.604L13.5413 19.4919V9.51833L12.573 9.51841ZM13.5413 6.3527V5.38006H12.573V6.3527H13.5413Z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Activity</span></div>
+                        <div><svg width="12" height="12.8" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                              fill="#fff"></path>
+                            <g mask="url(#a0bdco1iia)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                            </path>
+                            <g mask="url(#oozokqdm0b)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                          </svg><span>1 Meal</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="greyText font12 lineHeight18 dayplan-description">
+                  <p>After a continental breakfast proceed for an exciting trip to Disneyland Paris, where you can
+                    experience many thrilling rides and fascinating shows. Meet and get clicked with your favorite
+                    cartoon characters in a carnival-like atmosphere</p>
+                  <p>Day 2 &amp; Day 3 activities could be shuffled due to unforeseen circumstances, but all
+                    inclusions will be covered, however the order may differ.</p>
+                  </p>
+                  <ul class="dayplan-places-list">
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active "
+                            src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                            loading="lazy"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active "
+                            src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="dayplan-section" data-testid="day-plan-section-activity">
+                    <div class="activity-row  highlight  new-activity-row" data-testid="activity">
+                      <div class="activity-row-headerV2">
+                        <div class="makeFlex"><svg width="20" height="20" viewBox="0 0 14 22" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M5.15177 3.89062C6.22126 3.89062 7.08826 3.01969 7.08827 1.94533C7.08827 1.4294 6.88425 0.934595 6.52109 0.569775C6.15792 0.204954 5.66537 0 5.15177 0C4.63818 0 4.14563 0.204954 3.78246 0.569775C3.4193 0.934595 3.21528 1.4294 3.21528 1.94533C3.21529 3.01969 4.08229 3.89062 5.15177 3.89062ZM2.6599 3.43913V4.41178H1.04953V3.43913H2.6599ZM7.1901 5.26891C6.80543 5.02746 6.35966 4.89842 5.90603 4.89842L4.80348 4.89614C3.99575 4.89614 3.35109 5.544 3.35111 6.35511L3.32846 13.9178L0.979701 21.0039L3.63672 20.6962L6.11595 15.111L7.49268 16.3212L6.77027 20.3314L8.99422 20.0711L9.90005 16.2546C10.0126 15.7799 9.88266 15.2806 9.5521 14.923L7.62695 12.8409C7.2113 12.3912 6.98019 11.7997 6.98019 11.1862C6.97949 10.1438 6.98735 9.31455 6.99585 8.41844V8.41842V8.41841V8.41839V8.41836C7.00029 7.95026 7.0049 7.46392 7.00855 6.91945L9.93598 8.54554H13.5159C13.7889 8.54554 14 8.33342 14 8.05917V7.81618C14 7.54197 13.7889 7.32985 13.5159 7.32985H10.6111C10.5208 7.32985 10.4324 7.30375 10.3558 7.25596L7.1901 5.26891ZM0.211806 7.23025L1.21031 5.38374H2.66268V13.6513H0.968247C0.433484 13.6513 0 13.2159 0 12.6787V7.9749C0 7.71161 0.072861 7.4534 0.211806 7.23025ZM12.573 9.51841V19.604L13.5413 19.4919V9.51833L12.573 9.51841ZM13.5413 6.3527V5.38006H12.573V6.3527H13.5413Z"
+                              fill="#4A4A4A"></path>
+                          </svg>
+                          <p class="activity-row-title"><span class="activity-heading">ACTIVITY</span><span
+                              class="header-span"></span><span class="">8 Hours</span><span
+                              class="header-span"></span><span class="">In Paris</span><span
+                              class="mmt-chevron-up appendTop2"></span></p>
+                        </div>
+                      </div><span class="partition-border"></span>
+                      <div class="activity-row-body pointer">
+                        <div class="activity-row-image-wrapper">
+                          <div class=" image-carousel-slide ">
+                            <div class="imageLoaderContainer " style="width: 243px; height: 155px;"><img
+                                class="borderRadius4 vrtTop active " width="243" height="155"
+                                src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                          </div>
+                        </div>
+                        <div class="makeFlex column flexOne">
+                          <h2 class="activity-name">Disneyland Paris with Fire Works(1 Day, 1 Park)</h2>
+                          <p class="short-description">
+                          <p class="descriptionContainer"><span class="activity-row-text-desc">Today you will set out
+                              for an adventurous and fun-filled time at Disneyland Paris, where you can experience
+                              many thrilling rides and fascinating shows. Meet and get clicked with your favorite
+                              cartoon characters in a carnival-like atmosphere </span><a><span
+                                class="activity-row-text-link appendLeft3">Read More...</span></a></p>
+                          </p>
+                          <div class="makeFlex column appendBottom7 appendTop2">
+                            <p class="text-wrapper"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" class="text-icon"><span
+                                class="text">Duration 8 Hours</span><span class="dotSeparator">&nbsp;•&nbsp;</span><span
+                                class="text">Morning</span></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Breakfast</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="dayplan-wrapper" data-testid="day-plan-wrapper">
+                  <div id="dayplan3" day="3"></div>
+                  <div class="dayplanheaderV2">
+                    <div class="dayplanheaderV2-day font14 latoBold">Day 3</div>
+                    <div class="dayplanheaderV2-day-info latoBold">Paris City Tour</div>
+                    <div class="dayplanheaderV2-info">
+                      <div class="dayplanheaderV2-info-heading latoBold appendLeft2">INCLUDED : </div>
+                      <div class="dayplanheaderV2-info-content">
+                        <div><svg width="12" height="12" viewBox="0 0 14 22" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M5.15177 3.89062C6.22126 3.89062 7.08826 3.01969 7.08827 1.94533C7.08827 1.4294 6.88425 0.934595 6.52109 0.569775C6.15792 0.204954 5.66537 0 5.15177 0C4.63818 0 4.14563 0.204954 3.78246 0.569775C3.4193 0.934595 3.21528 1.4294 3.21528 1.94533C3.21529 3.01969 4.08229 3.89062 5.15177 3.89062ZM2.6599 3.43913V4.41178H1.04953V3.43913H2.6599ZM7.1901 5.26891C6.80543 5.02746 6.35966 4.89842 5.90603 4.89842L4.80348 4.89614C3.99575 4.89614 3.35109 5.544 3.35111 6.35511L3.32846 13.9178L0.979701 21.0039L3.63672 20.6962L6.11595 15.111L7.49268 16.3212L6.77027 20.3314L8.99422 20.0711L9.90005 16.2546C10.0126 15.7799 9.88266 15.2806 9.5521 14.923L7.62695 12.8409C7.2113 12.3912 6.98019 11.7997 6.98019 11.1862C6.97949 10.1438 6.98735 9.31455 6.99585 8.41844V8.41842V8.41841V8.41839V8.41836C7.00029 7.95026 7.0049 7.46392 7.00855 6.91945L9.93598 8.54554H13.5159C13.7889 8.54554 14 8.33342 14 8.05917V7.81618C14 7.54197 13.7889 7.32985 13.5159 7.32985H10.6111C10.5208 7.32985 10.4324 7.30375 10.3558 7.25596L7.1901 5.26891ZM0.211806 7.23025L1.21031 5.38374H2.66268V13.6513H0.968247C0.433484 13.6513 0 13.2159 0 12.6787V7.9749C0 7.71161 0.072861 7.4534 0.211806 7.23025ZM12.573 9.51841V19.604L13.5413 19.4919V9.51833L12.573 9.51841ZM13.5413 6.3527V5.38006H12.573V6.3527H13.5413Z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Activity</span></div>
+                        <div><svg width="12" height="12.8" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                              fill="#fff"></path>
+                            <g mask="url(#a0bdco1iia)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                            </path>
+                            <g mask="url(#oozokqdm0b)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                          </svg><span>2 Meals</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="greyText font12 lineHeight18 dayplan-description">
+                  <p>After a continental breakfast, you would set out for an Orientation Tour of Paris. Drive past
+                    popular sites such as Arc De Triomphe, Champs Elysees, Grand Palais, Petit Palais, National
+                    Assembly, Alexander Bridge, Concorde Square, Magdalene Church and Opera Garnier. Also visit the
+                    Fragonard Perfume Museum to get an insight about the history of perfume and a chance to buy some
+                    of the best fragrances.</p>
+                  </p>
+                  <div class="dayplan-description-readMore"><span>Read More </span></div>
+                  <ul class="dayplan-places-list">
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer " ><img class=" active " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                            loading="lazy"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer "
+                          style="background-image: url(&quot;//imgak.mmtcdn.com/holidays/node/images/listing/defaultImg.png&quot;);">
+                          <img class="  " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy">
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer "
+                          style="background-image: url(&quot;//imgak.mmtcdn.com/holidays/node/images/listing/defaultImg.png&quot;);">
+                          <img class="  " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy">
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="dayplan-section" data-testid="day-plan-section-activity">
+                    <div class="activity-row  highlight  new-activity-row" data-testid="activity">
+                      <div class="activity-row-headerV2">
+                        <div class="makeFlex"><svg width="20" height="20" viewBox="0 0 14 22" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M5.15177 3.89062C6.22126 3.89062 7.08826 3.01969 7.08827 1.94533C7.08827 1.4294 6.88425 0.934595 6.52109 0.569775C6.15792 0.204954 5.66537 0 5.15177 0C4.63818 0 4.14563 0.204954 3.78246 0.569775C3.4193 0.934595 3.21528 1.4294 3.21528 1.94533C3.21529 3.01969 4.08229 3.89062 5.15177 3.89062ZM2.6599 3.43913V4.41178H1.04953V3.43913H2.6599ZM7.1901 5.26891C6.80543 5.02746 6.35966 4.89842 5.90603 4.89842L4.80348 4.89614C3.99575 4.89614 3.35109 5.544 3.35111 6.35511L3.32846 13.9178L0.979701 21.0039L3.63672 20.6962L6.11595 15.111L7.49268 16.3212L6.77027 20.3314L8.99422 20.0711L9.90005 16.2546C10.0126 15.7799 9.88266 15.2806 9.5521 14.923L7.62695 12.8409C7.2113 12.3912 6.98019 11.7997 6.98019 11.1862C6.97949 10.1438 6.98735 9.31455 6.99585 8.41844V8.41842V8.41841V8.41839V8.41836C7.00029 7.95026 7.0049 7.46392 7.00855 6.91945L9.93598 8.54554H13.5159C13.7889 8.54554 14 8.33342 14 8.05917V7.81618C14 7.54197 13.7889 7.32985 13.5159 7.32985H10.6111C10.5208 7.32985 10.4324 7.30375 10.3558 7.25596L7.1901 5.26891ZM0.211806 7.23025L1.21031 5.38374H2.66268V13.6513H0.968247C0.433484 13.6513 0 13.2159 0 12.6787V7.9749C0 7.71161 0.072861 7.4534 0.211806 7.23025ZM12.573 9.51841V19.604L13.5413 19.4919V9.51833L12.573 9.51841ZM13.5413 6.3527V5.38006H12.573V6.3527H13.5413Z"
+                              fill="#4A4A4A"></path>
+                          </svg>
+                          <p class="activity-row-title"><span class="activity-heading">ACTIVITY</span><span
+                              class="header-span"></span><span class="">1 Hour</span><span
+                              class="header-span"></span><span class="">In Paris</span><span
+                              class="mmt-chevron-up appendTop2"></span></p>
+                        </div>
+                      </div><span class="partition-border"></span>
+                      <div class="activity-row-body pointer">
+                        <div class="activity-row-image-wrapper">
+                          <div class="slick-slider slick-initialized" dir="ltr">
+                            <div class="slick-list">
+                              <div class="slick-track"
+                                style="width: 2187px; opacity: 1; transform: translate3d(-486px, 0px, 0px);">
+                                <div data-index="-1" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true"
+                                  style="width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="0" class="slick-slide" tabindex="-1" aria-hidden="true"
+                                  style="outline: none; width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="1" class="slick-slide slick-active slick-current" tabindex="-1"
+                                  aria-hidden="false" style="outline: none; width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="2" class="slick-slide" tabindex="-1" aria-hidden="true"
+                                  style="outline: none; width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="3" class="slick-slide" tabindex="-1" aria-hidden="true"
+                                  style="outline: none; width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="4" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true"
+                                  style="width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="5" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true"
+                                  style="width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="6" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true"
+                                  style="width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div data-index="7" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true"
+                                  style="width: 243px;">
+                                  <div>
+                                    <div class=" image-carousel-slide " tabindex="-1"
+                                      style="width: 100%; display: inline-block;">
+                                      <div class="imageLoaderContainer object-cover"
+                                        style="width: 243px; height: 155px;"><img class="borderRadius4 vrtTop active "
+                                          width="243" height="155"
+                                          src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                          loading="lazy"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="makeFlex column flexOne">
+                          <h2 class="activity-name">Paris City Tour</h2>
+                          <p class="short-description">
+                          <p class="descriptionContainer"><span class="activity-row-text-desc">Embark on a fascinating
+                              Paris City tour with this curated activity. Begin with driving past the spectacular Arc
+                              De Triomphe, Champs Elysees, Grand Palais, Petit Palais, National Assembly, Alexander
+                              Bridge, Concorde Square, Magdalene Church, </span><a><span
+                                class="activity-row-text-link appendLeft3">Read More...</span></a></p>
+                          </p>
+                          <div class="makeFlex column appendBottom7 appendTop2">
+                            <p class="text-wrapper"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" class="text-icon"><span
+                                class="text">Duration 1 Hour</span><span class="dotSeparator">&nbsp;•&nbsp;</span><span
+                                class="text">Morning</span></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Breakfast</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Dinner</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="add-activity-card-conatiner">
+                    <div class="makeFlex center"><svg xmlns="http://www.w3.org/2000/svg" width="49" height="48"
+                        viewBox="0 0 49 48" fill="none" class="ballon-icon-white-background">
+                        <circle cx="24.5" cy="24" r="24" fill="white"></circle>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M24.0242 11.5681C26.2298 11.5681 27.6863 16.9793 26.7521 21.6938L25.5109 27.9525H22.5375L21.2962 21.6938C20.3621 16.9793 21.8185 11.5681 24.0242 11.5681Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M25.6789 36.3529H22.2995C21.6829 36.3529 21.1815 35.865 21.1815 35.2625V31.3911H26.7968V35.2625C26.7968 35.865 26.2966 36.3529 25.6789 36.3529Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M26.215 35.2627C26.215 35.5509 25.9742 35.7858 25.6787 35.7858H22.2993C22.0038 35.7858 21.7642 35.5509 21.7642 35.2627V31.9586H26.215V35.2627ZM17.6101 15.4891C18.571 13.9595 20.1089 12.885 21.9143 12.4119C20.58 14.4474 20.0495 18.396 20.7243 21.8023L21.8329 27.3859H20.4683L17.3611 21.4369C16.3537 19.5091 16.4456 17.3408 17.6101 15.4891ZM24.9235 12.6723C26.1008 14.0646 26.9174 17.8691 26.1799 21.5862L25.0305 27.3854H23.0168L21.8675 21.5862C21.13 17.8691 21.9454 14.0646 23.1239 12.6723C23.7253 11.9587 24.3209 11.9587 24.9235 12.6723ZM30.4391 15.4901C31.6025 17.3418 31.6932 19.509 30.6869 21.4368L27.5809 27.3858H26.2152L27.3226 21.8022C27.9974 18.3959 27.4669 14.4473 26.1326 12.4106C27.9392 12.8849 29.4771 13.9594 30.4391 15.4901ZM20.8961 28.5203H22.0583H25.9902H27.1373L26.373 30.8236H21.6139L20.8961 28.5203ZM31.7222 21.9517C32.9181 19.6642 32.811 17.0919 31.4302 14.8964C29.8981 12.4569 27.1283 11 24.0234 11C20.9185 11 18.1499 12.4558 16.6178 14.8964C15.2369 17.0919 15.1311 19.6631 16.3246 21.9517L19.5691 28.165L20.6009 31.4759V35.2623C20.6009 36.1768 21.3629 36.92 22.2994 36.92H25.6788C26.6164 36.92 27.3784 36.1768 27.3784 35.2623V31.4805L28.4766 28.1707L31.7222 21.9517Z"
+                          fill="#0084FF"></path>
+                      </svg><span class="add-activity-content">
+                        <p class="add-more-text">Add Activities to your day</p>
+                        <p class="time-spend-text">Spend the day at leisure or add an activity, transfer or meal to
+                          your day</p>
+                      </span></div><span class="add-button">ADD TO DAY</span>
+                  </div>
+                </div>
+                <div class="dayplan-wrapper" data-testid="day-plan-wrapper">
+                  <div id="dayplan4" day="4"></div>
+                  <div class="dayplanheaderV2">
+                    <div class="dayplanheaderV2-day font14 latoBold">Day 4</div>
+                    <div class="dayplanheaderV2-day-info latoBold">Day at Leisure</div>
+                    <div class="dayplanheaderV2-info">
+                      <div class="dayplanheaderV2-info-heading latoBold appendLeft2">INCLUDED : </div>
+                      <div class="dayplanheaderV2-info-content">
+                        <div><svg width="12" height="12.8" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                              fill="#fff"></path>
+                            <g mask="url(#a0bdco1iia)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                            </path>
+                            <g mask="url(#oozokqdm0b)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                          </svg><span>2 Meals</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="greyText font12 lineHeight18 dayplan-description">
+                  <p>Enjoy a hearty continental breakfast at your hotel, after which you will have the whole day at
+                    leisure. If you like, you can choose our optional activity at additional cost.</p>
+                  </p>
+                  <ul class="dayplan-places-list">
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer "
+                          style="background-image: url(&quot;//imgak.mmtcdn.com/holidays/node/images/listing/defaultImg.png&quot;);">
+                          <img class="  " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy">
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer "
+                          style="background-image: url(&quot;//imgak.mmtcdn.com/holidays/node/images/listing/defaultImg.png&quot;);">
+                          <img class="  " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy">
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="dayPlanImage cursorPointer">
+                        <div class="imageLoaderContainer "
+                          style="background-image: url(&quot;//imgak.mmtcdn.com/holidays/node/images/listing/defaultImg.png&quot;);">
+                          <img class="  " src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy">
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Breakfast</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Dinner</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="add-activity-card-conatiner">
+                    <div class="makeFlex center"><svg xmlns="http://www.w3.org/2000/svg" width="49" height="48"
+                        viewBox="0 0 49 48" fill="none" class="ballon-icon-white-background">
+                        <circle cx="24.5" cy="24" r="24" fill="white"></circle>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M24.0242 11.5681C26.2298 11.5681 27.6863 16.9793 26.7521 21.6938L25.5109 27.9525H22.5375L21.2962 21.6938C20.3621 16.9793 21.8185 11.5681 24.0242 11.5681Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M25.6789 36.3529H22.2995C21.6829 36.3529 21.1815 35.865 21.1815 35.2625V31.3911H26.7968V35.2625C26.7968 35.865 26.2966 36.3529 25.6789 36.3529Z"
+                          fill="#B4DCFA"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M26.215 35.2627C26.215 35.5509 25.9742 35.7858 25.6787 35.7858H22.2993C22.0038 35.7858 21.7642 35.5509 21.7642 35.2627V31.9586H26.215V35.2627ZM17.6101 15.4891C18.571 13.9595 20.1089 12.885 21.9143 12.4119C20.58 14.4474 20.0495 18.396 20.7243 21.8023L21.8329 27.3859H20.4683L17.3611 21.4369C16.3537 19.5091 16.4456 17.3408 17.6101 15.4891ZM24.9235 12.6723C26.1008 14.0646 26.9174 17.8691 26.1799 21.5862L25.0305 27.3854H23.0168L21.8675 21.5862C21.13 17.8691 21.9454 14.0646 23.1239 12.6723C23.7253 11.9587 24.3209 11.9587 24.9235 12.6723ZM30.4391 15.4901C31.6025 17.3418 31.6932 19.509 30.6869 21.4368L27.5809 27.3858H26.2152L27.3226 21.8022C27.9974 18.3959 27.4669 14.4473 26.1326 12.4106C27.9392 12.8849 29.4771 13.9594 30.4391 15.4901ZM20.8961 28.5203H22.0583H25.9902H27.1373L26.373 30.8236H21.6139L20.8961 28.5203ZM31.7222 21.9517C32.9181 19.6642 32.811 17.0919 31.4302 14.8964C29.8981 12.4569 27.1283 11 24.0234 11C20.9185 11 18.1499 12.4558 16.6178 14.8964C15.2369 17.0919 15.1311 19.6631 16.3246 21.9517L19.5691 28.165L20.6009 31.4759V35.2623C20.6009 36.1768 21.3629 36.92 22.2994 36.92H25.6788C26.6164 36.92 27.3784 36.1768 27.3784 35.2623V31.4805L28.4766 28.1707L31.7222 21.9517Z"
+                          fill="#0084FF"></path>
+                      </svg><span class="add-activity-content">
+                        <p class="add-more-text">Add Activities to your day</p>
+                        <p class="time-spend-text">Spend the day at leisure or add an activity, transfer or meal to
+                          your day</p>
+                      </span></div><span class="add-button">ADD TO DAY</span>
+                  </div>
+                </div>
+                <div class="dayplan-wrapper" data-testid="day-plan-wrapper">
+                  <div id="dayplan5" day="5"></div>
+                  <div class="dayplanheaderV2">
+                    <div class="dayplanheaderV2-day font14 latoBold">Day 5</div>
+                    <div class="dayplanheaderV2-day-info latoBold">Departure from Paris </div>
+                    <div class="dayplanheaderV2-info">
+                      <div class="dayplanheaderV2-info-heading latoBold appendLeft2">INCLUDED : </div>
+                      <div class="dayplanheaderV2-info-content">
+                        <div><svg width="12.8" height="12" viewBox="0 0 12 12" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M4.01119 11.5301H5.15244L8.00556 6.78053L11.144 6.78053C11.6176 6.78053 11.9999 6.38275 11.9999 5.88998C11.9999 5.39721 11.6176 4.99943 11.144 4.99943L8.00556 4.99943L5.15244 0.249825L4.01119 0.249825L5.43775 4.99943H2.29931L1.44338 3.81203H0.587439L1.15806 5.88998L0.587439 7.96793L1.44338 7.96793L2.29931 6.78053H5.43775L4.01119 11.5301Z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Flight</span></div>
+                        <div><svg width="12.8" height="12" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M8.35 5.223c.955 0 1.729-.777 1.729-1.736 0-.461-.182-.903-.507-1.228a1.725 1.725 0 0 0-2.444 0 1.74 1.74 0 0 0-.507 1.228c0 .959.774 1.736 1.73 1.736zM6.127 4.82v.869H4.689V4.82h1.438zm4.044 1.634a2.158 2.158 0 0 0-1.146-.331L8.04 6.12c-.72 0-1.296.578-1.296 1.302l-.02 6.751L4.627 20.5l2.372-.275 2.213-4.986 1.229 1.08-.645 3.58 1.985-.232.81-3.407c.1-.423-.016-.869-.312-1.188l-1.718-1.859a2.177 2.177 0 0 1-.577-1.477c-.001-.93.006-1.67.014-2.47v-.001c.004-.418.008-.852.01-1.338l2.614 1.452h3.196c.244 0 .432-.19.432-.435v-.216a.427.427 0 0 0-.432-.435h-2.593a.431.431 0 0 1-.228-.066L10.17 6.454zM3.939 8.205l.891-1.648h1.297v7.38H4.614a.866.866 0 0 1-.864-.868v-4.2c0-.234.065-.465.19-.664zm11.036 2.042v9.003l.864-.1v-8.903h-.864zm.864-2.826v-.868h-.864v.868h.864z"
+                              fill="#4A4A4A"></path>
+                          </svg><span>1 Transfer</span></div>
+                        <div><svg width="12" height="12.8" viewBox="0 0 20 21" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                              fill="#fff"></path>
+                            <g mask="url(#a0bdco1iia)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                            </path>
+                            <g mask="url(#oozokqdm0b)">
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                                fill="#4A4A4A"></path>
+                            </g>
+                          </svg><span>1 Meal</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="greyText font12 lineHeight18 dayplan-description">
+                  <p>After a continental breakfast, check out from your Paris hotel and proceed to the airport for
+                    your flight back to India. Return home with unforgettable memories of your European trip.</p>
+                  </p>
+                  <div class="card-separator">
+                    <div class="day-package-wise-meal-wrapper"><svg width="21" height="20" viewBox="0 0 20 21"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.358 2.889h4.849v15h-4.849v-15z"
+                          fill="#fff"></path>
+                        <g mask="url(#a0bdco1iia)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M16.207 7.057c0-1.974-.894-4.168-2.424-4.168-1.53 0-2.425 2.194-2.425 4.168 0 1.579.697 2.542 1.652 2.858l-.485 6.553c-.06.773.53 1.42 1.273 1.42.742 0 1.318-.663 1.272-1.42l-.514-6.553c.954-.332 1.65-1.295 1.65-2.858z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 3.001h4.97v14.872H5V3z" fill="#fff">
+                        </path>
+                        <g mask="url(#oozokqdm0b)">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.37 3.018h-.05a.462.462 0 0 0-.467.467l.116 3.549c.017.258-.2.467-.466.467-.25 0-.467-.193-.467-.435l-.033-3.613c0-.242-.217-.435-.467-.435h-.067c-.25 0-.466.193-.466.435l-.05 3.597c0 .242-.217.435-.467.435a.462.462 0 0 1-.467-.467l.117-3.549c.017-.258-.2-.468-.467-.468h-.05c-.25 0-.45.194-.466.436l-.15 3.677c-.05 1.081.65 2 1.65 2.355l-.567 6.952c-.067.79.583 1.452 1.4 1.452s1.45-.678 1.4-1.452l-.567-6.952c.984-.338 1.683-1.274 1.65-2.355l-.133-3.66a.467.467 0 0 0-.467-.436z"
+                            fill="#4A4A4A"></path>
+                        </g>
+                      </svg>
+                      <div class="meal-container">
+                        <div class="meal-header"><span class="latoBold">MEAL</span> <span
+                            class="header-span"></span><span>Breakfast</span><span class="header-span"></span><span>In
+                            Paris</span><span class="mmt-chevron-down"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator hotel-icon-removed-left-bar">
+                    <div class="makeFlex hotel-joining-line-v2 hrtlCenter hotel-removed-padding"><svg width="20"
+                        height="20" viewBox="0 0 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M9.6585 12.0283V0.727993H3.32865V12.0283H5.90747V9.71692H7.07967V12.0283H9.6585ZM7.78308 1.49808H8.95527V2.78222H7.78308V1.49808ZM7.07962 1.49808H5.90743V2.78222H7.07962V1.49808ZM4.0319 1.49808H5.2041V2.78222H4.0319V1.49808ZM8.95527 3.55305H7.78308V4.83718H8.95527V3.55305ZM5.90743 3.55305H7.07962V4.83718H5.90743V3.55305ZM5.2041 3.55305H4.0319V4.83718H5.2041V3.55305ZM3.09439 12.0279V4.06627H0.75V12.0279H3.09439ZM2.39088 4.8374H1.45312V5.86471H2.39088V4.8374ZM7.78308 5.60749H8.95527V6.89162H7.78308V5.60749ZM7.07962 5.60749H5.90743V6.89162H7.07962V5.60749ZM4.0319 5.60749H5.2041V6.89162H4.0319V5.60749ZM2.39088 6.63498H1.45312V7.66228H2.39088V6.63498ZM7.78308 7.66194H8.95527V8.94607H7.78308V7.66194ZM7.07962 7.66194H5.90743V8.94607H7.07962V7.66194ZM4.0319 7.66194H5.2041V8.94607H4.0319V7.66194ZM2.39088 8.43307H1.45312V9.46038H2.39088V8.43307ZM1.45312 10.2306H2.39088V11.258H1.45312V10.2306Z"
+                          fill="#4A4A4A"></path>
+                      </svg>
+                      <p class="appendLeft10 latoBold font14">HOTEL CHECKOUT<span class="header-span"></span><span
+                          class="latoRegular">In Paris</span></p>
+                    </div>
+                  </div>
+                  <div class="card-separator" data-testid="day-plan-section-transfer">
+                    <div class="flex-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="19"
+                        viewBox="0 0 18 12" fill="none" class="car-icon-no-commute">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                          d="M15.8864 3.41705H17.3999C17.649 3.41705 17.8408 3.64145 17.8209 3.88505V4.43345C17.8209 4.69745 17.6303 4.90025 17.3812 4.90025H16.4606C16.6525 5.57225 16.7671 6.34505 16.7671 7.24025V8.80505V11.4511C16.7671 11.7151 16.5752 11.9191 16.3261 11.9191H14.6981C14.4489 11.9191 14.2571 11.7151 14.2571 11.4511V10.2307C12.7237 10.3723 11.0184 10.4539 9.21722 10.4539C7.41602 10.4539 5.70948 10.3723 4.17734 10.2307V11.4511C4.17734 11.7151 3.98551 11.9191 3.73638 11.9191H2.10708C1.85795 11.9191 1.66612 11.7151 1.66612 11.4511V7.24145C1.66612 6.34505 1.78072 5.57345 1.97255 4.90145H1.05326C0.804134 4.90145 0.612305 4.69745 0.612305 4.43345V3.88505C0.612305 3.62105 0.804134 3.41705 1.05326 3.41705H2.54804C2.59548 3.34642 2.63805 3.27078 2.68057 3.19524L2.68057 3.19524L2.68058 3.19523C2.72401 3.11807 2.76738 3.04101 2.81585 2.96945C2.89308 2.84705 3.92821 1.40345 4.36917 0.813055C4.77027 0.285055 5.28846 0.0810547 5.86394 0.0810547H12.5705C13.146 0.0810547 13.6816 0.304255 14.0653 0.813055C14.5249 1.40345 15.1191 2.21705 15.4056 2.64425C15.4454 2.69626 15.4803 2.75401 15.5152 2.81174L15.5152 2.81176L15.5152 2.81179C15.5479 2.86595 15.5806 2.92009 15.6173 2.96945C15.688 3.07376 15.7485 3.17872 15.8138 3.292L15.8138 3.29204L15.8139 3.29206C15.8372 3.33254 15.8612 3.37409 15.8864 3.41705ZM6.05457 6.89536L6.51421 6.24496L6.51297 6.24376C6.62881 6.08176 6.57151 5.95936 6.39837 5.97976H2.98779C2.81465 5.97976 2.64275 6.12136 2.62282 6.32536L2.58545 6.83416C2.58545 7.01776 2.71873 7.17976 2.91056 7.17976H5.51894C5.70953 7.17976 5.93997 7.05856 6.05457 6.89536ZM7.89414 4.27209H3.94544C3.71624 4.27209 3.52441 4.06809 3.52441 3.82449C3.52441 3.71214 3.60521 3.58363 3.64835 3.51502L3.65894 3.49809C3.75486 3.33609 4.69283 2.03409 5.01919 1.60689C5.32686 1.20009 5.74789 1.03809 6.18885 1.03809H8.12333V1.11849C8.12333 1.38249 8.31516 1.58649 8.56429 1.58649H9.92454C10.1737 1.58649 10.3655 1.38249 10.3655 1.11849V1.03809H12.3212C12.7621 1.03809 13.1831 1.20009 13.4896 1.60689C13.8159 2.03409 14.2569 2.64489 14.4861 2.97009C14.506 2.99049 14.5247 3.01089 14.5247 3.03009C14.5502 3.06843 14.5772 3.10805 14.6048 3.1486L14.6048 3.14863C14.6808 3.26038 14.7617 3.37923 14.8311 3.49809L14.8388 3.51015C14.8811 3.57659 14.9657 3.70954 14.9657 3.82449C14.9657 4.06809 14.7738 4.27209 14.5446 4.27209H7.89414ZM12.8969 7.15888H15.5214H15.5227C15.7133 7.15888 15.8665 6.99688 15.8465 6.79288L15.8092 6.28408C15.7905 6.08128 15.6373 5.93848 15.4454 5.93848H12.0336C11.8418 5.93848 11.7845 6.06088 11.8991 6.22408L12.36 6.87448C12.4746 7.03768 12.705 7.15888 12.8969 7.15888Z"
+                          fill="#4a4a4a"></path>
+                      </svg>
+                      <div class="highlight  transfer-card-width transfer-row-v2" data-testid="transfer">
+                        <div class="transfer-wrapper-v2 transfer-header-left-bar">
+                          <div class="transfer-row-header paddingB15">
+                            <div class="makeFlex">
+                              <div class="header-width"><span class="latoBold">TRANSFER </span><span
+                                  class="header-span"> </span><span>Hotel in Paris to Airport</span></div><span
+                                class="mmt-chevron-up appendTop2"></span>
+                            </div>
+                            <div id="changeRemoveBtn" class="transfer-row-btns change-remove-btn-layout"><span
+                                id="other">Modify</span></div>
+                          </div>
+                          <div class="transfer-row-body">
+                            <div class="transfer-card-img-top-bar">
+                              <figure class="transfer-row-image-wrapper-v2">
+                                <div class=" image-carousel-slide ">
+                                  <div class="imageLoaderContainer " style="width: 180px; height: 100px;"><img
+                                      class="imgborder-transfer borderRadius16 vrtTop active " width="180" height="100"
+                                      src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400" loading="lazy"></div>
+                                </div>
+                              </figure>
+                              <div class="transfer-row-details">
+                                <div class="transfer-row-details-title appendBottom6"><span
+                                    class="font18 latoBlack blackText">Shared Transfer</span></div>
+                                <div class="transfer-row-text-desc description-width-v2 font12 appendBottom6">
+                                  <p class="descriptionContainer"><span class="activity-row-text-desc">Hotel to
+                                      Airport Transfer - Paris</span></p>
+                                </div>
+                                <div class="transfer-row-date-info appendTop2">
+                                  <div class="icon-image-v2 paddingTop2"><svg width="12" height="12" viewBox="0 0 16 20"
+                                      fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                        d="M15.0002 8.20024C15.0002 13.1185 9.10024 19.0002 8.20024 19.0002C7.30024 19.0002 1.00024 13.1185 1.00024 8.20024C1.00024 3.28202 4.13425 1.00024 8.00024 1.00024C11.8662 1.00024 15.0002 3.28202 15.0002 8.20024Z"
+                                        stroke="#A2A2A2" stroke-linecap="round"></path>
+                                      <ellipse cx="8.00054" cy="8.00024" rx="3.23077" ry="3" stroke="#A2A2A2"
+                                        stroke-linecap="round"></ellipse>
+                                    </svg></div>
+                                  <p class="appendLeft5">Hotel to Airport</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-separator-commute commute-wrapper-v2">
+                    <div class="commute-inner "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 28" fill="none"
+                        class=" flight-icon-v2">
+                        <path
+                          d="M10.8974 21.625H12.4574L16.3574 15.4671L20.6474 15.4671C21.2948 15.4671 21.8174 14.9514 21.8174 14.3125C21.8174 13.6736 21.2948 13.1579 20.6474 13.1579H16.3574L12.4574 7H10.8974L12.8474 13.1579L8.55738 13.1579L7.38738 11.6184H6.21738L6.99738 14.3125L6.21738 17.0066L7.38738 17.0066L8.55738 15.4671H12.8474L10.8974 21.625Z"
+                          fill="#4a4a4a"></path>
+                      </svg>
+                      <div class="commute-header-left-bar">
+                        <div class="flightListRow flexOne column">
+                          <div class="makeFlex">
+                            <ul class="flight-row firstFlightRow">
+                              <li class="highlight flight-row-container " data-testid="flight">
+                                <div class="flight-row-header ">
+                                  <div><span class="flight-row-title"><b>FLIGHT</b><span
+                                        class="header-span"></span><span>Paris to New Delhi</span></span><span
+                                      class="mmt-chevron-up"></span></div>
+                                  <div data-testid="changeRemoveBtn_flight" id="changeRemoveBtn"
+                                    class="flight-row-btns"><span id="remove">Remove</span></div>
+                                </div>
+                                <div class="flight-row-body card-img-top-bar-commute">
+                                  <div class="flight-row-airline-details"><svg width="42" height="42"
+                                      viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <circle cx="21" cy="21" r="21" fill="#EAF5FF"></circle>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M11.9688 22.9715L32.5094 12.7742C33.8954 12.0894 35.5806 12.592 36.3563 13.9226C37.2488 15.4563 36.5637 17.4185 34.9073 18.076L12.0357 27.0858C11.2863 27.3826 10.4331 27.2446 9.81758 26.7264L5.50995 23.0978C5.07551 22.7319 5.20676 22.0353 5.7462 21.8517L8.51033 20.9091C8.73345 20.8323 8.98151 20.8674 9.17576 21.0028L11.9688 22.9715Z"
+                                        fill="white"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M11.9688 22.9715L32.5094 12.7742C33.8954 12.0894 35.5806 12.592 36.3563 13.9226C37.2488 15.4563 36.5637 17.4185 34.9073 18.076L12.0357 27.0858C11.2863 27.3826 10.4331 27.2446 9.81758 26.7264L5.50995 23.0978C5.07551 22.7319 5.20676 22.0353 5.7462 21.8517L8.51033 20.9091C8.73345 20.8323 8.98151 20.8674 9.17576 21.0028L11.9688 22.9715Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M19.7889 19.0165L14.7831 16.5466C14.2515 16.2836 14.2358 15.5376 14.7555 15.2538L16.4408 14.3306C16.7689 14.151 17.1561 14.1041 17.5183 14.2017L25.2253 16.2771L19.7889 19.0165Z"
+                                        fill="#A9D4F6"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M19.7889 19.0165L14.7831 16.5466C14.2515 16.2836 14.2358 15.5376 14.7555 15.2538L16.4408 14.3306C16.7689 14.151 17.1561 14.1041 17.5183 14.2017L25.2253 16.2771L19.7889 19.0165Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M22.6911 23.0648L21.8747 28.696C21.7894 29.2832 22.4102 29.7206 22.9405 29.4485L25.1442 28.3171C25.4776 28.1452 25.7309 27.8536 25.8542 27.502L28.1642 20.8683L22.6911 23.0648Z"
+                                        fill="#A9D4F6"></path>
+                                      <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M22.6911 23.0648L21.8747 28.696C21.7894 29.2832 22.4102 29.7206 22.9405 29.4485L25.1442 28.3171C25.4776 28.1452 25.7309 27.8536 25.8542 27.502L28.1642 20.8683L22.6911 23.0648Z"
+                                        stroke="#008CFF" stroke-width="1.17"></path>
+                                    </svg> </div>
+                                  <div class="flight-row-right-details">
+                                    <div class="flight-row-basic-details-v2">
+                                      <div class="">
+                                        <div class="flight-dates-v2">
+                                          <div class="flight-date-text font12">Mon, 06 Jul</div>
+                                          <div class="flight-row-airline-path-v2"><svg
+                                              xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                              viewBox="0 0 29 28" fill="none" class="flightJourneyV2 absolute">
+                                              <path
+                                                d="M10.8974 21.625H12.4574L16.3574 15.4671L20.6474 15.4671C21.2948 15.4671 21.8174 14.9514 21.8174 14.3125C21.8174 13.6736 21.2948 13.1579 20.6474 13.1579H16.3574L12.4574 7H10.8974L12.8474 13.1579L8.55738 13.1579L7.38738 11.6184H6.21738L6.99738 14.3125L6.21738 17.0066L7.38738 17.0066L8.55738 15.4671H12.8474L10.8974 21.625Z"
+                                                fill="#4a4a4a"></path>
+                                            </svg></div>
+                                          <div class="flight-date-text font12">Mon, 06 Jul</div>
+                                        </div>
+                                        <div class="flight-row-airports-v2">
+                                          <p>Paris</p>
+                                          <p>New Delhi</p>
+                                        </div>
+                                      </div>
+                                      <div class="flight-row-baggage-v2 baggage-border-commute">
+                                        <p><b><span class="flightIcon"><svg width="20" height="20" viewBox="0 0 20 20"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path opacity=".01" fill="#fff" d="M0 0h20v20H0z"></path>
+                                                <path clip-rule="evenodd"
+                                                  d="M3.333 8.104c0-.966.784-1.75 1.75-1.75h9.625c.967 0 1.75.784 1.75 1.75v5.98a1.75 1.75 0 0 1-1.75 1.75H5.085a1.75 1.75 0 0 1-1.75-1.75v-5.98z"
+                                                  stroke="#757575"></path>
+                                                <path
+                                                  d="M3.333 9.27h.292A2.625 2.625 0 0 0 6.25 6.647v-.292M16.459 9.27h-.292a2.625 2.625 0 0 1-2.625-2.624v-.292M7.708 6.354v-.437c0-.967.784-1.75 1.75-1.75h.876c.966 0 1.75.783 1.75 1.75v.437"
+                                                  stroke="#757575"></path>
+                                              </svg></span>Cabin :</b><span class="cabinBaggageText">7 KGS</span></p>
+                                        <p><b><span class="flightIcon"><svg width="20" height="20" viewBox="0 0 20 20"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                  d="M12.962 4.547h.783c.766 0 1.405.61 1.437 1.34v10.237c0 .289-.255.532-.559.532h-.702v.168c0 .32-.272.579-.607.579a.593.593 0 0 1-.607-.58v-.167H7.294v.168c0 .32-.272.579-.607.579a.593.593 0 0 1-.607-.58v-.167h-.703c-.303 0-.559-.243-.559-.533V5.887c0-.73.623-1.34 1.406-1.34H7.66v-.472c0-.823.702-1.478 1.549-1.478h1.549c.862 0 1.549.67 1.549 1.478v.472h.654zm-7.6 2.346v9.23h9.23v-9.23c-.99-.122-1.773-.868-1.9-1.813h-5.43c-.128.945-.91 1.69-1.9 1.813zm0-1.006c0-.441.383-.807.846-.807h.479c-.112.64-.655 1.158-1.325 1.264v-.457zm9.23.457v-.457c0-.441-.384-.807-.847-.807h-.48c.112.64.655 1.158 1.326 1.264zm-6.1-2.27c0-.365.318-.67.702-.67h1.549c.383 0 .702.305.702.67v.473H8.491v-.472z"
+                                                  fill="#757575"></path>
+                                                <path
+                                                  d="M15.182 5.887h.1v-.004l-.1.004zm-1.261 10.77v-.1h-.1v.1h.1zm-1.214 0h.1v-.1h-.1v.1zm-5.413 0v-.1h-.1v.1h.1zm-1.214 0h.1v-.1h-.1v.1zm1.58-12.11v.1h.1v-.1h-.1zm4.648 0h-.1v.1h.1v-.1zM5.362 16.123h-.1v.1h.1v-.1zm0-9.23-.013-.1-.088.011v.089h.1zm9.23 9.23v.1h.1v-.1h-.1zm0-9.23h.1v-.089l-.088-.01-.013.099zm-1.9-1.813.098-.013-.011-.087h-.088v.1zm-5.43 0v-.1h-.088l-.011.087.099.013zm-.575 0 .098.017.02-.117h-.118v.1zM5.362 6.344h-.1v.118l.115-.019-.015-.099zm9.23 0-.017.1.116.018v-.118h-.1zM13.265 5.08v-.1h-.12l.021.117.099-.017zm-1.82-.533v.1h.1v-.1h-.1zm-2.955 0h-.1v.1h.1v-.1zm5.254-.1h-.783v.2h.783v-.2zm1.537 1.436c-.034-.786-.719-1.436-1.537-1.436v.2c.715 0 1.308.569 1.337 1.245l.2-.009zm0 .75v-.746h-.2v.747h.2zm0 9.49v-9.49h-.2v9.49h.2zm-.659.633c.354 0 .659-.284.659-.633h-.2c0 .23-.206.433-.459.433v.2zm-.702 0h.702v-.2h-.702v.2zm.1.068v-.168h-.2v.168h.2zm-.707.679c.386 0 .707-.3.707-.68h-.2c0 .261-.223.48-.507.48v.2zm-.707-.68c0 .38.32.68.707.68v-.2a.493.493 0 0 1-.507-.48h-.2zm0-.167v.168h.2v-.168h-.2zm-5.313.1h5.413v-.2H7.294v.2zm.1.068v-.168h-.2v.168h.2zm-.707.679c.386 0 .707-.3.707-.68h-.2c0 .261-.223.48-.507.48v.2zm-.707-.68c0 .38.32.68.707.68v-.2a.493.493 0 0 1-.507-.48h-.2zm0-.167v.168h.2v-.168h-.2zm-.603.1h.703v-.2h-.703v.2zm-.659-.633c0 .35.305.633.66.633v-.2c-.253 0-.46-.203-.46-.433h-.2zm0-9.49v9.49h.2v-9.49h-.2zm0-.746v.747h.2v-.747h-.2zm1.506-1.44c-.834 0-1.506.65-1.506 1.44h.2c0-.672.575-1.24 1.306-1.24v-.2zm.782 0h-.782v.2h.782v-.2zm.655 0h-.655v.2h.655v-.2zm-.1-.372v.472h.2v-.472h-.2zM9.21 2.497c-.897 0-1.65.695-1.65 1.578h.2c0-.762.653-1.378 1.45-1.378v-.2zm1.549 0h-1.55v.2h1.55v-.2zm1.649 1.578c0-.866-.736-1.578-1.65-1.578v.2c.812 0 1.45.63 1.45 1.378h.2zm0 .472v-.472h-.2v.472h.2zm.554-.1h-.654v.2h.654v-.2zm-7.5 11.676v-9.23h-.2v9.23h.2zm9.13-.1h-9.23v.2h9.23v-.2zm-.1-9.13v9.23h.2v-9.23h-.2zm-1.9-1.8c.134.993.955 1.772 1.987 1.899l.025-.199c-.948-.116-1.692-.83-1.814-1.726l-.198.027zm-5.33.087h5.43v-.2h-5.43v.2zM5.374 6.992c1.032-.127 1.853-.906 1.987-1.898l-.198-.027c-.122.896-.866 1.61-1.814 1.726l.025.199zm.834-2.012c-.514 0-.947.406-.947.907h.2c0-.382.334-.707.747-.707v-.2zm.479 0h-.48v.2h.48v-.2zm-1.31 1.463c.71-.113 1.289-.661 1.408-1.346l-.197-.034c-.104.595-.611 1.082-1.242 1.183l.031.197zm-.115-.556v.457h.2v-.457h-.2zm9.23 0v.457h.2v-.457h-.2zm-.747-.707c.412 0 .746.325.746.707h.2c0-.5-.432-.907-.946-.907v.2zm-.48 0h.48v-.2h-.48v.2zm1.342 1.066c-.631-.1-1.139-.588-1.243-1.183l-.197.034c.12.685.698 1.233 1.409 1.346l.03-.197zM9.194 3.305c-.434 0-.803.345-.803.77h.2c0-.306.27-.57.603-.57v-.2zm1.549 0h-1.55v.2h1.55v-.2zm.802.77c0-.425-.368-.77-.802-.77v.2c.332 0 .602.264.602.57h.2zm0 .472v-.472h-.2v.472h.2zm-3.054.1h2.954v-.2H8.491v.2zm-.1-.572v.472h.2v-.472h-.2z"
+                                                  fill="#757575"></path>
+                                              </svg></span>Check-in :</b>20 KGS</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="info-container">
+                          <div class="info-container-single"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                              height="16" width="16"><span class="font12">Tentative Flight</span>
+                            <div class="makeFlex info-container-tooltip"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400"
+                                height="16" width="16">
+                              <div class="font12">This is a tentative flight and may contain upto 2 stops. The details
+                                of the actual flight will be shared with you 3 days before departure.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="new-sme-details">
+                  <div class="sme-container">
+                    <p class="dest-guide-header">Your Europe Destination Guide</p>
+                    <p class="description">
+                    <p>Explore the timeless charm of Paris in 5 unforgettable days. From iconic landmarks and elegant
+                      boulevards to the Eiffel Tower and Seine cruise, immerse yourself in art, culture, and romance.
+                      With time to unwind, shop and explore Disneyland , this trip blends discovery, leisure and
+                      exploration in Paris.</p>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rightContainer">
+          <div class="pakageDtlWrap appendBottom20" id="__FPSC_ID_1_1773503253662" >
+            <div class="pakageDtlWrapTop">
+              <div class="packageDtlslashedOfferPrice">
+                <p class="slashedPrice"> MAD 1408</p><span class="packageOfftag">11% OFF</span>
+              </div>
+              <p class="priceContainer"><span class="priceDetail"><span>MAD 1262</span></span> /Adult</p>
+              <p class="excludingText">Excluding applicable taxes</p>
+            </div>
+            <div class="pakageDtlWrapBottom">
+              <div class="pakageDtlCta" id="continue"><span
+                  class="primaryBtn fill btn btn-primary btn-sm borderRadius8 padding13  ">PROCEED TO PAYMENT</span>
+              </div>
+            </div>
+          </div>
+          <div class="offersWrap appendBottom20">
+            <div class="offersSection appendBottom20" id="coupon">
+              <p class="couponsHead">Coupons &amp; Offers </p>
+              <div class="emiOptions"><span class="emiIcon"><span>MAD</span>EMI</span>
+                <div class="flexOne">
+                  <p class="latoBold">No cost EMI MAD 42,067</p>
+                  <p class="greyText font11">Book your holidays with Easy <span
+                      class="linkText font11 emi-option-link">EMI options</span>.</p>
+                </div>
+              </div>
+              <div class="padding15">
+                <div class="couponsInput appendBottom25 font12 ">
+                  <div class="enterCoupon">
+                    <p class="fieldText">Have a Coupon Code?</p>
+                    <p class="enterCodeButton font12">Enter Code</p>
+                  </div>
+                </div>
+                <div class="couponsList"><label class="couponsOuter active EUROPEFD2026">
+                    <div class="makeFlex column start flexOne">
+                      <div class="flexCouponContainer">
+                        <div class="couponIcon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <rect width="20" height="20" rx="4" fill="#EAF5FF"></rect>
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M9.98746 3.28496C10.8218 1.95257 12.8672 2.40647 13.0615 3.96603C13.1826 4.94838 14.1274 5.61064 15.0929 5.38912C16.6247 5.03748 17.7508 6.80429 16.7842 8.04483C16.1754 8.82551 16.3757 9.96119 17.2149 10.4874C18.5473 11.3217 18.0934 13.3671 16.5338 13.5614C15.5507 13.6827 14.8892 14.6273 15.1116 15.5926C15.4624 17.1246 13.6956 18.2507 12.456 17.2848C11.6744 16.6753 10.5387 16.8756 10.0135 17.7155C9.17735 19.0474 7.13276 18.5933 6.93928 17.0336C6.81723 16.0506 5.87177 15.3893 4.90725 15.6115C3.37529 15.9623 2.2492 14.1955 3.21588 12.9558C3.82455 12.1743 3.6243 11.0386 2.78519 10.5132C1.45265 9.67809 1.90655 7.63268 3.46626 7.4392C4.44846 7.31729 5.11058 6.37169 4.8892 5.40703C4.53756 3.87521 6.30356 2.74926 7.54491 3.71565C8.32559 4.32446 9.46127 4.12421 9.98746 3.28496Z"
+                              fill="#008CFF"></path>
+                            <path
+                              d="M11.8516 6.87573C12.0405 6.60587 12.4125 6.54029 12.6823 6.72925C12.9072 6.88671 12.9902 7.17125 12.9023 7.4179L12.8288 7.56001L8.22689 14.1322C8.03793 14.4021 7.66599 14.4677 7.39612 14.2787C7.17124 14.1212 7.08822 13.8367 7.17614 13.5901L7.24964 13.4479L11.8516 6.87573Z"
+                              fill="white"></path>
+                            <path
+                              d="M7.69953 6.84859C6.88758 6.99176 6.34577 7.76449 6.48895 8.57647C6.63201 9.38783 7.40574 9.92923 8.21749 9.78609C9.02865 9.64307 9.57029 8.86952 9.42726 8.05836C9.28413 7.24659 8.51088 6.70553 7.69953 6.84859Z"
+                              fill="white"></path>
+                            <path
+                              d="M11.6999 11.2052C10.8881 11.3483 10.3471 12.1215 10.4901 12.9329C10.6333 13.7448 11.4059 14.2858 12.2179 14.1427C13.0292 13.9996 13.5708 13.2267 13.4276 12.4149C13.2846 11.6038 12.511 11.0621 11.6999 11.2052Z"
+                              fill="white"></path>
+                          </svg></div>
+                        <div class="makeFlex spaceBetween flexOne">
+                          <div class="flexOne">
+                            <p class="latoBold font12 blackText">EUROPEFD2026</p>
+                          </div>
+                        </div>
+                        <p class="couponPrice"><span>- MAD14,674</span></p>
+                      </div>
+                      <div class="flexCouponTextApplyRemoveButton">
+                        <p class="latoRegular font12 greyText3 lineHeight12">Its downpouring offers grab exclusive
+                          discounts. Offer Ends Soon..Hurry!!!</p><span
+                          class="latoBold font12 linkText capText unique pointer ">Remove</span>
+                      </div>
+                    </div>
+                  </label><label class="couponsOuter  MMTHLD">
+                    <div class="makeFlex column start flexOne">
+                      <div class="flexCouponContainer">
+                        <div class="couponIcon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <rect width="20" height="20" rx="4" fill="#EAF5FF"></rect>
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M9.98746 3.28496C10.8218 1.95257 12.8672 2.40647 13.0615 3.96603C13.1826 4.94838 14.1274 5.61064 15.0929 5.38912C16.6247 5.03748 17.7508 6.80429 16.7842 8.04483C16.1754 8.82551 16.3757 9.96119 17.2149 10.4874C18.5473 11.3217 18.0934 13.3671 16.5338 13.5614C15.5507 13.6827 14.8892 14.6273 15.1116 15.5926C15.4624 17.1246 13.6956 18.2507 12.456 17.2848C11.6744 16.6753 10.5387 16.8756 10.0135 17.7155C9.17735 19.0474 7.13276 18.5933 6.93928 17.0336C6.81723 16.0506 5.87177 15.3893 4.90725 15.6115C3.37529 15.9623 2.2492 14.1955 3.21588 12.9558C3.82455 12.1743 3.6243 11.0386 2.78519 10.5132C1.45265 9.67809 1.90655 7.63268 3.46626 7.4392C4.44846 7.31729 5.11058 6.37169 4.8892 5.40703C4.53756 3.87521 6.30356 2.74926 7.54491 3.71565C8.32559 4.32446 9.46127 4.12421 9.98746 3.28496Z"
+                              fill="#008CFF"></path>
+                            <path
+                              d="M11.8516 6.87573C12.0405 6.60587 12.4125 6.54029 12.6823 6.72925C12.9072 6.88671 12.9902 7.17125 12.9023 7.4179L12.8288 7.56001L8.22689 14.1322C8.03793 14.4021 7.66599 14.4677 7.39612 14.2787C7.17124 14.1212 7.08822 13.8367 7.17614 13.5901L7.24964 13.4479L11.8516 6.87573Z"
+                              fill="white"></path>
+                            <path
+                              d="M7.69953 6.84859C6.88758 6.99176 6.34577 7.76449 6.48895 8.57647C6.63201 9.38783 7.40574 9.92923 8.21749 9.78609C9.02865 9.64307 9.57029 8.86952 9.42726 8.05836C9.28413 7.24659 8.51088 6.70553 7.69953 6.84859Z"
+                              fill="white"></path>
+                            <path
+                              d="M11.6999 11.2052C10.8881 11.3483 10.3471 12.1215 10.4901 12.9329C10.6333 13.7448 11.4059 14.2858 12.2179 14.1427C13.0292 13.9996 13.5708 13.2267 13.4276 12.4149C13.2846 11.6038 12.511 11.0621 11.6999 11.2052Z"
+                              fill="white"></path>
+                          </svg></div>
+                        <div class="makeFlex spaceBetween flexOne">
+                          <div class="flexOne">
+                            <p class="latoBold font12 blackText">MMTHLD</p>
+                          </div>
+                        </div>
+                        <p class="couponPrice"><span>- MAD3,348</span></p>
+                      </div>
+                      <div class="flexCouponTextApplyRemoveButton">
+                        <p class="latoRegular font12 greyText3 lineHeight12">Grab Your Discount Before It’s Gone!</p>
+                        <span class="latoBold font12 linkText capText unique pointer ">Apply</span>
+                      </div>
+                    </div>
+                  </label></div>
+                <div class="rMoreCoupons">
+                  <p class="latoBlack font14 linkText">+8 More</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // === Tab switching (ITINERARY / POLICIES / SUMMARY) ===
+  var tabs = document.querySelectorAll('#tabItem .mainTabItem');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+
+  // === Day Plan navigation ===
+  var dayItems = document.querySelectorAll('.pointer-list li');
+  var dayWrappers = document.querySelectorAll('.dayplan-wrapper');
+
+  dayItems.forEach(function (item, index) {
+    item.addEventListener('click', function () {
+      // Update active state on sidebar
+      dayItems.forEach(function (li) { li.classList.remove('active'); });
+      item.classList.add('active');
+
+      // Scroll to the corresponding day plan section
+      var target = document.getElementById('dayplan' + (index + 1));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Highlight sidebar day on scroll
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var day = entry.target.getAttribute('day');
+        if (day) {
+          dayItems.forEach(function (li) { li.classList.remove('active'); });
+          var idx = parseInt(day, 10) - 1;
+          if (dayItems[idx]) dayItems[idx].classList.add('active');
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  document.querySelectorAll('[id^="dayplan"][day]').forEach(function (el) {
+    observer.observe(el);
+  });
+
+  // === Itinerary sub-nav (Day Plan / Flights / Hotel / Activities / Meals) ===
+  var itineraryTabs = document.querySelectorAll('#initeraryNav li');
+  itineraryTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      itineraryTabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+});
+</script>
+</body>
+</html>
