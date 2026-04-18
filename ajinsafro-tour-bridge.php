@@ -23,6 +23,10 @@ define('AJTB_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AJTB_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('AJTB_POST_TYPE', 'st_tours');
 
+require_once AJTB_PLUGIN_DIR . 'includes/helpers.php';
+require_once AJTB_PLUGIN_DIR . 'includes/class-tour-repository.php';
+require_once AJTB_PLUGIN_DIR . 'includes/class-laravel-repository.php';
+require_once AJTB_PLUGIN_DIR . 'includes/class-v1-data-provider.php';
 require_once AJTB_PLUGIN_DIR . 'includes/class-single-tour-page.php';
 
 add_action('plugins_loaded', static function () {

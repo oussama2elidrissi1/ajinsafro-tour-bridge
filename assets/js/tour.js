@@ -120,9 +120,61 @@
         });
     }
 
+    function initStickySearchBox() {
+        var searchBox = document.getElementById("ajtb-v1-search-box");
+        var pageRoot = document.getElementById("ajtb-v1-page");
+        if (!searchBox || !pageRoot) {
+            return;
+        }
+
+        function computeOffset() {
+            var offset = 88;
+            var navbar = document.getElementById("aj-navbar");
+            if (!navbar) {
+                navbar = document.querySelector(".aj-navbar");
+            }
+            if (navbar) {
+                var h = Math.ceil(navbar.getBoundingClientRect().height || 0);
+                if (h > 0) {
+                    offset = h + 10;
+                }
+            } else {
+                var fallbackHeader = document.querySelector(".ajtb-v1-fallback-header");
+                if (fallbackHeader) {
+                    var hh = Math.ceil(fallbackHeader.getBoundingClientRect().height || 0);
+                    if (hh > 0) {
+                        offset = hh + 10;
+                    }
+                }
+            }
+
+            pageRoot.style.setProperty("--ajtb-v1-sticky-top", offset + "px");
+        }
+
+        function updateStuckState() {
+            var rect = searchBox.getBoundingClientRect();
+            var stickyTop = parseInt(
+                getComputedStyle(pageRoot).getPropertyValue("--ajtb-v1-sticky-top"),
+                10,
+            );
+            if (isNaN(stickyTop)) {
+                stickyTop = 88;
+            }
+            searchBox.classList.toggle("is-stuck", rect.top <= stickyTop + 1);
+        }
+
+        computeOffset();
+        updateStuckState();
+
+        window.addEventListener("resize", computeOffset, { passive: true });
+        window.addEventListener("resize", updateStuckState, { passive: true });
+        window.addEventListener("scroll", updateStuckState, { passive: true });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initTabs();
         initDayChips();
         initFloatingButton();
+        initStickySearchBox();
     });
 })();

@@ -50,6 +50,7 @@ body.single-st_tours .footer-bottom {
     font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--ajtb-v1-text);
     min-height: 100vh;
+    --ajtb-v1-sticky-top: 88px;
     background:
         radial-gradient(circle at 12% 4%, rgba(0, 131, 196, 0.11), transparent 23%),
         radial-gradient(circle at 89% 16%, rgba(243, 122, 31, 0.1), transparent 20%),
@@ -160,6 +161,15 @@ body.single-st_tours .footer-bottom {
     background: linear-gradient(145deg, #0d3553, #10517c);
     box-shadow: var(--ajtb-v1-shadow);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    position: sticky;
+    top: var(--ajtb-v1-sticky-top);
+    z-index: 120;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ajtb-v1-search-box.is-stuck {
+    box-shadow: 0 16px 36px rgba(13, 53, 83, 0.26);
+    transform: translateY(0);
 }
 
 .ajtb-v1-search-card {
@@ -720,6 +730,13 @@ body.single-st_tours .footer-bottom {
     margin: 0 0 12px;
     color: #17304d;
     font-size: 24px;
+    font-weight: 800;
+}
+
+.ajtb-v1-subsection-title {
+    margin: 18px 0 10px;
+    color: #17304d;
+    font-size: 17px;
     font-weight: 800;
 }
 
