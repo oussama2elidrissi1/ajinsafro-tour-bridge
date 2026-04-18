@@ -83,7 +83,6 @@ if (empty($days)) {
             'date_label' => 'Day 1',
             'title' => 'Programme a venir',
             'description' => 'Les details du programme seront visibles des que les donnees itinerary sont disponibles.',
-            'gallery' => [$img('day-1.svg'), $img('day-2.svg'), $img('day-3.svg')],
             'meals' => [],
             'activities' => [],
             'flights_out' => [],
@@ -230,7 +229,6 @@ get_header();
                                     $transfers_out = is_array($day['transfers_out'] ?? null) ? $day['transfers_out'] : [];
                                     $meals = is_array($day['meals'] ?? null) ? $day['meals'] : [];
                                     $hotel = !empty($day['hotel']) && is_array($day['hotel']) ? $day['hotel'] : null;
-                                    $gallery = is_array($day['gallery'] ?? null) ? $day['gallery'] : [];
 
                                     $included_parts = [];
                                     if (!empty($flights_out) || !empty($flights_in)) {
@@ -262,12 +260,6 @@ get_header();
                                             </header>
                                             <div class="ajtb-v1-day-content">
                                                 <p class="ajtb-v1-day-desc"><?php echo esc_html((string) ($day['description'] ?? '')); ?></p>
-
-                                                <div class="ajtb-v1-day-gallery">
-                                                    <?php foreach (array_slice($gallery, 0, 3) as $g): ?>
-                                                        <img src="<?php echo esc_url((string) $g); ?>" alt="Day <?php echo esc_attr((string) $day_num); ?> visual" loading="lazy">
-                                                    <?php endforeach; ?>
-                                                </div>
 
                                                 <?php
                                                 $flight_cards = array_merge($flights_out, $flights_in);
@@ -474,4 +466,3 @@ get_header();
 </div>
 
 <?php get_footer(); ?>
-

@@ -51,6 +51,7 @@ body.single-st_tours .footer-bottom {
     color: var(--ajtb-v1-text);
     min-height: 100vh;
     --ajtb-v1-sticky-top: 88px;
+    --ajtb-v1-day-scroll-offset: 172px;
     background:
         radial-gradient(circle at 12% 4%, rgba(0, 131, 196, 0.11), transparent 23%),
         radial-gradient(circle at 89% 16%, rgba(243, 122, 31, 0.1), transparent 20%),
@@ -164,11 +165,13 @@ body.single-st_tours .footer-bottom {
     position: sticky;
     top: var(--ajtb-v1-sticky-top);
     z-index: 120;
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    margin-bottom: 2px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .ajtb-v1-search-box.is-stuck {
-    box-shadow: 0 16px 36px rgba(13, 53, 83, 0.26);
+    box-shadow: 0 18px 38px rgba(13, 53, 83, 0.24);
+    border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(0);
 }
 
@@ -226,7 +229,7 @@ body.single-st_tours .footer-bottom {
 }
 
 .ajtb-v1-hero {
-    margin-top: 20px;
+    margin-top: 22px;
 }
 
 .ajtb-v1-hero-kicker {
@@ -502,6 +505,7 @@ body.single-st_tours .footer-bottom {
     position: relative;
     padding-left: 44px;
     margin-bottom: 18px;
+    scroll-margin-top: var(--ajtb-v1-day-scroll-offset);
 }
 
 .ajtb-v1-day-card::before {
@@ -569,25 +573,10 @@ body.single-st_tours .footer-bottom {
 }
 
 .ajtb-v1-day-desc {
-    margin: 0 0 14px;
+    margin: 0 0 16px;
     color: #596981;
     font-size: 13px;
     line-height: 1.72;
-}
-
-.ajtb-v1-day-gallery {
-    margin-bottom: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-}
-
-.ajtb-v1-day-gallery img {
-    width: 100%;
-    min-height: 120px;
-    border-radius: var(--ajtb-v1-radius-md);
-    border: 1px solid #dbe7f5;
-    object-fit: cover;
 }
 
 .ajtb-v1-service-card {
@@ -1033,6 +1022,10 @@ body.single-st_tours .footer-bottom {
 }
 
 @media (max-width: 991px) {
+    .ajtb-v1-page {
+        --ajtb-v1-day-scroll-offset: 150px;
+    }
+
     .ajtb-v1-day-layout {
         grid-template-columns: 1fr;
     }
@@ -1093,6 +1086,10 @@ body.single-st_tours .footer-bottom {
         flex-wrap: nowrap;
     }
 
+    .ajtb-v1-page {
+        --ajtb-v1-day-scroll-offset: 136px;
+    }
+
     .ajtb-v1-stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1107,10 +1104,6 @@ body.single-st_tours .footer-bottom {
 
     .ajtb-v1-day-card::before {
         left: 3px;
-    }
-
-    .ajtb-v1-day-gallery {
-        grid-template-columns: 1fr;
     }
 
     .ajtb-v1-media-row {

@@ -75,7 +75,22 @@
                 }
 
                 activateChipByTarget(targetId);
-                target.scrollIntoView({ behavior: "smooth", block: "start" });
+                var root = document.getElementById("ajtb-v1-page");
+                var offset = 172;
+                if (root) {
+                    var parsed = parseInt(
+                        getComputedStyle(root).getPropertyValue("--ajtb-v1-day-scroll-offset"),
+                        10,
+                    );
+                    if (!isNaN(parsed) && parsed > 0) {
+                        offset = parsed;
+                    }
+                }
+                var y =
+                    window.pageYOffset +
+                    target.getBoundingClientRect().top -
+                    offset;
+                window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
             });
         });
 
@@ -129,6 +144,7 @@
 
         function computeOffset() {
             var offset = 88;
+            var dayOffset = 172;
             var navbar = document.getElementById("aj-navbar");
             if (!navbar) {
                 navbar = document.querySelector(".aj-navbar");
@@ -137,6 +153,7 @@
                 var h = Math.ceil(navbar.getBoundingClientRect().height || 0);
                 if (h > 0) {
                     offset = h + 10;
+                    dayOffset = offset + 84;
                 }
             } else {
                 var fallbackHeader = document.querySelector(".ajtb-v1-fallback-header");
@@ -144,11 +161,19 @@
                     var hh = Math.ceil(fallbackHeader.getBoundingClientRect().height || 0);
                     if (hh > 0) {
                         offset = hh + 10;
+                        dayOffset = offset + 84;
                     }
                 }
             }
 
+            if (window.innerWidth < 768) {
+                dayOffset = offset + 58;
+            } else if (window.innerWidth < 992) {
+                dayOffset = offset + 68;
+            }
+
             pageRoot.style.setProperty("--ajtb-v1-sticky-top", offset + "px");
+            pageRoot.style.setProperty("--ajtb-v1-day-scroll-offset", dayOffset + "px");
         }
 
         function updateStuckState() {
