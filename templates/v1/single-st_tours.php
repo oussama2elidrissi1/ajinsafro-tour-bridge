@@ -367,7 +367,17 @@ get_header();
                             </aside>
 
                             <div class="ajtb-v1-timeline">
-                                <?php foreach ($days as $day): ?>
+                                <?php
+                                $has_any_hotel = false;
+                                foreach ($days as $day_probe) {
+                                    if (!empty($day_probe['hotel']) && is_array($day_probe['hotel'])) {
+                                        $has_any_hotel = true;
+                                        break;
+                                    }
+                                }
+                                $hotel_displayed_once = false;
+                                ?>
+                                <?php foreach ($days as $day_index => $day): ?>
                                     <?php
                                     $day_num = (int) ($day['day'] ?? 1);
                                     $activities = is_array($day['activities'] ?? null) ? $day['activities'] : [];
@@ -377,12 +387,21 @@ get_header();
                                     $transfers_out = is_array($day['transfers_out'] ?? null) ? $day['transfers_out'] : [];
                                     $meals = is_array($day['meals'] ?? null) ? $day['meals'] : [];
                                     $hotel = !empty($day['hotel']) && is_array($day['hotel']) ? $day['hotel'] : null;
+                                    $show_hotel_card = false;
+                                    if ($has_any_hotel) {
+                                        if (!$hotel_displayed_once && !empty($hotel)) {
+                                            $show_hotel_card = true;
+                                            $hotel_displayed_once = true;
+                                        }
+                                    } elseif ((int) $day_index === 0) {
+                                        $show_hotel_card = true;
+                                    }
 
                                     $included_parts = [];
                                     if (!empty($flights_out) || !empty($flights_in)) {
                                         $included_parts[] = (count($flights_out) + count($flights_in)) . ' Flight';
                                     }
-                                    if (!empty($hotel)) {
+                                    if ($show_hotel_card) {
                                         $included_parts[] = '1 Hotel';
                                     }
                                     if (!empty($transfers_in) || !empty($transfers_out)) {
@@ -450,40 +469,42 @@ get_header();
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                                <?php
-                                                $hotel_img = $pick((array) $hotel, ['image_url'], '');
-                                                $hotel_available = !empty($hotel);
-                                                $hotel_name = $hotel_available
-                                                    ? $pick((array) $hotel, ['hotel_name', 'name', 'title'], 'Hotel')
-                                                    : 'Pas dispo';
-                                                $hotel_desc = $hotel_available
-                                                    ? $pick((array) $hotel, ['notes', 'address'], 'Hotel configure dans la section Hotel du CRUD.')
-                                                    : 'Aucun hotel configure dans la section Hotel du CRUD.';
-                                                $hotel_city = $hotel_available
-                                                    ? $pick((array) $hotel, ['city', 'hotel_city', 'location'], $destination)
-                                                    : $destination;
-                                                $hotel_room = $hotel_available
-                                                    ? $pick((array) $hotel, ['room_type'], 'Standard room')
-                                                    : 'Pas dispo';
-                                                $hotel_stars = $hotel_available
-                                                    ? $pick((array) $hotel, ['stars'], '4')
-                                                    : '-';
-                                                ?>
-                                                <div class="ajtb-v1-service-card">
-                                                    <div class="ajtb-v1-service-head"><span>Hotel - <?php echo esc_html($hotel_city); ?></span><span><?php echo $hotel_available ? 'View' : 'Pas dispo'; ?></span></div>
-                                                    <div class="ajtb-v1-service-body ajtb-v1-media-row">
-                                                        <img src="<?php echo $safe_image($hotel_img, $default_hotel_image); ?>" alt="Hotel visual" loading="lazy">
-                                                        <div>
-                                                            <h4><?php echo esc_html($hotel_name); ?></h4>
-                                                            <p><?php echo esc_html($hotel_desc); ?></p>
-                                                            <div class="ajtb-v1-meta-line">
-                                                                <span><?php echo esc_html($hotel_available ? ((string) $hotel_stars . '/5') : 'Pas dispo'); ?></span>
-                                                                <span><?php echo esc_html($hotel_city); ?></span>
-                                                                <span><?php echo esc_html($hotel_room); ?></span>
+                                                <?php if ($show_hotel_card): ?>
+                                                    <?php
+                                                    $hotel_img = $pick((array) $hotel, ['image_url'], '');
+                                                    $hotel_available = !empty($hotel);
+                                                    $hotel_name = $hotel_available
+                                                        ? $pick((array) $hotel, ['hotel_name', 'name', 'title'], 'Hotel')
+                                                        : 'Pas dispo';
+                                                    $hotel_desc = $hotel_available
+                                                        ? $pick((array) $hotel, ['notes', 'address'], 'Hotel configure dans la section Hotel du CRUD.')
+                                                        : 'Aucun hotel configure dans la section Hotel du CRUD.';
+                                                    $hotel_city = $hotel_available
+                                                        ? $pick((array) $hotel, ['city', 'hotel_city', 'location'], $destination)
+                                                        : $destination;
+                                                    $hotel_room = $hotel_available
+                                                        ? $pick((array) $hotel, ['room_type'], 'Standard room')
+                                                        : 'Pas dispo';
+                                                    $hotel_stars = $hotel_available
+                                                        ? $pick((array) $hotel, ['stars'], '4')
+                                                        : '-';
+                                                    ?>
+                                                    <div class="ajtb-v1-service-card">
+                                                        <div class="ajtb-v1-service-head"><span>Hotel - <?php echo esc_html($hotel_city); ?></span><span><?php echo $hotel_available ? 'View' : 'Pas dispo'; ?></span></div>
+                                                        <div class="ajtb-v1-service-body ajtb-v1-media-row">
+                                                            <img src="<?php echo $safe_image($hotel_img, $default_hotel_image); ?>" alt="Hotel visual" loading="lazy">
+                                                            <div>
+                                                                <h4><?php echo esc_html($hotel_name); ?></h4>
+                                                                <p><?php echo esc_html($hotel_desc); ?></p>
+                                                                <div class="ajtb-v1-meta-line">
+                                                                    <span><?php echo esc_html($hotel_available ? ((string) $hotel_stars . '/5') : 'Pas dispo'); ?></span>
+                                                                    <span><?php echo esc_html($hotel_city); ?></span>
+                                                                    <span><?php echo esc_html($hotel_room); ?></span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                <?php endif; ?>
 
                                                 <?php foreach (array_slice($activities, 0, 2) as $activity): ?>
                                                     <?php
