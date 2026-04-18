@@ -325,6 +325,17 @@
     padding: 28px 0;
 }
 
+.ajtb-availability-dates {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+}
+
+.ajtb-availability-dates li {
+    color: var(--ajtb-text-light);
+}
+
 .ajtb-tour-page .ajtb-tour-main {
     min-width: 0;
     width: 100%;

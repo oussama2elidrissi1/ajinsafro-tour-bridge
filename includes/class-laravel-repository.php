@@ -77,6 +77,9 @@ class AJTB_Laravel_Repository
             'days' => $this->get_days($session_token),
             'sections' => $this->get_sections(),
             'pricing_rules' => $this->get_pricing_rules(),
+            'departure_places' => $this->get_departure_places(),
+            'travel_dates' => $this->get_travel_dates(),
+            'voyage_extras' => $this->get_voyage_extras(),
             'activities_catalog' => $this->get_activities_catalog(),
             'flights' => $this->get_flights($session_token),
             'laravel_voyage_flights' => $this->get_voyage_flights_from_db(),
@@ -1228,6 +1231,202 @@ class AJTB_Laravel_Repository
 
         // Return first rule as default if no date match
         return $rules[0] ?? null;
+    }
+
+    /**
+     * Get departure places configured in Laravel for this tour (travel_id = WP post ID).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function get_departure_places()
+    {
+        $table = $this->table('travel_departure_places');
+
+        if (!$this->table_exists($table)) {
+            return [];
+        }
+
+        $has_active = $this->wpdb->get_var($this->wpdb->prepare(
+            "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = 'is_active'",
+            $table
+        ));
+        $has_sort = $this->wpdb->get_var($this->wpdb->prepare(
+            "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = 'sort_order'",
+            $table
+        ));
+
+        $sql = "SELECT * FROM {$table} WHERE travel_id = %d";
+        if ($has_active) {
+            $sql .= " AND is_active = 1";
+        }
+        $sql .= " ORDER BY ";
+        $sql .= $has_sort ? "sort_order ASC, id ASC" : "id ASC";
+
+        $rows = $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $this->tour_id),
+            ARRAY_A
+        );
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * Get active travel dates configured in Laravel for this tour (travel_id = WP post ID).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function get_travel_dates()
+    {
+        $table = $this->table('travel_dates');
+
+        if (!$this->table_exists($table)) {
+            return [];
+        }
+
+        $has_active = $this->wpdb->get_var($this->wpdb->prepare(
+            "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = 'is_active'",
+            $table
+        ));
+
+        $sql = "SELECT * FROM {$table} WHERE travel_id = %d";
+        if ($has_active) {
+            $sql .= " AND is_active = 1";
+        }
+        $sql .= " ORDER BY date ASC, id ASC";
+
+        $rows = $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $this->tour_id),
+            ARRAY_A
+        );
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * Get reservation extras/supplements for this tour from synced CRUD tables.
+     * Supports multiple deployment schemas (aj_voyage_extras / voyage_extras).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function get_voyage_extras()
+    {
+        $table = $this->resolve_voyage_extras_table();
+        if ($table === null) {
+            return [];
+        }
+
+        $fkColumn = $this->resolve_first_existing_column($table, ['voyage_id', 'travel_id', 'tour_id', 'wp_post_id']);
+        if ($fkColumn === null) {
+            return [];
+        }
+
+        $laravelVoyageId = $this->resolve_laravel_voyage_id();
+        $fkValue = ($fkColumn === 'voyage_id' && $laravelVoyageId > 0) ? $laravelVoyageId : $this->tour_id;
+
+        $hasActive = $this->column_exists($table, 'is_active');
+        $hasSort = $this->column_exists($table, 'sort_order');
+        $sql = "SELECT * FROM {$table} WHERE {$fkColumn} = %d";
+        if ($hasActive) {
+            $sql .= " AND is_active = 1";
+        }
+        $sql .= " ORDER BY ";
+        $sql .= $hasSort ? "sort_order ASC, id ASC" : "id ASC";
+
+        $rows = $this->wpdb->get_results($this->wpdb->prepare($sql, $fkValue), ARRAY_A);
+        if (!is_array($rows) || empty($rows)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($rows as $row) {
+            $name = isset($row['name']) ? trim((string) $row['name']) : '';
+            if ($name === '') {
+                continue;
+            }
+            $normalized[] = [
+                'id' => isset($row['id']) ? (int) $row['id'] : 0,
+                'name' => $name,
+                'description' => isset($row['description']) ? trim((string) $row['description']) : '',
+                'price_adult' => isset($row['price_adult']) && $row['price_adult'] !== '' ? (float) $row['price_adult'] : 0.0,
+                'price_child' => isset($row['price_child']) && $row['price_child'] !== '' ? (float) $row['price_child'] : 0.0,
+                'extra_type' => isset($row['extra_type']) ? trim((string) $row['extra_type']) : '',
+                'icon' => isset($row['icon']) ? trim((string) $row['icon']) : '',
+            ];
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Resolve Laravel voyage ID from wp_post_id mapping when available.
+     */
+    private function resolve_laravel_voyage_id()
+    {
+        $tableCandidates = ['voyages', $this->wpdb->prefix . 'voyages'];
+        foreach ($tableCandidates as $table) {
+            if (!$this->table_exists($table) || !$this->column_exists($table, 'wp_post_id')) {
+                continue;
+            }
+            $id = (int) $this->wpdb->get_var($this->wpdb->prepare(
+                "SELECT id FROM {$table} WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
+                $this->tour_id
+            ));
+            if ($id > 0) {
+                return $id;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Resolve first available voyage extras table.
+     */
+    private function resolve_voyage_extras_table()
+    {
+        $candidates = [
+            $this->table('voyage_extras'),
+            'aj_voyage_extras',
+            $this->wpdb->prefix . 'aj_voyage_extras',
+            'voyage_extras',
+            $this->wpdb->prefix . 'voyage_extras',
+        ];
+
+        foreach ($candidates as $table) {
+            if ($table !== '' && $this->table_exists($table)) {
+                return $table;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resolve first existing column from a candidate list.
+     *
+     * @param string $table
+     * @param array<int, string> $columns
+     * @return string|null
+     */
+    private function resolve_first_existing_column($table, array $columns)
+    {
+        foreach ($columns as $column) {
+            if ($this->column_exists($table, $column)) {
+                return $column;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check if a column exists on a table in current DB.
+     */
+    private function column_exists($table, $column)
+    {
+        $exists = $this->wpdb->get_var($this->wpdb->prepare(
+            "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = %s",
+            $table,
+            $column
+        ));
+        return !empty($exists);
     }
 
     /**
