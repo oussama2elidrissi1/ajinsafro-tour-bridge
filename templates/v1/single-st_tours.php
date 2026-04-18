@@ -506,7 +506,7 @@ get_header();
                                                     </div>
                                                 <?php endif; ?>
 
-                                                <?php foreach (array_slice($activities, 0, 2) as $activity): ?>
+                                                <?php foreach ($activities as $activity): ?>
                                                     <?php
                                                     $act_img = $pick($activity, ['image_url'], '');
                                                     $act_title = $pick($activity, ['title'], 'Activity');
