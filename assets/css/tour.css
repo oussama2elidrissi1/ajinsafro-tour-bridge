@@ -9,12 +9,12 @@
     --ajtb-v1-brand-blue-strong: #006ea8;
     --ajtb-v1-brand-orange: #f37a1f;
     --ajtb-v1-brand-orange-strong: #d95f08;
-    --ajtb-v1-bg: #f3f7fc;
+    --ajtb-v1-bg: #f0f6fc;
     --ajtb-v1-card: #ffffff;
     --ajtb-v1-text: #13243d;
     --ajtb-v1-text-soft: #5f6f87;
     --ajtb-v1-line: #d9e4f2;
-    --ajtb-v1-shadow: 0 12px 30px rgba(14, 58, 90, 0.1);
+    --ajtb-v1-shadow: 0 14px 34px rgba(14, 58, 90, 0.11);
     --ajtb-v1-radius-xl: 20px;
     --ajtb-v1-radius-lg: 16px;
     --ajtb-v1-radius-md: 12px;
@@ -50,6 +50,10 @@ body.single-st_tours .footer-bottom {
     font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--ajtb-v1-text);
     min-height: 100vh;
+    background:
+        radial-gradient(circle at 12% 4%, rgba(0, 131, 196, 0.11), transparent 23%),
+        radial-gradient(circle at 89% 16%, rgba(243, 122, 31, 0.1), transparent 20%),
+        var(--ajtb-v1-bg);
 }
 
 .ajtb-v1-main {
@@ -155,6 +159,7 @@ body.single-st_tours .footer-bottom {
     border-radius: var(--ajtb-v1-radius-xl);
     background: linear-gradient(145deg, #0d3553, #10517c);
     box-shadow: var(--ajtb-v1-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .ajtb-v1-search-card {
@@ -212,6 +217,15 @@ body.single-st_tours .footer-bottom {
 
 .ajtb-v1-hero {
     margin-top: 20px;
+}
+
+.ajtb-v1-hero-kicker {
+    margin: 0 0 10px;
+    color: #0f5e8a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
 }
 
 .ajtb-v1-title {
@@ -571,6 +585,7 @@ body.single-st_tours .footer-bottom {
     border: 1px solid #dce8f6;
     border-radius: var(--ajtb-v1-radius-lg);
     overflow: hidden;
+    background: linear-gradient(180deg, #ffffff, #fcfeff);
 }
 
 .ajtb-v1-service-head {
@@ -738,6 +753,8 @@ body.single-st_tours .footer-bottom {
 
 .ajtb-v1-side-card {
     padding: 18px;
+    position: relative;
+    overflow: hidden;
 }
 
 .ajtb-v1-side-card h3 {
@@ -768,6 +785,14 @@ body.single-st_tours .footer-bottom {
     line-height: 1.55;
 }
 
+.ajtb-v1-price-includes {
+    margin: 14px 0 0;
+    padding-left: 18px;
+    color: #5e6f88;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
 .ajtb-v1-price-card button {
     margin-top: 14px;
     width: 100%;
@@ -781,6 +806,29 @@ body.single-st_tours .footer-bottom {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     background: linear-gradient(180deg, #1d8eff, #005ff7);
+}
+
+.ajtb-v1-price-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #0e3a5a, #0083c4, #f37a1f);
+}
+
+.ajtb-v1-side-highlight {
+    border-color: #bfe1f8;
+    background: linear-gradient(145deg, #f6fcff, #edf8ff);
+}
+
+.ajtb-v1-side-highlight p {
+    margin: 0;
+    color: #4f6481;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
 }
 
 .ajtb-v1-coupon {
@@ -846,7 +894,11 @@ body.single-st_tours .footer-bottom {
     margin-top: 18px;
     padding: 34px 0 26px;
     color: #eaf2ff;
-    background: linear-gradient(160deg, #0e3a5a, #0a2841);
+    background:
+        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.09), transparent 26%),
+        radial-gradient(circle at 82% 82%, rgba(243, 122, 31, 0.22), transparent 24%),
+        linear-gradient(160deg, #0e3a5a, #0a2841);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .ajtb-v1-fallback-footer__grid {
@@ -928,7 +980,7 @@ body.single-st_tours .footer-bottom {
     text-transform: uppercase;
     cursor: pointer;
     background: linear-gradient(140deg, var(--ajtb-v1-brand-orange), var(--ajtb-v1-brand-orange-strong));
-    box-shadow: 0 14px 28px rgba(217, 95, 8, 0.36);
+    box-shadow: 0 16px 32px rgba(217, 95, 8, 0.38);
 }
 
 .ajtb-v1-floating-btn:hover {
