@@ -534,10 +534,7 @@ class AJTB_V1_Data_Provider
                     $title = 'Day ' . $day_number;
                 }
 
-                $description = trim((string) ($row['content_html'] ?? ''));
-                if ($description !== '') {
-                    $description = trim(wp_strip_all_tags($description));
-                }
+                $description = self::normalize_rich_text((string) ($row['content_html'] ?? ''));
                 if ($description === '') {
                     $description = trim((string) ($row['description'] ?? ''));
                 }
@@ -785,6 +782,44 @@ class AJTB_V1_Data_Provider
             }
         }
         return self::unique_non_empty($out);
+    }
+
+    /**
+     * Convert rich HTML content into readable plain text while preserving line breaks.
+     */
+    private static function normalize_rich_text(string $html): string
+    {
+        $html = trim($html);
+        if ($html === '') {
+            return '';
+        }
+
+        $break_tags = ['<br>', '<br/>', '<br />', '</p>', '</div>', '</li>', '</h1>', '</h2>', '</h3>', '</h4>', '</h5>', '</h6>'];
+        $html = str_ireplace($break_tags, "\n", $html);
+        $html = preg_replace('/<li\b[^>]*>/i', "- ", $html);
+        if (!is_string($html)) {
+            return '';
+        }
+
+        $text = wp_strip_all_tags($html);
+        if (function_exists('html_entity_decode')) {
+            $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
+        $lines = preg_split('/\R+/', $text);
+        if (!is_array($lines)) {
+            return trim($text);
+        }
+
+        $clean = [];
+        foreach ($lines as $line) {
+            $line = trim((string) $line);
+            if ($line !== '') {
+                $clean[] = $line;
+            }
+        }
+
+        return trim(implode("\n", $clean));
     }
 
     private static function extract_lines(string $content, int $limit = 10): array

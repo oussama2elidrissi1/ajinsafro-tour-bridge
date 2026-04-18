@@ -943,6 +943,26 @@ class AJTB_Laravel_Repository
                 ];
             }
 
+            // Enrich from CRUD detailed program (travel_program_days.content_html)
+            // so front can display "Description detaillee" when available.
+            $crud_day_content_map = $this->get_travel_program_day_content_map();
+            if (!empty($crud_day_content_map)) {
+                foreach ($days_by_id as &$day_row) {
+                    $dn = isset($day_row['day']) ? (int) $day_row['day'] : 0;
+                    if ($dn < 1 || empty($crud_day_content_map[$dn])) {
+                        continue;
+                    }
+                    $crud = $crud_day_content_map[$dn];
+                    if (!empty($crud['content_html'])) {
+                        $day_row['content_html'] = (string) $crud['content_html'];
+                    }
+                    if (!empty($crud['description'])) {
+                        $day_row['description'] = (string) $crud['description'];
+                    }
+                }
+                unset($day_row);
+            }
+
             if ($has_activities) {
                 $day_ids = array_keys($days_by_id);
                 if (!empty($day_ids)) {
@@ -1089,6 +1109,115 @@ class AJTB_Laravel_Repository
             return $days_array;
         } catch (Exception $e) {
             $this->log_error('get_days', $e);
+            return [];
+        }
+    }
+
+    /**
+     * Fetch per-day detailed content from CRUD tables when present.
+     * Joins voyages (wp_post_id) -> travel_program_days by day_number.
+     *
+     * @return array<int, array{content_html: string, description: string}>
+     */
+    private function get_travel_program_day_content_map()
+    {
+        $voyage_tables = array_values(array_unique([
+            'voyages',
+            'aj_voyages',
+            $this->wpdb->prefix . 'voyages',
+            $this->wpdb->prefix . 'aj_voyages',
+        ]));
+
+        $day_tables = array_values(array_unique([
+            'travel_program_days',
+            'aj_travel_program_days',
+            $this->wpdb->prefix . 'travel_program_days',
+            $this->wpdb->prefix . 'aj_travel_program_days',
+        ]));
+
+        $voyage_table = '';
+        foreach ($voyage_tables as $t) {
+            if (is_string($t) && $t !== '' && $this->table_exists($t)) {
+                $voyage_table = $t;
+                break;
+            }
+        }
+        if ($voyage_table === '') {
+            return [];
+        }
+
+        $day_table = '';
+        foreach ($day_tables as $t) {
+            if (is_string($t) && $t !== '' && $this->table_exists($t)) {
+                $day_table = $t;
+                break;
+            }
+        }
+        if ($day_table === '') {
+            return [];
+        }
+
+        $has_col = function ($table, $column) {
+            return (bool) $this->wpdb->get_var($this->wpdb->prepare(
+                "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = %s",
+                $table,
+                $column
+            ));
+        };
+
+        if (!$has_col($voyage_table, 'id') || !$has_col($voyage_table, 'wp_post_id')) {
+            return [];
+        }
+        if (!$has_col($day_table, 'day_number') || !$has_col($day_table, 'content_html')) {
+            return [];
+        }
+
+        $fk_col = $has_col($day_table, 'voyage_id')
+            ? 'voyage_id'
+            : ($has_col($day_table, 'travel_id') ? 'travel_id' : '');
+        if ($fk_col === '') {
+            return [];
+        }
+
+        $has_description = $has_col($day_table, 'description');
+
+        try {
+            $sql = "SELECT d.day_number, d.content_html";
+            if ($has_description) {
+                $sql .= ", d.description";
+            } else {
+                $sql .= ", '' AS description";
+            }
+            $sql .= " FROM {$day_table} d";
+            $sql .= " INNER JOIN {$voyage_table} v ON v.id = d.{$fk_col}";
+            $sql .= " WHERE v.wp_post_id = %d";
+            $sql .= " ORDER BY d.day_number ASC";
+
+            $rows = $this->wpdb->get_results($this->wpdb->prepare($sql, $this->tour_id), ARRAY_A);
+            if (!$rows) {
+                return [];
+            }
+
+            $map = [];
+            foreach ($rows as $row) {
+                $day_number = isset($row['day_number']) ? (int) $row['day_number'] : 0;
+                if ($day_number < 1) {
+                    continue;
+                }
+                $content_html = isset($row['content_html']) ? trim((string) $row['content_html']) : '';
+                $description = isset($row['description']) ? trim((string) $row['description']) : '';
+                if ($content_html === '' && $description === '') {
+                    continue;
+                }
+                $map[$day_number] = [
+                    'content_html' => $content_html,
+                    'description' => $description,
+                ];
+            }
+
+            return $map;
+        } catch (Exception $e) {
+            $this->log_error('get_travel_program_day_content_map', $e);
             return [];
         }
     }
