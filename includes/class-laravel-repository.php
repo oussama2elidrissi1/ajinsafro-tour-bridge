@@ -932,6 +932,7 @@ class AJTB_Laravel_Repository
                     'day' => (int) $row['day_number'],
                     'title' => $row['title'] ?? '',
                     'description' => $row['description'] ?? '',
+                    'content_html' => isset($row['content_html']) ? $row['content_html'] : '',
                     'meals' => $row['meals'] ?? '',
                     'accommodation' => $row['accommodation'] ?? '',
                     'image' => '',
@@ -1050,9 +1051,6 @@ class AJTB_Laravel_Repository
                     $transfers_by_day_direction[$last_day_number]['departure'] = $transfers_flat['departure'];
                 }
             }
-            $hotels_all = $hotels_grouped['all'] ?? [];
-            $hotel_first = isset($hotels_all[0]) ? $hotels_all[0] : null;
-
             foreach ($days_array as &$day) {
                 $day['flight'] = [];
                 $day['flight_return'] = [];
@@ -1072,7 +1070,7 @@ class AJTB_Laravel_Repository
                 $day['transfer'] = isset($day_transfers['arrival']) ? $day_transfers['arrival'] : [];
                 $day['transfer_return'] = isset($day_transfers['departure']) ? $day_transfers['departure'] : [];
                 $day['hotels'] = $day_hotels;
-                $day['hotel'] = isset($day_hotels[0]) ? $day_hotels[0] : $hotel_first;
+                $day['hotel'] = isset($day_hotels[0]) ? $day_hotels[0] : null;
                 if ($last_day_number > 0 && $dn === $last_day_number && !empty($day_hotels)) {
                     $day['hotel_checkout'] = true;
                 }

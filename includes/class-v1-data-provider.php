@@ -113,6 +113,13 @@ class AJTB_V1_Data_Provider
                 'departure_place' => $dates_and_places['first_place'] ?: 'Casablanca',
                 'departure_date' => $dates_and_places['first_date_label'] ?: 'Date a confirmer',
                 'guests' => $guests_label,
+                'guest_config' => [
+                    'adults' => 2,
+                    'children' => 0,
+                    'max_adults' => max(1, $group_size),
+                    'max_children' => 8,
+                    'max_total' => max(1, $group_size),
+                ],
                 'places' => $dates_and_places['places'],
                 'dates' => $dates_and_places['dates'],
                 'date_options' => $dates_and_places['date_options'],
@@ -527,9 +534,12 @@ class AJTB_V1_Data_Provider
                     $title = 'Day ' . $day_number;
                 }
 
-                $description = trim((string) ($row['description'] ?? ''));
+                $description = trim((string) ($row['content_html'] ?? ''));
+                if ($description !== '') {
+                    $description = trim(wp_strip_all_tags($description));
+                }
                 if ($description === '') {
-                    $description = trim((string) ($row['notes'] ?? ''));
+                    $description = trim((string) ($row['description'] ?? ''));
                 }
                 if ($description === '') {
                     $description = 'Programme detaille communique avant le depart.';

@@ -87,6 +87,18 @@ if ($hero_count <= 1) {
 $search_departure = isset($tour_data['search']['departure_place']) ? (string) $tour_data['search']['departure_place'] : 'Casablanca';
 $search_date = isset($tour_data['search']['departure_date']) ? (string) $tour_data['search']['departure_date'] : 'Date a confirmer';
 $search_guests = isset($tour_data['search']['guests']) ? (string) $tour_data['search']['guests'] : '2 Adultes';
+$guest_config = isset($tour_data['search']['guest_config']) && is_array($tour_data['search']['guest_config'])
+    ? $tour_data['search']['guest_config']
+    : [];
+$guest_adults = isset($guest_config['adults']) ? max(1, (int) $guest_config['adults']) : 2;
+$guest_children = isset($guest_config['children']) ? max(0, (int) $guest_config['children']) : 0;
+$guest_max_adults = isset($guest_config['max_adults']) ? max(1, (int) $guest_config['max_adults']) : max(1, (int) $group_size);
+$guest_max_children = isset($guest_config['max_children']) ? max(0, (int) $guest_config['max_children']) : 8;
+$guest_max_total = isset($guest_config['max_total']) ? max(1, (int) $guest_config['max_total']) : max(1, (int) $group_size);
+$search_guests = $guest_adults . ' ' . ($guest_adults > 1 ? 'adultes' : 'adulte');
+if ($guest_children > 0) {
+    $search_guests .= ', ' . $guest_children . ' ' . ($guest_children > 1 ? 'enfants' : 'enfant');
+}
 $search_date_options = [];
 if (!empty($tour_data['search']['date_options']) && is_array($tour_data['search']['date_options'])) {
     foreach ($tour_data['search']['date_options'] as $date_option) {
@@ -243,7 +255,45 @@ get_header();
                 </div>
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
-                    <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_guests); ?></span><strong aria-hidden="true">▾</strong></span>
+                    <div
+                        class="ajtb-v1-guests-picker"
+                        data-max-adults="<?php echo esc_attr((string) $guest_max_adults); ?>"
+                        data-max-children="<?php echo esc_attr((string) $guest_max_children); ?>"
+                        data-max-total="<?php echo esc_attr((string) $guest_max_total); ?>">
+                        <button type="button" class="ajtb-v1-guest-trigger" id="ajtb-v1-guest-trigger" aria-expanded="false">
+                            <span class="ajtb-v1-search-value">
+                                <span class="ajtb-v1-search-text" id="ajtb-v1-guest-summary"><?php echo esc_html($search_guests); ?></span>
+                                <strong aria-hidden="true">&#9662;</strong>
+                            </span>
+                        </button>
+                        <div class="ajtb-v1-guest-popover" id="ajtb-v1-guest-popover" hidden>
+                            <div class="ajtb-v1-guest-row">
+                                <div>
+                                    <strong>Adultes</strong>
+                                    <span>Age 12+</span>
+                                </div>
+                                <div class="ajtb-v1-guest-stepper">
+                                    <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="adults">-</button>
+                                    <span id="ajtb-v1-guest-adults-value"><?php echo esc_html((string) $guest_adults); ?></span>
+                                    <button type="button" data-ajtb-guest-action="plus" data-ajtb-guest-target="adults">+</button>
+                                </div>
+                            </div>
+                            <div class="ajtb-v1-guest-row">
+                                <div>
+                                    <strong>Enfants</strong>
+                                    <span>Age 2-11</span>
+                                </div>
+                                <div class="ajtb-v1-guest-stepper">
+                                    <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="children">-</button>
+                                    <span id="ajtb-v1-guest-children-value"><?php echo esc_html((string) $guest_children); ?></span>
+                                    <button type="button" data-ajtb-guest-action="plus" data-ajtb-guest-target="children">+</button>
+                                </div>
+                            </div>
+                            <button type="button" class="ajtb-v1-guest-apply" id="ajtb-v1-guest-apply">Appliquer</button>
+                        </div>
+                        <input type="hidden" id="ajtb-v1-guest-adults-input" value="<?php echo esc_attr((string) $guest_adults); ?>">
+                        <input type="hidden" id="ajtb-v1-guest-children-input" value="<?php echo esc_attr((string) $guest_children); ?>">
+                    </div>
                 </div>
                 <button type="button" class="ajtb-v1-search-btn">Rechercher</button>
             </section>
@@ -400,27 +450,40 @@ get_header();
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                                <?php if (!empty($hotel)): ?>
-                                                    <?php
-                                                    $hotel_img = $pick($hotel, ['image_url'], '');
-                                                    $hotel_name = $pick($hotel, ['hotel_name', 'name', 'title'], 'Hotel');
-                                                    $hotel_desc = $pick($hotel, ['notes', 'address'], 'Sejour prevu dans un hebergement selectionne pour le confort du groupe.');
-                                                    $hotel_city = $pick($hotel, ['city', 'hotel_city', 'location'], $destination);
-                                                    $hotel_room = $pick($hotel, ['room_type'], 'Standard room');
-                                                    $hotel_stars = $pick($hotel, ['stars'], '4');
-                                                    ?>
-                                                    <div class="ajtb-v1-service-card">
-                                                        <div class="ajtb-v1-service-head"><span>Hotel - <?php echo esc_html($hotel_city); ?></span><span>View</span></div>
-                                                        <div class="ajtb-v1-service-body ajtb-v1-media-row">
-                                                            <img src="<?php echo $safe_image($hotel_img, $default_hotel_image); ?>" alt="Hotel visual" loading="lazy">
-                                                            <div>
-                                                                <h4><?php echo esc_html($hotel_name); ?></h4>
-                                                                <p><?php echo esc_html($hotel_desc); ?></p>
-                                                                <div class="ajtb-v1-meta-line"><span><?php echo esc_html($hotel_stars); ?>/5</span><span><?php echo esc_html($hotel_city); ?></span><span><?php echo esc_html($hotel_room); ?></span></div>
+                                                <?php
+                                                $hotel_img = $pick((array) $hotel, ['image_url'], '');
+                                                $hotel_available = !empty($hotel);
+                                                $hotel_name = $hotel_available
+                                                    ? $pick((array) $hotel, ['hotel_name', 'name', 'title'], 'Hotel')
+                                                    : 'Pas dispo';
+                                                $hotel_desc = $hotel_available
+                                                    ? $pick((array) $hotel, ['notes', 'address'], 'Hotel configure dans la section Hotel du CRUD.')
+                                                    : 'Aucun hotel configure dans la section Hotel du CRUD.';
+                                                $hotel_city = $hotel_available
+                                                    ? $pick((array) $hotel, ['city', 'hotel_city', 'location'], $destination)
+                                                    : $destination;
+                                                $hotel_room = $hotel_available
+                                                    ? $pick((array) $hotel, ['room_type'], 'Standard room')
+                                                    : 'Pas dispo';
+                                                $hotel_stars = $hotel_available
+                                                    ? $pick((array) $hotel, ['stars'], '4')
+                                                    : '-';
+                                                ?>
+                                                <div class="ajtb-v1-service-card">
+                                                    <div class="ajtb-v1-service-head"><span>Hotel - <?php echo esc_html($hotel_city); ?></span><span><?php echo $hotel_available ? 'View' : 'Pas dispo'; ?></span></div>
+                                                    <div class="ajtb-v1-service-body ajtb-v1-media-row">
+                                                        <img src="<?php echo $safe_image($hotel_img, $default_hotel_image); ?>" alt="Hotel visual" loading="lazy">
+                                                        <div>
+                                                            <h4><?php echo esc_html($hotel_name); ?></h4>
+                                                            <p><?php echo esc_html($hotel_desc); ?></p>
+                                                            <div class="ajtb-v1-meta-line">
+                                                                <span><?php echo esc_html($hotel_available ? ((string) $hotel_stars . '/5') : 'Pas dispo'); ?></span>
+                                                                <span><?php echo esc_html($hotel_city); ?></span>
+                                                                <span><?php echo esc_html($hotel_room); ?></span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                <?php endif; ?>
+                                                </div>
 
                                                 <?php foreach (array_slice($activities, 0, 2) as $activity): ?>
                                                     <?php
