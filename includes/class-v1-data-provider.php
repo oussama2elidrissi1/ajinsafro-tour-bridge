@@ -25,6 +25,7 @@ class AJTB_V1_Data_Provider
         $tour_id = (int) $tour_id;
         $wp_data = [];
         $laravel_days = [];
+        $sections = [];
         $inclusions = [];
         $exclusions = [];
         $overview = '';
@@ -42,6 +43,7 @@ class AJTB_V1_Data_Provider
         if (class_exists('AJTB_Laravel_Repository')) {
             $laravel_repo = new AJTB_Laravel_Repository($tour_id);
             $laravel_days = $laravel_repo->get_days();
+            $sections = $laravel_repo->get_sections();
             $inclusions = $laravel_repo->get_inclusions();
             $exclusions = $laravel_repo->get_exclusions();
             $overview = (string) $laravel_repo->get_overview();
@@ -64,7 +66,11 @@ class AJTB_V1_Data_Provider
             : '5 jours / 4 nuits';
 
         $price_data = self::resolve_price($wp_data, $pricing);
+        $rating_label = self::resolve_rating_label($wp_data);
+        $guests_label = self::resolve_guests_label($wp_data);
         $overview_points = self::resolve_overview_points($overview, $wp_data);
+        $policy_items = self::resolve_policy_items($sections, $wp_data, $exclusions);
+        $coupon_items = self::resolve_coupons($sections);
 
         $normalized_days = self::normalize_days(
             $laravel_days,
@@ -87,6 +93,7 @@ class AJTB_V1_Data_Provider
         if ($group_size <= 0) {
             $group_size = 12;
         }
+        $best_deals = self::resolve_best_deals($wp_data, $overview_points, $inclusions);
 
         return [
             'id' => $tour_id,
@@ -94,36 +101,29 @@ class AJTB_V1_Data_Provider
             'destination' => $destination,
             'duration_label' => $duration_label,
             'group_size' => $group_size,
-            'rating' => '4.9 / 5 voyageurs',
+            'rating' => $rating_label,
             'hero' => [
                 'main' => $hero_images['main'],
                 'side' => $hero_images['side'],
+                'all' => $hero_images['all'],
             ],
             'search' => [
                 'departure_place' => $dates_and_places['first_place'] ?: 'Casablanca',
                 'departure_date' => $dates_and_places['first_date_label'] ?: 'Date a confirmer',
-                'guests' => '2 Adultes',
+                'guests' => $guests_label,
                 'places' => $dates_and_places['places'],
                 'dates' => $dates_and_places['dates'],
             ],
             'pricing' => $price_data,
             'overview_points' => $overview_points,
+            'policies' => $policy_items,
             'inclusions' => $inclusions,
             'exclusions' => $exclusions,
             'days' => $normalized_days,
             'stats' => $stats,
             'summary_rows' => self::build_summary_rows($normalized_days),
-            'coupons' => [
-                ['code' => 'DAKHLA1200', 'text' => 'Reduction directe sur ce depart.', 'value' => '-1,200 MAD'],
-                ['code' => 'AJBANK500', 'text' => 'Bonus additionnel avec cartes eligibles.', 'value' => '-500 MAD'],
-                ['code' => 'FLEXPAY', 'text' => 'Paiement en plusieurs fois selon dossier.', 'value' => '3x'],
-            ],
-            'best_deals' => [
-                'Programme optimise entre lagon, desert et ville',
-                'Selection hebergement et activites Ajinsafro',
-                'Assistance client Ajinsafro avant et pendant voyage',
-                'Configuration evolutive vers donnees 100% CRUD',
-            ],
+            'coupons' => $coupon_items,
+            'best_deals' => $best_deals,
         ];
     }
 
@@ -243,8 +243,16 @@ class AJTB_V1_Data_Provider
     private static function resolve_price(array $wp_data, ?array $pricing): array
     {
         $amount = 0.0;
+        $season_name = '';
+        $period_label = '';
         if (is_array($pricing) && isset($pricing['adult_price'])) {
             $amount = (float) $pricing['adult_price'];
+            $season_name = !empty($pricing['season_name']) ? trim((string) $pricing['season_name']) : '';
+            if (!empty($pricing['start_date']) || !empty($pricing['end_date'])) {
+                $start = !empty($pricing['start_date']) ? self::format_date_label((string) $pricing['start_date']) : '';
+                $end = !empty($pricing['end_date']) ? self::format_date_label((string) $pricing['end_date']) : '';
+                $period_label = trim($start . ($start !== '' && $end !== '' ? ' - ' : '') . $end);
+            }
         }
         if ($amount <= 0 && !empty($wp_data['pricing']['display_price'])) {
             $amount = (float) $wp_data['pricing']['display_price'];
@@ -256,11 +264,21 @@ class AJTB_V1_Data_Provider
         $currency_symbol = !empty($wp_data['pricing']['currency_symbol'])
             ? (string) $wp_data['pricing']['currency_symbol']
             : ajtb_get_currency_symbol();
+        $note = 'Tarif par adulte, hors options complementaires.';
+        if ($season_name !== '') {
+            $note = 'Tarif ' . $season_name . '.';
+        }
+        if ($period_label !== '') {
+            $note .= ' Periode: ' . $period_label . '.';
+        }
 
         return [
             'amount' => $amount,
             'display_amount' => number_format($amount, 0, ',', ' '),
             'currency_symbol' => $currency_symbol,
+            'season_name' => $season_name,
+            'period_label' => $period_label,
+            'note' => $note,
         ];
     }
 
@@ -289,13 +307,148 @@ class AJTB_V1_Data_Provider
 
         if (empty($points)) {
             $points = [
-                'Programme accompagne avec support Ajinsafro et confirmations progressives.',
-                'Selection vols, transferts et hebergement depuis les donnees CRUD disponibles.',
-                'Affichage V1 hybride: donnees reelles avec fallback premium stable.',
+                'Programme accompagne avec support Ajinsafro a chaque etape du voyage.',
+                'Selection des prestations selon la disponibilite confirmee.',
+                'Experience optimisee pour un sejour fluide et confortable.',
             ];
         }
 
         return $points;
+    }
+
+    private static function resolve_rating_label(array $wp_data): string
+    {
+        $score = 0.0;
+        if (!empty($wp_data['rating'])) {
+            $score = (float) $wp_data['rating'];
+        }
+        if ($score <= 0 && !empty($wp_data['review_score'])) {
+            $score = (float) $wp_data['review_score'];
+        }
+        if ($score > 0) {
+            return number_format($score, 1, ',', ' ') . ' / 5 voyageurs';
+        }
+        return 'Experience Ajinsafro';
+    }
+
+    private static function resolve_guests_label(array $wp_data): string
+    {
+        $min = isset($wp_data['min_people']) ? (int) $wp_data['min_people'] : 0;
+        $max = isset($wp_data['max_people']) ? (int) $wp_data['max_people'] : 0;
+
+        if ($min > 0 && $max > 0 && $max >= $min) {
+            return sprintf('%d a %d voyageurs', $min, $max);
+        }
+        if ($max > 0) {
+            return sprintf('Jusqu a %d voyageurs', $max);
+        }
+        if ($min > 0) {
+            return sprintf('A partir de %d voyageurs', $min);
+        }
+        return 'Voyageurs flexibles';
+    }
+
+    private static function resolve_policy_items(array $sections, array $wp_data, array $exclusions): array
+    {
+        $items = [];
+        $section_keys = [
+            'policies',
+            'policy',
+            'conditions',
+            'terms',
+            'cancellation_policy',
+            'payment_policy',
+        ];
+
+        foreach ($section_keys as $key) {
+            if (!empty($sections[$key]['content'])) {
+                $items = array_merge($items, self::extract_lines((string) $sections[$key]['content'], 4));
+            }
+        }
+
+        if (!empty($wp_data['cancellation_policy'])) {
+            $items = array_merge($items, self::extract_lines((string) $wp_data['cancellation_policy'], 3));
+        }
+
+        if (empty($items) && !empty($exclusions)) {
+            $items = array_slice(self::normalize_list_items($exclusions), 0, 4);
+        }
+
+        if (empty($items)) {
+            $items = [
+                'Confirmation sous reserve de disponibilite finale des prestations.',
+                'Conditions d annulation et de modification communiquees avant paiement.',
+                'L ordre des activites peut s ajuster selon les operations locales.',
+            ];
+        }
+
+        return array_slice(self::unique_non_empty($items), 0, 6);
+    }
+
+    private static function resolve_coupons(array $sections): array
+    {
+        $candidates = ['coupons', 'offers', 'promotions', 'promo', 'deals'];
+        $rows = [];
+        foreach ($candidates as $key) {
+            if (empty($sections[$key]['content'])) {
+                continue;
+            }
+            $lines = self::extract_lines((string) $sections[$key]['content'], 12);
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === '') {
+                    continue;
+                }
+                $code = '';
+                $text = $line;
+                $value = '';
+
+                if (preg_match('/^([A-Z0-9_-]{4,})\s*[:\-]\s*(.+)$/', $line, $m)) {
+                    $code = trim((string) $m[1]);
+                    $text = trim((string) $m[2]);
+                }
+                if ($code === '') {
+                    $parts = preg_split('/\s+/', $line);
+                    if (is_array($parts) && !empty($parts[0]) && preg_match('/^[A-Z0-9_-]{4,}$/', $parts[0])) {
+                        $code = trim((string) $parts[0]);
+                        $text = trim(substr($line, strlen($parts[0])));
+                    }
+                }
+                if (preg_match('/(-?\d[\d\s.,]*\s?(MAD|DHS|DH|%|€|\$))/i', $line, $v)) {
+                    $value = trim((string) $v[1]);
+                }
+
+                $rows[] = [
+                    'code' => $code !== '' ? $code : 'OFFRE',
+                    'text' => $text !== '' ? $text : 'Offre disponible',
+                    'value' => $value,
+                ];
+                if (count($rows) >= 3) {
+                    break 2;
+                }
+            }
+        }
+        return $rows;
+    }
+
+    private static function resolve_best_deals(array $wp_data, array $overview_points, array $inclusions): array
+    {
+        $items = [];
+
+        if (!empty($wp_data['highlights']) && is_array($wp_data['highlights'])) {
+            $items = array_merge($items, self::normalize_list_items($wp_data['highlights']));
+        }
+        $items = array_merge($items, array_slice($inclusions, 0, 6));
+        $items = array_merge($items, array_slice($overview_points, 0, 6));
+
+        $items = self::unique_non_empty($items);
+        if (empty($items)) {
+            $items = [
+                'Accompagnement Ajinsafro avant et pendant le voyage.',
+                'Programme equilibre entre confort et decouvertes.',
+            ];
+        }
+        return array_slice($items, 0, 4);
     }
 
     private static function normalize_days(array $laravel_days, array $wp_data, array $gallery_pool, string $first_date): array
@@ -319,7 +472,7 @@ class AJTB_V1_Data_Provider
                     $description = trim((string) ($row['notes'] ?? ''));
                 }
                 if ($description === '') {
-                    $description = 'Programme en cours de synchronisation depuis le CRUD.';
+                    $description = 'Programme detaille communique avant le depart.';
                 }
 
                 $activities = is_array($row['activities'] ?? null) ? $row['activities'] : [];
@@ -391,7 +544,7 @@ class AJTB_V1_Data_Provider
             }
             $desc = trim((string) ($item['desc'] ?? ''));
             if ($desc === '') {
-                $desc = 'Programme en cours de synchronisation depuis le CRUD.';
+                $desc = 'Programme detaille communique avant le depart.';
             }
             $img = !empty($gallery_pool[$i - 1]) ? $gallery_pool[$i - 1] : $fallbacks[min($i - 1, count($fallbacks) - 1)];
             $days[] = [
@@ -562,6 +715,30 @@ class AJTB_V1_Data_Provider
             }
         }
         return self::unique_non_empty($out);
+    }
+
+    private static function extract_lines(string $content, int $limit = 10): array
+    {
+        $clean = trim(wp_strip_all_tags($content));
+        if ($clean === '') {
+            return [];
+        }
+        $parts = preg_split('/[\r\n\.;|]+/', $clean);
+        if (!is_array($parts)) {
+            return [];
+        }
+        $out = [];
+        foreach ($parts as $part) {
+            $part = trim((string) $part);
+            if (mb_strlen($part) < 4) {
+                continue;
+            }
+            $out[] = $part;
+            if (count($out) >= $limit) {
+                break;
+            }
+        }
+        return $out;
     }
 
     private static function unique_non_empty(array $items): array

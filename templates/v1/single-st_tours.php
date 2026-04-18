@@ -94,10 +94,11 @@ $days = !empty($tour_data['days']) && is_array($tour_data['days']) ? $tour_data[
 $overview_points = !empty($tour_data['overview_points']) && is_array($tour_data['overview_points'])
     ? $tour_data['overview_points']
     : [
-        'Programme en cours de synchronisation depuis les sources CRUD.',
-        'Affichage V1 conserve la structure premium et les fallbacks stables.',
+        'Programme construit pour offrir une experience de voyage complete.',
+        'Prestations confirmees selon disponibilite au moment de la reservation.',
     ];
 
+$policy_items = !empty($tour_data['policies']) && is_array($tour_data['policies']) ? $tour_data['policies'] : [];
 $inclusions = !empty($tour_data['inclusions']) && is_array($tour_data['inclusions']) ? $tour_data['inclusions'] : [];
 $exclusions = !empty($tour_data['exclusions']) && is_array($tour_data['exclusions']) ? $tour_data['exclusions'] : [];
 $summary_rows = !empty($tour_data['summary_rows']) && is_array($tour_data['summary_rows']) ? $tour_data['summary_rows'] : [];
@@ -106,6 +107,7 @@ $best_deals = !empty($tour_data['best_deals']) && is_array($tour_data['best_deal
 
 $price_amount = $tour_data['pricing']['display_amount'] ?? '12 900';
 $price_currency = $tour_data['pricing']['currency_symbol'] ?? 'MAD';
+$price_note = !empty($tour_data['pricing']['note']) ? (string) $tour_data['pricing']['note'] : 'Tarif indicatif par adulte.';
 
 if (empty($days)) {
     $days = [
@@ -191,7 +193,7 @@ get_header();
             </section>
 
             <section class="ajtb-v1-hero" aria-label="Hero tour">
-                <p class="ajtb-v1-hero-kicker">Ajinsafro Signature Escape - Real data progressive sync</p>
+                <p class="ajtb-v1-hero-kicker">Ajinsafro Signature Escape</p>
                 <h1 class="ajtb-v1-title"><?php echo esc_html($tour_title); ?></h1>
 
                 <div class="ajtb-v1-meta-pills">
@@ -221,7 +223,7 @@ get_header();
                 <div class="ajtb-v1-main-column">
                     <section class="ajtb-v1-tab-panel is-active" id="ajtb-v1-panel-itinerary" role="tabpanel">
                         <article class="ajtb-v1-card ajtb-v1-overview-card">
-                            <p class="ajtb-v1-kicker">Apercu genere depuis les donnees tour disponibles (CRUD + WordPress)</p>
+                            <p class="ajtb-v1-kicker">Apercu du voyage</p>
                             <ul class="ajtb-v1-overview-list">
                                 <?php foreach ($overview_points as $point): ?>
                                     <li><?php echo esc_html((string) $point); ?></li>
@@ -335,7 +337,7 @@ get_header();
                                                             <img src="<?php echo $safe_image($transfer_img, $default_transfer_image); ?>" alt="Transfer visual" loading="lazy">
                                                             <div>
                                                                 <h4><?php echo esc_html($pick($transfer, ['transfer_type', 'service_name', 'name'], 'Transfer service')); ?></h4>
-                                                                <p><?php echo esc_html($pick($transfer, ['notes'], 'Transfer details synced from CRUD.')); ?></p>
+                                                                <p><?php echo esc_html($pick($transfer, ['notes'], 'Transfert organise avec assistance locale.')); ?></p>
                                                                 <div class="ajtb-v1-meta-line"><span><?php echo esc_html($pick($transfer, ['vehicle_type'], 'Comfort vehicle')); ?></span><span><?php echo esc_html($pick($transfer, ['pickup_time'], 'On time')); ?></span></div>
                                                             </div>
                                                         </div>
@@ -346,7 +348,7 @@ get_header();
                                                     <?php
                                                     $hotel_img = $pick($hotel, ['image_url'], '');
                                                     $hotel_name = $pick($hotel, ['hotel_name', 'name', 'title'], 'Hotel');
-                                                    $hotel_desc = $pick($hotel, ['notes', 'address'], 'Hotel details synced from CRUD.');
+                                                    $hotel_desc = $pick($hotel, ['notes', 'address'], 'Sejour prevu dans un hebergement selectionne pour le confort du groupe.');
                                                     $hotel_city = $pick($hotel, ['city', 'hotel_city', 'location'], $destination);
                                                     $hotel_room = $pick($hotel, ['room_type'], 'Standard room');
                                                     $hotel_stars = $pick($hotel, ['stars'], '4');
@@ -368,7 +370,7 @@ get_header();
                                                     <?php
                                                     $act_img = $pick($activity, ['image_url'], '');
                                                     $act_title = $pick($activity, ['title'], 'Activity');
-                                                    $act_desc = $pick($activity, ['description'], 'Activity details synced from CRUD.');
+                                                    $act_desc = $pick($activity, ['description'], 'Activite incluse selon le programme du jour.');
                                                     $act_price = isset($activity['custom_price']) && $activity['custom_price'] !== null
                                                         ? (float) $activity['custom_price']
                                                         : (isset($activity['base_price']) && $activity['base_price'] !== null ? (float) $activity['base_price'] : null);
@@ -408,12 +410,11 @@ get_header();
                     <section class="ajtb-v1-tab-panel" id="ajtb-v1-panel-policies" role="tabpanel" hidden>
                         <article class="ajtb-v1-card">
                             <h2>Policies and Conditions</h2>
-                            <p>Cette section combine des regles statiques V1 et des elements reelles disponibles.</p>
+                            <p>Conditions importantes a connaitre avant confirmation.</p>
                             <ul class="ajtb-v1-overview-list">
-                                <li>Annulation gratuite jusqu a 14 jours avant depart.</li>
-                                <li>Acompte de confirmation de 30 pourcent a la reservation.</li>
-                                <li>Les activites exterieures dependent des conditions meteo locales.</li>
-                                <li>Support client Ajinsafro disponible avant, pendant et apres voyage.</li>
+                                <?php foreach ($policy_items as $policy_line): ?>
+                                    <li><?php echo esc_html((string) $policy_line); ?></li>
+                                <?php endforeach; ?>
                             </ul>
                             <?php if (!empty($exclusions)): ?>
                                 <h3 class="ajtb-v1-subsection-title">Exclusions</h3>
@@ -442,7 +443,7 @@ get_header();
                     <div class="ajtb-v1-side-card ajtb-v1-price-card" id="ajtb-v1-price-card">
                         <h3>Starting price</h3>
                         <p class="ajtb-v1-price"><span><?php echo esc_html($price_amount); ?></span> <?php echo esc_html($price_currency); ?> / adulte</p>
-                        <p class="ajtb-v1-price-note">Prix recupere depuis les donnees disponibles. Ajustements taxes/options a l etape checkout.</p>
+                        <p class="ajtb-v1-price-note"><?php echo esc_html($price_note); ?></p>
                         <ul class="ajtb-v1-price-includes">
                             <?php
                             $price_items = !empty($inclusions) ? array_slice($inclusions, 0, 4) : ['Programme principal', 'Hebergement', 'Support Ajinsafro', 'Configuration flexible'];
@@ -455,31 +456,35 @@ get_header();
                     </div>
 
                     <div class="ajtb-v1-side-card ajtb-v1-side-highlight">
-                        <h3>Depart en vue</h3>
-                        <p><?php echo esc_html($search_date); ?> - Ville: <?php echo esc_html($search_departure); ?></p>
+                        <h3>Prochain depart</h3>
+                        <p><?php echo esc_html($search_date); ?> - Depart: <?php echo esc_html($search_departure); ?></p>
                     </div>
 
-                    <div class="ajtb-v1-side-card">
-                        <h3>Coupons and Offers</h3>
-                        <?php foreach ($coupons as $coupon): ?>
-                            <div class="ajtb-v1-coupon">
-                                <div>
-                                    <strong><?php echo esc_html((string) ($coupon['code'] ?? 'OFFER')); ?></strong>
-                                    <p><?php echo esc_html((string) ($coupon['text'] ?? 'Offer available')); ?></p>
+                    <?php if (!empty($coupons)): ?>
+                        <div class="ajtb-v1-side-card">
+                            <h3>Coupons and Offers</h3>
+                            <?php foreach ($coupons as $coupon): ?>
+                                <div class="ajtb-v1-coupon">
+                                    <div>
+                                        <strong><?php echo esc_html((string) ($coupon['code'] ?? 'OFFER')); ?></strong>
+                                        <p><?php echo esc_html((string) ($coupon['text'] ?? 'Offer available')); ?></p>
+                                    </div>
+                                    <span><?php echo esc_html((string) ($coupon['value'] ?? '')); ?></span>
                                 </div>
-                                <span><?php echo esc_html((string) ($coupon['value'] ?? '')); ?></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <div class="ajtb-v1-side-card ajtb-v1-best-deals">
-                        <h3>Best Deals For You</h3>
-                        <ul>
-                            <?php foreach ($best_deals as $deal): ?>
-                                <li><?php echo esc_html((string) $deal); ?></li>
                             <?php endforeach; ?>
-                        </ul>
-                    </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($best_deals)): ?>
+                        <div class="ajtb-v1-side-card ajtb-v1-best-deals">
+                            <h3>Best Deals For You</h3>
+                            <ul>
+                                <?php foreach ($best_deals as $deal): ?>
+                                    <li><?php echo esc_html((string) $deal); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </aside>
             </section>
         </div>
