@@ -87,6 +87,49 @@ if ($hero_count <= 1) {
 $search_departure = isset($tour_data['search']['departure_place']) ? (string) $tour_data['search']['departure_place'] : 'Casablanca';
 $search_date = isset($tour_data['search']['departure_date']) ? (string) $tour_data['search']['departure_date'] : 'Date a confirmer';
 $search_guests = isset($tour_data['search']['guests']) ? (string) $tour_data['search']['guests'] : '2 Adultes';
+$search_date_options = [];
+if (!empty($tour_data['search']['date_options']) && is_array($tour_data['search']['date_options'])) {
+    foreach ($tour_data['search']['date_options'] as $date_option) {
+        if (!is_array($date_option)) {
+            continue;
+        }
+        $value = isset($date_option['value']) ? trim((string) $date_option['value']) : '';
+        if ($value === '') {
+            continue;
+        }
+        $display = isset($date_option['display']) && trim((string) $date_option['display']) !== ''
+            ? (string) $date_option['display']
+            : (isset($date_option['label']) ? (string) $date_option['label'] : $value);
+        $search_date_options[] = [
+            'value' => $value,
+            'display' => $display,
+        ];
+    }
+} elseif (!empty($tour_data['search']['dates']) && is_array($tour_data['search']['dates'])) {
+    foreach ($tour_data['search']['dates'] as $date_label) {
+        $date_label = trim((string) $date_label);
+        if ($date_label === '') {
+            continue;
+        }
+        $search_date_options[] = [
+            'value' => $date_label,
+            'display' => $date_label,
+        ];
+    }
+}
+if (empty($search_date_options) && $search_date !== '') {
+    $search_date_options[] = [
+        'value' => $search_date,
+        'display' => $search_date,
+    ];
+}
+$selected_search_date = !empty($search_date_options) ? (string) $search_date_options[0]['value'] : '';
+foreach ($search_date_options as $date_option) {
+    if ((string) $date_option['value'] === $search_date || (string) $date_option['display'] === $search_date) {
+        $selected_search_date = (string) $date_option['value'];
+        break;
+    }
+}
 
 $stats = $tour_data['stats'] ?? ['days' => 5, 'flights' => 2, 'transfers' => 2, 'hotels' => 1, 'activities' => 2];
 $days = !empty($tour_data['days']) && is_array($tour_data['days']) ? $tour_data['days'] : [];
@@ -183,7 +226,20 @@ get_header();
                 </div>
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Date de voyage</span>
-                    <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_date); ?></span><strong aria-hidden="true">▾</strong></span>
+                    <?php if (!empty($search_date_options)): ?>
+                        <span class="ajtb-v1-search-value ajtb-v1-search-value--select">
+                            <select class="ajtb-v1-search-select" aria-label="Dates de depart disponibles">
+                                <?php foreach ($search_date_options as $date_option): ?>
+                                    <option value="<?php echo esc_attr((string) $date_option['value']); ?>"<?php selected((string) $date_option['value'], $selected_search_date); ?>>
+                                        <?php echo esc_html((string) $date_option['display']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <strong aria-hidden="true">&#9662;</strong>
+                        </span>
+                    <?php else: ?>
+                        <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_date); ?></span><strong aria-hidden="true">&#9662;</strong></span>
+                    <?php endif; ?>
                 </div>
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
@@ -456,8 +512,17 @@ get_header();
                     </div>
 
                     <div class="ajtb-v1-side-card ajtb-v1-side-highlight">
-                        <h3>Prochain depart</h3>
-                        <p><?php echo esc_html($search_date); ?> - Depart: <?php echo esc_html($search_departure); ?></p>
+                        <h3>Dates de depart</h3>
+                        <?php if (!empty($search_date_options)): ?>
+                            <ul class="ajtb-v1-departure-list">
+                                <?php foreach ($search_date_options as $date_option): ?>
+                                    <li><?php echo esc_html((string) $date_option['display']); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <p>Depart: <?php echo esc_html($search_departure); ?></p>
+                        <?php else: ?>
+                            <p><?php echo esc_html($search_date); ?> - Depart: <?php echo esc_html($search_departure); ?></p>
+                        <?php endif; ?>
                     </div>
 
                     <?php if (!empty($coupons)): ?>

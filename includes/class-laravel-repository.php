@@ -1265,6 +1265,126 @@ class AJTB_Laravel_Repository
     }
 
     /**
+     * Get departure dates configured in CRUD (Dates de depart).
+     * Supports both travel_id and tour_id schemas and optional stock/price columns.
+     *
+     * @param bool $active_only Only return active dates when the column exists.
+     * @return array<int, array<string, mixed>>
+     */
+    public function get_departure_dates($active_only = true)
+    {
+        $candidates = [];
+        $candidates[] = $this->table('travel_dates');
+        $candidates[] = $this->table('tour_dates');
+
+        $flights_table = function_exists('ajtb_flights_table') ? ajtb_flights_table($this->tour_id) : $this->table('tour_flights');
+        if (is_string($flights_table) && preg_match('/^(.*)aj_tour_flights$/', $flights_table, $m)) {
+            $alt_prefix = $m[1];
+            $candidates[] = $alt_prefix . 'aj_travel_dates';
+            $candidates[] = $alt_prefix . 'aj_tour_dates';
+        }
+
+        $candidates = array_values(array_unique(array_filter(array_map('strval', $candidates))));
+        $table = '';
+        foreach ($candidates as $candidate) {
+            if ($this->table_exists($candidate)) {
+                $table = $candidate;
+                break;
+            }
+        }
+
+        if ($table === '') {
+            return [];
+        }
+
+        $has_col = function ($column) use ($table) {
+            return (bool) $this->wpdb->get_var($this->wpdb->prepare(
+                "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND COLUMN_NAME = %s",
+                $table,
+                $column
+            ));
+        };
+
+        $date_col = $has_col('date') ? 'date' : ($has_col('start_date') ? 'start_date' : '');
+        $tour_col = $has_col('travel_id') ? 'travel_id' : ($has_col('tour_id') ? 'tour_id' : '');
+
+        if ($date_col === '' || $tour_col === '') {
+            return [];
+        }
+
+        $stock_col = $has_col('stock') ? 'stock' : ($has_col('places') ? 'places' : ($has_col('available_seats') ? 'available_seats' : ($has_col('seats_available') ? 'seats_available' : '')));
+        $price_col = $has_col('specific_price') ? 'specific_price' : ($has_col('adult_price') ? 'adult_price' : ($has_col('price') ? 'price' : ''));
+        $active_col = $has_col('is_active') ? 'is_active' : ($has_col('active') ? 'active' : '');
+        $place_id_col = $has_col('departure_place_id') ? 'departure_place_id' : '';
+
+        try {
+            $sql = "SELECT id, {$date_col} AS departure_date";
+            if ($stock_col !== '') {
+                $sql .= ", {$stock_col} AS stock_value";
+            }
+            if ($price_col !== '') {
+                $sql .= ", {$price_col} AS price_value";
+            }
+            if ($active_col !== '') {
+                $sql .= ", {$active_col} AS is_active_value";
+            }
+            if ($place_id_col !== '') {
+                $sql .= ", {$place_id_col} AS departure_place_id";
+            }
+            $sql .= " FROM {$table} WHERE {$tour_col} = %d";
+
+            $params = [$this->tour_id];
+            if ($active_only && $active_col !== '') {
+                $sql .= " AND {$active_col} = 1";
+            }
+
+            $sql .= " ORDER BY {$date_col} ASC, id ASC";
+
+            $rows = $this->wpdb->get_results($this->wpdb->prepare($sql, $params), ARRAY_A);
+            if (!$rows) {
+                return [];
+            }
+
+            $out = [];
+            foreach ($rows as $row) {
+                $raw_date = isset($row['departure_date']) ? trim((string) $row['departure_date']) : '';
+                if ($raw_date === '') {
+                    continue;
+                }
+
+                $stock = null;
+                if (array_key_exists('stock_value', $row) && $row['stock_value'] !== null && $row['stock_value'] !== '') {
+                    $stock = (int) $row['stock_value'];
+                }
+
+                $specific_price = null;
+                if (array_key_exists('price_value', $row) && $row['price_value'] !== null && $row['price_value'] !== '') {
+                    $specific_price = (float) $row['price_value'];
+                }
+
+                $is_active = true;
+                if (array_key_exists('is_active_value', $row)) {
+                    $is_active = !empty($row['is_active_value']);
+                }
+
+                $out[] = [
+                    'id' => isset($row['id']) ? (int) $row['id'] : 0,
+                    'date' => $raw_date,
+                    'stock' => $stock,
+                    'specific_price' => $specific_price,
+                    'is_active' => $is_active,
+                    'departure_place_id' => isset($row['departure_place_id']) && $row['departure_place_id'] !== '' ? (int) $row['departure_place_id'] : null,
+                ];
+            }
+
+            return $out;
+        } catch (Exception $e) {
+            $this->log_error('get_departure_dates', $e);
+            return [];
+        }
+    }
+
+    /**
      * Get inclusions from sections table
      *
      * @return array Array of inclusion items

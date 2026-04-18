@@ -245,6 +245,35 @@ body.single-st_tours .footer-bottom {
     flex: 0 0 auto;
 }
 
+.ajtb-v1-search-value--select {
+    align-items: stretch;
+}
+
+.ajtb-v1-search-select {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: #102540;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+    padding: 0;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+    cursor: pointer;
+}
+
+.ajtb-v1-search-select:focus {
+    color: #0b3c65;
+}
+
 .ajtb-v1-search-btn {
     border: 0;
     border-radius: 16px;
@@ -907,6 +936,14 @@ body.single-st_tours .footer-bottom {
     color: #4f6481;
     font-size: 13px;
     font-weight: 600;
+    line-height: 1.6;
+}
+
+.ajtb-v1-departure-list {
+    margin: 0 0 8px;
+    padding-left: 18px;
+    color: #355272;
+    font-size: 13px;
     line-height: 1.6;
 }
 
