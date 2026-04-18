@@ -111,25 +111,27 @@ get_header();
 ?>
 
 <div class="ajtb-v1-page" id="ajtb-v1-page">
-    <?php if ($ajth_ready): ?>
-        <?php ajth_render_site_header($ajth_settings); ?>
-    <?php else: ?>
-        <header class="ajtb-v1-fallback-header">
-            <div class="ajtb-v1-container ajtb-v1-fallback-header__inner">
-                <a href="<?php echo esc_url(home_url('/')); ?>" class="ajtb-v1-brand" aria-label="Ajinsafro">
-                    <span class="ajtb-v1-brand__logo">A</span>
-                    <span class="ajtb-v1-brand__text">Ajinsafro</span>
-                </a>
-                <nav class="ajtb-v1-fallback-nav" aria-label="Menu principal Ajinsafro">
-                    <a href="#">Voyages</a>
-                    <a href="#">Hebergement</a>
-                    <a href="#">Activites</a>
-                    <a href="#">Group Deals</a>
-                </nav>
-                <a href="#" class="ajtb-v1-lowcost-btn">Formule low cost</a>
-            </div>
-        </header>
-    <?php endif; ?>
+    <div class="ajtb-v1-site-header" id="ajtb-v1-site-header">
+        <?php if ($ajth_ready): ?>
+            <?php ajth_render_site_header($ajth_settings); ?>
+        <?php else: ?>
+            <header class="ajtb-v1-fallback-header">
+                <div class="ajtb-v1-container ajtb-v1-fallback-header__inner">
+                    <a href="<?php echo esc_url(home_url('/')); ?>" class="ajtb-v1-brand" aria-label="Ajinsafro">
+                        <span class="ajtb-v1-brand__logo">A</span>
+                        <span class="ajtb-v1-brand__text">Ajinsafro</span>
+                    </a>
+                    <nav class="ajtb-v1-fallback-nav" aria-label="Menu principal Ajinsafro">
+                        <a href="#">Voyages</a>
+                        <a href="#">Hebergement</a>
+                        <a href="#">Activites</a>
+                        <a href="#">Group Deals</a>
+                    </nav>
+                    <a href="#" class="ajtb-v1-lowcost-btn">Formule low cost</a>
+                </div>
+            </header>
+        <?php endif; ?>
+    </div>
 
     <main class="ajtb-v1-main">
         <div class="ajtb-v1-container">

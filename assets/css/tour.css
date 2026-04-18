@@ -50,7 +50,9 @@ body.single-st_tours .footer-bottom {
     font-family: "Poppins", "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--ajtb-v1-text);
     min-height: 100vh;
+    --ajtb-v1-admin-top: 0px;
     --ajtb-v1-sticky-top: 88px;
+    --ajtb-v1-rail-top: 186px;
     --ajtb-v1-day-scroll-offset: 172px;
     background:
         radial-gradient(circle at 12% 4%, rgba(0, 131, 196, 0.11), transparent 23%),
@@ -62,15 +64,25 @@ body.single-st_tours .footer-bottom {
     padding: 28px 0 44px;
 }
 
+.ajtb-v1-site-header {
+    position: sticky;
+    top: var(--ajtb-v1-admin-top);
+    z-index: 210;
+    transition: box-shadow 0.2s ease;
+}
+
+.ajtb-v1-site-header.is-stuck {
+    box-shadow: 0 10px 24px rgba(14, 58, 90, 0.12);
+}
+
 .ajtb-v1-container {
     width: min(1260px, calc(100vw - 36px));
     margin: 0 auto;
 }
 
 .ajtb-v1-fallback-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
+    position: relative;
+    z-index: 1;
     background: #ffffff;
     border-bottom: 1px solid #e6edf7;
     box-shadow: 0 8px 20px rgba(14, 58, 90, 0.06);
@@ -164,7 +176,7 @@ body.single-st_tours .footer-bottom {
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: sticky;
     top: var(--ajtb-v1-sticky-top);
-    z-index: 120;
+    z-index: 160;
     margin-bottom: 2px;
     transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
@@ -357,7 +369,7 @@ body.single-st_tours .footer-bottom {
 
 .ajtb-v1-sidebar {
     position: sticky;
-    top: 116px;
+    top: var(--ajtb-v1-rail-top);
     display: grid;
     gap: 16px;
 }
@@ -462,7 +474,7 @@ body.single-st_tours .footer-bottom {
 
 .ajtb-v1-day-nav {
     position: sticky;
-    top: 116px;
+    top: var(--ajtb-v1-rail-top);
     align-self: start;
     display: flex;
     flex-direction: column;
@@ -1023,6 +1035,7 @@ body.single-st_tours .footer-bottom {
 
 @media (max-width: 991px) {
     .ajtb-v1-page {
+        --ajtb-v1-rail-top: 168px;
         --ajtb-v1-day-scroll-offset: 150px;
     }
 
@@ -1087,6 +1100,7 @@ body.single-st_tours .footer-bottom {
     }
 
     .ajtb-v1-page {
+        --ajtb-v1-rail-top: 148px;
         --ajtb-v1-day-scroll-offset: 136px;
     }
 
