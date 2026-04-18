@@ -47,10 +47,41 @@ $duration_label = isset($tour_data['duration_label']) ? (string) $tour_data['dur
 $group_size = isset($tour_data['group_size']) ? (int) $tour_data['group_size'] : 12;
 $rating_label = isset($tour_data['rating']) ? (string) $tour_data['rating'] : '4.9 / 5 voyageurs';
 
-$hero_main = $tour_data['hero']['main'] ?? $img('hero-main.svg');
-$hero_side = $tour_data['hero']['side'] ?? [$img('hero-side-1.svg'), $img('hero-side-2.svg'), $img('hero-side-3.svg'), $img('hero-side-4.svg')];
-for ($i = count($hero_side); $i < 4; $i++) {
-    $hero_side[] = $img('hero-side-' . ($i + 1) . '.svg');
+$default_hero_image = $img('hero-main.svg');
+$default_hotel_image = $img('card-hotel.svg');
+$default_flight_image = $img('card-flight.svg');
+$default_transfer_image = $img('card-transfer.svg');
+$default_activity_image = $img('card-activity.svg');
+
+$hero_images = [];
+if (!empty($tour_data['hero']['all']) && is_array($tour_data['hero']['all'])) {
+    $hero_images = array_values(array_unique(array_filter(array_map('strval', $tour_data['hero']['all']))));
+} else {
+    if (!empty($tour_data['hero']['main'])) {
+        $hero_images[] = (string) $tour_data['hero']['main'];
+    }
+    if (!empty($tour_data['hero']['side']) && is_array($tour_data['hero']['side'])) {
+        foreach ($tour_data['hero']['side'] as $side_img) {
+            $hero_images[] = (string) $side_img;
+        }
+    }
+}
+if (!empty($hero_images)) {
+    $hero_images = array_values(array_unique(array_filter(array_map('strval', $hero_images))));
+}
+if (empty($hero_images)) {
+    $hero_images = [$default_hero_image];
+}
+$hero_count = count($hero_images);
+$hero_gallery_class = 'ajtb-v1-gallery--count-many';
+if ($hero_count <= 1) {
+    $hero_gallery_class = 'ajtb-v1-gallery--count-1';
+} elseif ($hero_count === 2) {
+    $hero_gallery_class = 'ajtb-v1-gallery--count-2';
+} elseif ($hero_count === 3) {
+    $hero_gallery_class = 'ajtb-v1-gallery--count-3';
+} elseif ($hero_count === 4) {
+    $hero_gallery_class = 'ajtb-v1-gallery--count-4';
 }
 
 $search_departure = isset($tour_data['search']['departure_place']) ? (string) $tour_data['search']['departure_place'] : 'Casablanca';
@@ -107,6 +138,14 @@ $pick = static function (array $row, array $keys, string $default = ''): string 
     return $default;
 };
 
+$safe_image = static function ($candidate, string $fallback): string {
+    $candidate = trim((string) $candidate);
+    if ($candidate === '') {
+        return esc_url($fallback);
+    }
+    return esc_url($candidate);
+};
+
 get_header();
 ?>
 
@@ -138,15 +177,15 @@ get_header();
             <section class="ajtb-v1-search-box" id="ajtb-v1-search-box" aria-label="Search box premium">
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Ville de depart</span>
-                    <span class="ajtb-v1-search-value"><?php echo esc_html($search_departure); ?> <strong>v</strong></span>
+                    <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_departure); ?></span><strong aria-hidden="true">▾</strong></span>
                 </div>
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Date de voyage</span>
-                    <span class="ajtb-v1-search-value"><?php echo esc_html($search_date); ?> <strong>v</strong></span>
+                    <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_date); ?></span><strong aria-hidden="true">▾</strong></span>
                 </div>
                 <div class="ajtb-v1-search-card">
                     <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
-                    <span class="ajtb-v1-search-value"><?php echo esc_html($search_guests); ?> <strong>v</strong></span>
+                    <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_guests); ?></span><strong aria-hidden="true">▾</strong></span>
                 </div>
                 <button type="button" class="ajtb-v1-search-btn">Rechercher</button>
             </section>
@@ -163,13 +202,12 @@ get_header();
                     <span class="ajtb-v1-pill ajtb-v1-pill--id">ID #<?php echo esc_html((string) $tour_id); ?></span>
                 </div>
 
-                <div class="ajtb-v1-gallery">
-                    <img class="ajtb-v1-gallery-main" src="<?php echo esc_url($hero_main); ?>" alt="Hero image" loading="eager">
-                    <div class="ajtb-v1-gallery-side">
-                        <?php foreach (array_slice($hero_side, 0, 4) as $index => $side_img): ?>
-                            <img src="<?php echo esc_url($side_img); ?>" alt="Hero side <?php echo esc_attr((string) ($index + 1)); ?>" loading="lazy">
-                        <?php endforeach; ?>
-                    </div>
+                <div class="ajtb-v1-gallery <?php echo esc_attr($hero_gallery_class); ?>" data-image-count="<?php echo esc_attr((string) $hero_count); ?>">
+                    <?php foreach ($hero_images as $index => $gallery_img): ?>
+                        <figure class="ajtb-v1-gallery-item<?php echo $index === 0 ? ' is-featured' : ''; ?>">
+                            <img src="<?php echo $safe_image($gallery_img, $default_hero_image); ?>" alt="Galerie voyage <?php echo esc_attr((string) ($index + 1)); ?>" loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>">
+                        </figure>
+                    <?php endforeach; ?>
                 </div>
             </section>
 
@@ -272,6 +310,7 @@ get_header();
                                                     $arr_time = $pick($flight, ['arrive_time'], '--:--');
                                                     $dep_code = strtoupper(substr($pick($flight, ['depart_airport', 'from_city'], 'DEP'), 0, 3));
                                                     $arr_code = strtoupper(substr($pick($flight, ['arrive_airport', 'to_city'], 'ARR'), 0, 3));
+                                                    $flight_img = $pick($flight, ['image_url', 'airline_logo', 'logo_url'], '');
                                                 ?>
                                                     <div class="ajtb-v1-service-card ajtb-v1-service-card--flight">
                                                         <div class="ajtb-v1-service-head"><span>Flight - <?php echo esc_html($from . ' to ' . $to); ?></span><span>Confirmed</span></div>
@@ -279,7 +318,7 @@ get_header();
                                                             <div><strong><?php echo esc_html($dep_time); ?></strong><small><?php echo esc_html($dep_code); ?></small></div>
                                                             <div class="ajtb-v1-flight-line"></div>
                                                             <div><strong><?php echo esc_html($arr_time); ?></strong><small><?php echo esc_html($arr_code); ?></small></div>
-                                                            <img src="<?php echo $img('card-flight.svg'); ?>" alt="Flight card visual" loading="lazy">
+                                                            <img src="<?php echo $safe_image($flight_img, $default_flight_image); ?>" alt="Flight card visual" loading="lazy">
                                                         </div>
                                                     </div>
                                                 <?php endforeach; ?>
@@ -288,12 +327,12 @@ get_header();
                                                     <?php
                                                     $from = $pick($transfer, ['from_label', 'pickup_location', 'from_city'], 'Arrival point');
                                                     $to = $pick($transfer, ['to_label', 'dropoff_location', 'to_city'], 'Hotel');
-                                                    $transfer_img = $pick($transfer, ['image_url'], $img('card-transfer.svg'));
+                                                    $transfer_img = $pick($transfer, ['image_url'], '');
                                                     ?>
                                                     <div class="ajtb-v1-service-card">
                                                         <div class="ajtb-v1-service-head"><span>Transfer - <?php echo esc_html($from . ' to ' . $to); ?></span><span>Included</span></div>
                                                         <div class="ajtb-v1-service-body ajtb-v1-media-row">
-                                                            <img src="<?php echo esc_url($transfer_img); ?>" alt="Transfer visual" loading="lazy">
+                                                            <img src="<?php echo $safe_image($transfer_img, $default_transfer_image); ?>" alt="Transfer visual" loading="lazy">
                                                             <div>
                                                                 <h4><?php echo esc_html($pick($transfer, ['transfer_type', 'service_name', 'name'], 'Transfer service')); ?></h4>
                                                                 <p><?php echo esc_html($pick($transfer, ['notes'], 'Transfer details synced from CRUD.')); ?></p>
@@ -305,7 +344,7 @@ get_header();
 
                                                 <?php if (!empty($hotel)): ?>
                                                     <?php
-                                                    $hotel_img = $pick($hotel, ['image_url'], $img('card-hotel.svg'));
+                                                    $hotel_img = $pick($hotel, ['image_url'], '');
                                                     $hotel_name = $pick($hotel, ['hotel_name', 'name', 'title'], 'Hotel');
                                                     $hotel_desc = $pick($hotel, ['notes', 'address'], 'Hotel details synced from CRUD.');
                                                     $hotel_city = $pick($hotel, ['city', 'hotel_city', 'location'], $destination);
@@ -315,7 +354,7 @@ get_header();
                                                     <div class="ajtb-v1-service-card">
                                                         <div class="ajtb-v1-service-head"><span>Hotel - <?php echo esc_html($hotel_city); ?></span><span>View</span></div>
                                                         <div class="ajtb-v1-service-body ajtb-v1-media-row">
-                                                            <img src="<?php echo esc_url($hotel_img); ?>" alt="Hotel visual" loading="lazy">
+                                                            <img src="<?php echo $safe_image($hotel_img, $default_hotel_image); ?>" alt="Hotel visual" loading="lazy">
                                                             <div>
                                                                 <h4><?php echo esc_html($hotel_name); ?></h4>
                                                                 <p><?php echo esc_html($hotel_desc); ?></p>
@@ -327,7 +366,7 @@ get_header();
 
                                                 <?php foreach (array_slice($activities, 0, 2) as $activity): ?>
                                                     <?php
-                                                    $act_img = $pick($activity, ['image_url'], $img('card-activity.svg'));
+                                                    $act_img = $pick($activity, ['image_url'], '');
                                                     $act_title = $pick($activity, ['title'], 'Activity');
                                                     $act_desc = $pick($activity, ['description'], 'Activity details synced from CRUD.');
                                                     $act_price = isset($activity['custom_price']) && $activity['custom_price'] !== null
@@ -337,7 +376,7 @@ get_header();
                                                     <div class="ajtb-v1-service-card">
                                                         <div class="ajtb-v1-service-head"><span>Activity - Program</span><span>Included</span></div>
                                                         <div class="ajtb-v1-service-body ajtb-v1-media-row">
-                                                            <img src="<?php echo esc_url($act_img); ?>" alt="Activity visual" loading="lazy">
+                                                            <img src="<?php echo $safe_image($act_img, $default_activity_image); ?>" alt="Activity visual" loading="lazy">
                                                             <div>
                                                                 <h4><?php echo esc_html($act_title); ?></h4>
                                                                 <p><?php echo esc_html($act_desc); ?></p>

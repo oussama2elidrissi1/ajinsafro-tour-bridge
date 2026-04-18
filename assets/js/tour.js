@@ -198,6 +198,10 @@
             return Math.max(measured, total, 56);
         }
 
+        function isMobileSearchLayout() {
+            return window.matchMedia("(max-width: 767px)").matches;
+        }
+
         function computeOffset() {
             var adminOffset = getAdminOffset();
             var headerHeight = getHeaderHeight();
@@ -206,6 +210,12 @@
             var stickyTop = adminOffset + headerHeight + 10;
             var railTop = stickyTop + searchHeight + 14;
             var dayOffset = railTop + 16;
+
+            if (isMobileSearchLayout()) {
+                stickyTop = adminOffset + headerHeight + 8;
+                railTop = stickyTop + 10;
+                dayOffset = adminOffset + headerHeight + 20;
+            }
 
             pageRoot.style.setProperty("--ajtb-v1-admin-top", adminOffset + "px");
             pageRoot.style.setProperty("--ajtb-v1-sticky-top", stickyTop + "px");
@@ -230,7 +240,9 @@
             if (isNaN(stickyTop)) {
                 stickyTop = 88;
             }
-            searchBox.classList.toggle("is-stuck", rect.top <= stickyTop + 1);
+            var mobileLayout = isMobileSearchLayout();
+            var searchIsStuck = !mobileLayout && rect.top <= stickyTop + 1;
+            searchBox.classList.toggle("is-stuck", searchIsStuck);
             headerRoot.classList.toggle("is-stuck", isHeaderStuck);
             document.body.classList.toggle("ajtb-v1-header-is-sticky", isHeaderStuck);
             headerRoot.style.top = adminTop + "px";

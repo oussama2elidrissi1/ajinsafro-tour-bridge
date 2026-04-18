@@ -168,35 +168,40 @@ body.single-st_tours .footer-bottom {
 .ajtb-v1-search-box {
     display: grid;
     grid-template-columns: 1.15fr 1fr 1fr auto;
-    gap: 12px;
-    padding: 14px;
-    border-radius: var(--ajtb-v1-radius-xl);
-    background: linear-gradient(145deg, #0d3553, #10517c);
-    box-shadow: var(--ajtb-v1-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 14px;
+    padding: 16px;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #0b3250, #0f4f79);
+    box-shadow:
+        0 14px 34px rgba(10, 40, 64, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     position: sticky;
     top: var(--ajtb-v1-sticky-top);
     z-index: 160;
-    margin-bottom: 2px;
+    margin-bottom: 8px;
     transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .ajtb-v1-search-box.is-stuck {
-    box-shadow: 0 18px 38px rgba(13, 53, 83, 0.24);
+    box-shadow:
+        0 20px 40px rgba(10, 40, 64, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(0);
 }
 
 .ajtb-v1-search-card {
     background: #fff;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 131, 196, 0.12);
-    padding: 14px 16px;
-    min-height: 86px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 131, 196, 0.16);
+    padding: 14px 18px;
+    min-height: 88px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+    gap: 9px;
+    box-shadow: 0 6px 16px rgba(15, 79, 121, 0.1);
 }
 
 .ajtb-v1-search-label {
@@ -211,21 +216,44 @@ body.single-st_tours .footer-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
     color: #102540;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.ajtb-v1-search-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ajtb-v1-search-value strong {
-    color: #40658f;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef5ff;
+    border: 1px solid #d6e5f7;
+    color: #335c87;
+    font-size: 12px;
+    flex: 0 0 auto;
 }
 
 .ajtb-v1-search-btn {
     border: 0;
-    border-radius: 14px;
-    min-width: 132px;
-    padding: 0 26px;
+    border-radius: 16px;
+    min-width: 150px;
+    min-height: 88px;
+    padding: 0 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #fff;
     font-size: 14px;
     font-weight: 800;
@@ -290,31 +318,64 @@ body.single-st_tours .footer-bottom {
 .ajtb-v1-gallery {
     margin-top: 16px;
     display: grid;
-    grid-template-columns: 1.56fr 0.94fr;
-    gap: 14px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ajtb-v1-gallery-item {
+    margin: 0;
+    grid-column: span 4;
 }
 
 .ajtb-v1-gallery img {
     width: 100%;
+    height: 100%;
+    min-height: 220px;
     object-fit: cover;
     border-radius: var(--ajtb-v1-radius-lg);
     border: 1px solid #d9e7f5;
     box-shadow: var(--ajtb-v1-shadow);
 }
 
-.ajtb-v1-gallery-main {
-    min-height: 420px;
+.ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item {
+    grid-column: 1 / -1;
 }
 
-.ajtb-v1-gallery-side {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 12px;
+.ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item img {
+    min-height: 430px;
 }
 
-.ajtb-v1-gallery-side img {
-    min-height: 204px;
+.ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item {
+    grid-column: span 6;
+}
+
+.ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item img {
+    min-height: 360px;
+}
+
+.ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item.is-featured,
+.ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item.is-featured,
+.ajtb-v1-gallery--count-many .ajtb-v1-gallery-item.is-featured {
+    grid-column: span 8;
+    grid-row: span 2;
+}
+
+.ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item:not(.is-featured),
+.ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item:not(.is-featured),
+.ajtb-v1-gallery--count-many .ajtb-v1-gallery-item:not(.is-featured) {
+    grid-column: span 4;
+}
+
+.ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item.is-featured img,
+.ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item.is-featured img,
+.ajtb-v1-gallery--count-many .ajtb-v1-gallery-item.is-featured img {
+    min-height: 440px;
+}
+
+.ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item:not(.is-featured) img,
+.ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item:not(.is-featured) img,
+.ajtb-v1-gallery--count-many .ajtb-v1-gallery-item:not(.is-featured) img {
+    min-height: 214px;
 }
 
 .ajtb-v1-tabs {
@@ -1011,7 +1072,7 @@ body.single-st_tours .footer-bottom {
     }
 
     .ajtb-v1-search-btn {
-        min-height: 54px;
+        min-height: 56px;
     }
 
     .ajtb-v1-layout {
@@ -1059,15 +1120,27 @@ body.single-st_tours .footer-bottom {
     }
 
     .ajtb-v1-gallery {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 
-    .ajtb-v1-gallery-main {
-        min-height: 300px;
+    .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-many .ajtb-v1-gallery-item {
+        grid-column: span 1;
+        grid-row: auto;
     }
 
-    .ajtb-v1-gallery-side img {
-        min-height: 150px;
+    .ajtb-v1-gallery img,
+    .ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-many .ajtb-v1-gallery-item img {
+        min-height: 190px;
     }
 
     .ajtb-v1-fallback-footer__grid {
@@ -1086,6 +1159,27 @@ body.single-st_tours .footer-bottom {
 
     .ajtb-v1-search-box {
         grid-template-columns: 1fr;
+        position: static;
+        top: auto;
+        z-index: 1;
+        padding: 12px;
+        border-radius: 16px;
+        gap: 10px;
+    }
+
+    .ajtb-v1-search-card {
+        min-height: 78px;
+        padding: 12px 14px;
+    }
+
+    .ajtb-v1-search-value {
+        font-size: 16px;
+    }
+
+    .ajtb-v1-search-btn {
+        width: 100%;
+        min-height: 50px;
+        border-radius: 12px;
     }
 
     .ajtb-v1-title {
@@ -1106,6 +1200,28 @@ body.single-st_tours .footer-bottom {
 
     .ajtb-v1-stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ajtb-v1-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item,
+    .ajtb-v1-gallery--count-many .ajtb-v1-gallery-item {
+        grid-column: 1 / -1;
+    }
+
+    .ajtb-v1-gallery img,
+    .ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item img,
+    .ajtb-v1-gallery--count-many .ajtb-v1-gallery-item img {
+        min-height: 210px;
     }
 
     .ajtb-v1-day-card {

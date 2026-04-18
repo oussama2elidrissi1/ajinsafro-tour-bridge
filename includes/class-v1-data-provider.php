@@ -156,67 +156,42 @@ class AJTB_V1_Data_Provider
     private static function resolve_images(array $wp_data): array
     {
         $fallback_main = AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-main.svg';
-        $fallback_side = [
-            AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-side-1.svg',
-            AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-side-2.svg',
-            AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-side-3.svg',
-            AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-side-4.svg',
-        ];
-
-        $hero_main = '';
+        $images = [];
         if (!empty($wp_data['hero_image_url'])) {
-            $hero_main = (string) $wp_data['hero_image_url'];
-        } elseif (!empty($wp_data['featured_image']['url'])) {
-            $hero_main = (string) $wp_data['featured_image']['url'];
+            $images[] = (string) $wp_data['hero_image_url'];
+        }
+        if (!empty($wp_data['featured_image']['url'])) {
+            $images[] = (string) $wp_data['featured_image']['url'];
         }
 
-        $gallery_pool = [];
         if (!empty($wp_data['hero_gallery']) && is_array($wp_data['hero_gallery'])) {
             foreach ($wp_data['hero_gallery'] as $img) {
                 if (!empty($img['url'])) {
-                    $gallery_pool[] = (string) $img['url'];
+                    $images[] = (string) $img['url'];
                 }
             }
         }
         if (!empty($wp_data['gallery']) && is_array($wp_data['gallery'])) {
             foreach ($wp_data['gallery'] as $img) {
                 if (!empty($img['url'])) {
-                    $gallery_pool[] = (string) $img['url'];
+                    $images[] = (string) $img['url'];
                 }
             }
         }
-        $gallery_pool = self::unique_non_empty($gallery_pool);
 
-        if ($hero_main === '' && !empty($gallery_pool[0])) {
-            $hero_main = $gallery_pool[0];
-        }
-        if ($hero_main === '') {
-            $hero_main = $fallback_main;
+        $images = self::unique_non_empty($images);
+        if (empty($images)) {
+            $images = [$fallback_main];
         }
 
-        $side = [];
-        foreach ($gallery_pool as $url) {
-            if ($url !== $hero_main) {
-                $side[] = $url;
-            }
-            if (count($side) >= 4) {
-                break;
-            }
-        }
-
-        if (count($side) < 4) {
-            foreach ($fallback_side as $fallback) {
-                if (count($side) >= 4) {
-                    break;
-                }
-                $side[] = $fallback;
-            }
-        }
+        $hero_main = $images[0];
+        $side = array_slice($images, 1);
 
         return [
             'main' => $hero_main,
-            'side' => array_slice($side, 0, 4),
-            'gallery_pool' => array_merge([$hero_main], $side),
+            'side' => $side,
+            'all' => $images,
+            'gallery_pool' => $images,
         ];
     }
 
@@ -607,4 +582,3 @@ class AJTB_V1_Data_Provider
         return $out;
     }
 }
-
