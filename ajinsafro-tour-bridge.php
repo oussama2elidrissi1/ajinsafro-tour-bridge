@@ -789,6 +789,7 @@ class Ajinsafro_Tour_Bridge {
 }
 
 
+
 /**
  * Main function to get plugin instance
  * @return Ajinsafro_Tour_Bridge
