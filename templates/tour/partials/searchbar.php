@@ -164,11 +164,23 @@ if (!empty($departure_places)) {
     foreach ($departure_places as $place) {
         $departure_cities[$place['id']] = $place['name'];
     }
+} else {
+    // Fallback to static cities if no data configured
+    $departure_cities = [
+        '' => __('Choisir', 'ajinsafro-tour-bridge'),
+        'Casablanca' => 'Casablanca',
+        'Rabat' => 'Rabat',
+        'Tanger' => 'Tanger',
+        'Marrakech' => 'Marrakech',
+    ];
 }
 
 $start_from = isset($saved['start_from']) ? $saved['start_from'] : (isset($saved['starting_from']) ? $saved['starting_from'] : '');
+if ($start_from === '' && !empty($tour['address'])) {
+    $start_from = $tour['address'];
+}
 if ($start_from !== '' && !isset($departure_cities[ $start_from ])) {
-    $start_from = '';
+    $departure_cities[ $start_from ] = $start_from;
 }
 
 $travel_date = isset($saved['travel_date']) ? $saved['travel_date'] : (isset($saved['travelling_on']) ? $saved['travelling_on'] : '');

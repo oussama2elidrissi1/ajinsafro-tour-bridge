@@ -140,19 +140,10 @@ class AJTB_Template_Loader
             ? ajtb_parse_list_content($sections['exclusions']['content'])
             : $wp_data['excluded'];
 
-        $highlights = self::resolve_highlights($sections, $wp_data['highlights']);
-        $faqs = self::resolve_faqs($sections, $wp_data['faqs']);
-        $extras_content = self::first_section_content($sections, ['extras', 'supplements', 'supplement', 'extra_options']);
-        $voyage_extras = $laravel_data['voyage_extras'] ?? [];
-
         // Get overview from Laravel if available
         $overview = !empty($sections['overview']['content'])
             ? $sections['overview']['content']
             : '';
-
-        $cancellation_policy = !empty($sections['cancellation_policy']['content'])
-            ? $sections['cancellation_policy']['content']
-            : $wp_data['cancellation_policy'];
 
         // Merge pricing with seasonal rules
         $pricing = $wp_data['pricing'];
@@ -209,8 +200,8 @@ class AJTB_Template_Loader
             'itinerary' => $itinerary,
             'inclusions' => $inclusions,
             'exclusions' => $exclusions,
-            'highlights' => $highlights,
-            'faqs' => $faqs,
+            'highlights' => $wp_data['highlights'],
+            'faqs' => $wp_data['faqs'],
 
             // Reviews
             'rating' => $wp_data['rating'],
@@ -218,9 +209,7 @@ class AJTB_Template_Loader
             // Extras
             'external_booking_link' => $wp_data['external_booking_link'],
             'video' => $wp_data['video'],
-            'cancellation_policy' => $cancellation_policy,
-            'extras_content' => $extras_content,
-            'voyage_extras' => $voyage_extras,
+            'cancellation_policy' => $wp_data['cancellation_policy'],
 
             // Taxonomies
             'categories' => $wp_data['categories'],
@@ -238,9 +227,6 @@ class AJTB_Template_Loader
                 'itinerary' => !empty($laravel_data['days']) ? 'laravel' : 'wordpress',
                 'inclusions' => !empty($sections['inclusions']['content']) ? 'laravel' : 'wordpress',
                 'exclusions' => !empty($sections['exclusions']['content']) ? 'laravel' : 'wordpress',
-                'highlights' => self::has_section_content($sections, ['highlights', 'tour_highlights', 'points_forts']) ? 'laravel' : 'wordpress',
-                'faqs' => self::has_section_content($sections, ['faq', 'faqs']) ? 'laravel' : 'wordpress',
-                'extras' => (!empty($voyage_extras) || $extras_content !== '') ? 'laravel' : 'none',
                 'pricing' => !empty($laravel_data['pricing_rules']) ? 'laravel' : 'wordpress',
             ],
             // Client activity selections (front add/remove)
@@ -250,106 +236,9 @@ class AJTB_Template_Loader
             // Flights (displayed after session selections) and all flights (for "Add this flight" links)
             'flights' => $laravel_data['flights'] ?? [],
             'all_flights' => $laravel_data['all_flights'] ?? [],
-            'departure_places' => $laravel_data['departure_places'] ?? [],
-            'travel_dates' => $laravel_data['travel_dates'] ?? [],
             // Laravel voyage_flights: Vol Aller (Jour 1) + Vol Retour (dernier jour)
             'outboundFlight' => $laravel_data['laravel_voyage_flights']['outbound'] ?? null,
             'inboundFlight' => $laravel_data['laravel_voyage_flights']['inbound'] ?? null,
         ];
-    }
-
-    /**
-     * Return first non-empty section content for the given keys.
-     *
-     * @param array<string, array<string, mixed>> $sections
-     * @param array<int, string> $keys
-     */
-    private static function first_section_content(array $sections, array $keys)
-    {
-        foreach ($keys as $key) {
-            if (!empty($sections[$key]['content'])) {
-                return (string) $sections[$key]['content'];
-            }
-        }
-        return '';
-    }
-
-    /**
-     * Check whether at least one section key has non-empty content.
-     *
-     * @param array<string, array<string, mixed>> $sections
-     * @param array<int, string> $keys
-     */
-    private static function has_section_content(array $sections, array $keys)
-    {
-        return self::first_section_content($sections, $keys) !== '';
-    }
-
-    /**
-     * Resolve highlights with Laravel section priority.
-     *
-     * @param array<string, array<string, mixed>> $sections
-     * @param array<int, string> $wpHighlights
-     * @return array<int, string>
-     */
-    private static function resolve_highlights(array $sections, array $wpHighlights)
-    {
-        $content = self::first_section_content($sections, ['highlights', 'tour_highlights', 'points_forts']);
-        if ($content === '') {
-            return $wpHighlights;
-        }
-        $parsed = ajtb_parse_list_content($content);
-        return !empty($parsed) ? $parsed : $wpHighlights;
-    }
-
-    /**
-     * Resolve FAQs with Laravel section priority.
-     *
-     * @param array<string, array<string, mixed>> $sections
-     * @param array<int, array<string, string>> $wpFaqs
-     * @return array<int, array<string, string>>
-     */
-    private static function resolve_faqs(array $sections, array $wpFaqs)
-    {
-        $content = self::first_section_content($sections, ['faq', 'faqs']);
-        if ($content === '') {
-            return $wpFaqs;
-        }
-
-        $decoded = json_decode($content, true);
-        if (is_array($decoded)) {
-            $out = [];
-            foreach ($decoded as $row) {
-                if (!is_array($row)) {
-                    continue;
-                }
-                $question = '';
-                foreach (['question', 'q', 'title'] as $k) {
-                    if (!empty($row[$k])) {
-                        $question = trim((string) $row[$k]);
-                        break;
-                    }
-                }
-                $answer = '';
-                foreach (['answer', 'a', 'content', 'description'] as $k) {
-                    if (!empty($row[$k])) {
-                        $answer = (string) $row[$k];
-                        break;
-                    }
-                }
-                if ($question === '') {
-                    continue;
-                }
-                $out[] = [
-                    'question' => $question,
-                    'answer' => $answer,
-                ];
-            }
-            if (!empty($out)) {
-                return $out;
-            }
-        }
-
-        return $wpFaqs;
     }
 }

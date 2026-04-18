@@ -49,7 +49,7 @@ foreach (['transfer_title', 'service_title', 'service_name', 'transfer_type', 't
     }
 }
 if ($section_title === '') {
-    $section_title = $card_label;
+    $section_title = __('Transfert Partage', 'ajinsafro-tour-bridge');
 }
 
 $transfer_name = '';
@@ -104,7 +104,7 @@ foreach (['status_label', 'status', 'state'] as $key) {
     }
 }
 if ($status_label === '') {
-    $status_label = '';
+    $status_label = __('Transfert confirme', 'ajinsafro-tour-bridge');
 }
 
 $can_edit = current_user_can('edit_posts');
@@ -168,14 +168,12 @@ $can_edit = current_user_can('edit_posts');
         <div class="ajtb-card-notes"><?php echo wp_kses_post(nl2br($notes)); ?></div>
     <?php endif; ?>
 
-    <?php if ($status_label !== ''): ?>
-        <div class="ajtb-card-footer">
-            <span class="ajtb-card-status">
-                <?php echo esc_html($status_label); ?>
-                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </span>
-        </div>
-    <?php endif; ?>
+    <div class="ajtb-card-footer">
+        <span class="ajtb-card-status">
+            <?php echo esc_html($status_label); ?>
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </span>
+    </div>
 </div>

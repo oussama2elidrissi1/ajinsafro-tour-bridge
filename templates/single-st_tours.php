@@ -165,24 +165,6 @@ get_header();
                     }
                 }
                 $has_summary_tab = !empty($summary_days);
-                $laravel_sections = isset($tour['laravel_sections']) && is_array($tour['laravel_sections']) ? $tour['laravel_sections'] : [];
-                $departure_places = isset($tour['departure_places']) && is_array($tour['departure_places']) ? $tour['departure_places'] : [];
-                $travel_dates = isset($tour['travel_dates']) && is_array($tour['travel_dates']) ? $tour['travel_dates'] : [];
-                $first_section_content = function ($keys) use ($laravel_sections) {
-                    foreach ($keys as $key) {
-                        if (!empty($laravel_sections[$key]['content'])) {
-                            return (string) $laravel_sections[$key]['content'];
-                        }
-                    }
-                    return '';
-                };
-                $reservation_info = $first_section_content(['reservation', 'reservation_info', 'booking_conditions']);
-                $schedule_info = $first_section_content(['schedules', 'horaires', 'flight_schedules']);
-                $calendar_sync_info = $first_section_content(['calendar_sync', 'sync_calendar']);
-                $extras_content = isset($tour['extras_content']) ? trim((string) $tour['extras_content']) : '';
-                $voyage_extras = isset($tour['voyage_extras']) && is_array($tour['voyage_extras']) ? $tour['voyage_extras'] : [];
-                $has_extras_tab = !empty($voyage_extras) || $extras_content !== '';
-                $has_availability_tab = !empty($departure_places) || !empty($travel_dates) || $reservation_info !== '' || $schedule_info !== '' || $calendar_sync_info !== '';
                 ?>
                 <a href="#overview" class="tab-link ajtb-tab-ape-it<?php echo $has_itinerary_tab ? '' : ' active'; ?>"><?php esc_html_e('Aperçu', 'ajinsafro-tour-bridge'); ?></a>
                 <?php if (!empty($tour['categories']) || !empty($tour['tour_types'])): ?>
@@ -201,12 +183,6 @@ get_header();
                 <?php endif; ?>
                 <?php if ($has_summary_tab): ?>
                     <a href="#summary" class="tab-link"><?php esc_html_e('Summary', 'ajinsafro-tour-bridge'); ?></a>
-                <?php endif; ?>
-                <?php if ($has_availability_tab): ?>
-                    <a href="#availability" class="tab-link"><?php esc_html_e('Départs', 'ajinsafro-tour-bridge'); ?></a>
-                <?php endif; ?>
-                <?php if ($has_extras_tab): ?>
-                    <a href="#extras" class="tab-link"><?php esc_html_e('Extras', 'ajinsafro-tour-bridge'); ?></a>
                 <?php endif; ?>
                 <?php if (!empty($tour['inclusions']) || !empty($tour['exclusions'])): ?>
                     <a href="#include-exclude" class="tab-link"><?php esc_html_e('Inclus/Exclus', 'ajinsafro-tour-bridge'); ?></a>
@@ -312,80 +288,6 @@ get_header();
                 <!-- Overview Section (Aperçu du Circuit) -->
                 <?php ajtb_get_partial('overview', ['tour' => $tour]); ?>
 
-                <?php if ($has_availability_tab): ?>
-                    <section class="ajtb-section ajtb-tab-panel ajtb-tab-panel-hidden" id="availability">
-                        <h2 class="ajtb-section-title">
-                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <?php esc_html_e('Départs et Disponibilités', 'ajinsafro-tour-bridge'); ?>
-                        </h2>
-
-                        <?php if (!empty($departure_places)): ?>
-                            <div class="ajtb-content-block">
-                                <h3 class="facts-title"><?php esc_html_e('Lieux de départ', 'ajinsafro-tour-bridge'); ?></h3>
-                                <div class="ajtb-tags">
-                                    <?php foreach ($departure_places as $place): ?>
-                                        <?php
-                                        $place_name = isset($place['name']) ? trim((string) $place['name']) : '';
-                                        if ($place_name === '') {
-                                            continue;
-                                        }
-                                        $place_code = isset($place['code']) ? trim((string) $place['code']) : '';
-                                        ?>
-                                        <span class="tag-item"><?php echo esc_html($place_name . ($place_code !== '' ? ' (' . $place_code . ')' : '')); ?></span>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($travel_dates)): ?>
-                            <div class="ajtb-content-block">
-                                <h3 class="facts-title"><?php esc_html_e('Dates disponibles', 'ajinsafro-tour-bridge'); ?></h3>
-                                <ul class="ajtb-availability-dates">
-                                    <?php foreach ($travel_dates as $date_row): ?>
-                                        <?php
-                                        $raw_date = isset($date_row['date']) ? trim((string) $date_row['date']) : '';
-                                        if ($raw_date === '') {
-                                            continue;
-                                        }
-                                        $label = $raw_date;
-                                        if (strtotime($raw_date) !== false) {
-                                            $label = date_i18n('d/m/Y', strtotime($raw_date));
-                                        }
-                                        ?>
-                                        <li><?php echo esc_html($label); ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ($reservation_info !== ''): ?>
-                            <div class="ajtb-content-block">
-                                <h3 class="facts-title"><?php esc_html_e('Réservation', 'ajinsafro-tour-bridge'); ?></h3>
-                                <div class="ajtb-policy-content"><?php echo wp_kses_post($reservation_info); ?></div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ($schedule_info !== ''): ?>
-                            <div class="ajtb-content-block">
-                                <h3 class="facts-title"><?php esc_html_e('Horaires', 'ajinsafro-tour-bridge'); ?></h3>
-                                <div class="ajtb-policy-content"><?php echo wp_kses_post($schedule_info); ?></div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ($calendar_sync_info !== ''): ?>
-                            <div class="ajtb-content-block">
-                                <h3 class="facts-title"><?php esc_html_e('Synchronisation calendrier', 'ajinsafro-tour-bridge'); ?></h3>
-                                <div class="ajtb-policy-content"><?php echo wp_kses_post($calendar_sync_info); ?></div>
-                            </div>
-                        <?php endif; ?>
-                    </section>
-                <?php endif; ?>
-
                 <?php if ($has_summary_tab): ?>
                     <section class="ajtb-section ajtb-tab-panel ajtb-tab-panel-hidden" id="summary">
                         <h2 class="ajtb-section-title">
@@ -432,64 +334,6 @@ get_header();
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                    </section>
-                <?php endif; ?>
-
-                <?php if ($has_extras_tab): ?>
-                    <section class="ajtb-section ajtb-tab-panel ajtb-tab-panel-hidden" id="extras">
-                        <h2 class="ajtb-section-title">
-                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2">
-                                <path d="M12 2v20"></path>
-                                <path d="M2 12h20"></path>
-                            </svg>
-                            <?php esc_html_e('Extras et Suppléments', 'ajinsafro-tour-bridge'); ?>
-                        </h2>
-
-                        <?php if (!empty($voyage_extras)): ?>
-                            <div class="ajtb-content-block">
-                                <div class="ajtb-tags">
-                                    <?php
-                                    $currency = $tour['pricing']['currency_symbol'] ?? 'DH';
-                                    foreach ($voyage_extras as $extra):
-                                        $name = isset($extra['name']) ? trim((string) $extra['name']) : '';
-                                        if ($name === '') {
-                                            continue;
-                                        }
-                                        $adult = isset($extra['price_adult']) ? (float) $extra['price_adult'] : 0.0;
-                                        $child = isset($extra['price_child']) ? (float) $extra['price_child'] : 0.0;
-                                        $type = isset($extra['extra_type']) ? trim((string) $extra['extra_type']) : '';
-                                        $description = isset($extra['description']) ? trim((string) $extra['description']) : '';
-                                    ?>
-                                        <div class="tag-item" style="display:block;width:100%;text-align:left;">
-                                            <strong><?php echo esc_html($name); ?></strong>
-                                            <?php if ($type !== ''): ?>
-                                                <span style="opacity:.8;"> • <?php echo esc_html($type); ?></span>
-                                            <?php endif; ?>
-                                            <?php if ($adult > 0 || $child > 0): ?>
-                                                <div style="font-size:12px;margin-top:4px;">
-                                                    <?php if ($adult > 0): ?>
-                                                        <?php echo esc_html__('Adulte', 'ajinsafro-tour-bridge') . ': ' . esc_html(number_format($adult, 0, ',', ' ') . ' ' . $currency); ?>
-                                                    <?php endif; ?>
-                                                    <?php if ($adult > 0 && $child > 0): ?> • <?php endif; ?>
-                                                    <?php if ($child > 0): ?>
-                                                        <?php echo esc_html__('Enfant', 'ajinsafro-tour-bridge') . ': ' . esc_html(number_format($child, 0, ',', ' ') . ' ' . $currency); ?>
-                                                    <?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
-                                            <?php if ($description !== ''): ?>
-                                                <div style="font-size:12px;opacity:.85;margin-top:4px;"><?php echo esc_html($description); ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ($extras_content !== ''): ?>
-                            <div class="ajtb-content-block">
-                                <div class="ajtb-policy-content"><?php echo wp_kses_post($extras_content); ?></div>
-                            </div>
-                        <?php endif; ?>
                     </section>
                 <?php endif; ?>
 
