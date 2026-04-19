@@ -938,6 +938,122 @@ body.single-st_tours .footer-bottom {
     background: #f1f7ff;
 }
 
+.ajtb-v1-optional-block {
+    margin-top: 16px;
+    padding: 14px;
+    border: 1px dashed #c7d9ed;
+    border-radius: 14px;
+    background: #f7fbff;
+}
+
+.ajtb-v1-optional-title {
+    margin: 0;
+    color: #153150;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.ajtb-v1-optional-subtitle {
+    margin: 4px 0 0;
+    color: #5f7594;
+    font-size: 12px;
+}
+
+.ajtb-v1-optional-grid {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.ajtb-v1-optional-card {
+    display: grid;
+    grid-template-columns: 98px minmax(0, 1fr);
+    gap: 10px;
+    border: 1px solid #d5e5f5;
+    border-radius: 12px;
+    background: #fff;
+    padding: 10px;
+}
+
+.ajtb-v1-optional-media img {
+    width: 100%;
+    height: 86px;
+    object-fit: cover;
+    border-radius: 9px;
+}
+
+.ajtb-v1-optional-body h5 {
+    margin: 4px 0 4px;
+    color: #102a46;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ajtb-v1-optional-body p {
+    margin: 0;
+    color: #58708e;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.ajtb-v1-optional-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: #fff1de;
+    color: #9d5a00;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ajtb-v1-optional-footer {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.ajtb-v1-optional-price {
+    color: #0f3458;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.ajtb-v1-option-btn {
+    border: 0;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 9px;
+    background: linear-gradient(180deg, #1f8fff, #0568f5);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+}
+
+.ajtb-v1-option-btn.is-loading {
+    opacity: 0.75;
+    cursor: wait;
+}
+
+.ajtb-v1-option-btn.is-done {
+    background: linear-gradient(180deg, #28a36a, #1d8a58);
+}
+
+.ajtb-v1-option-btn.is-disabled,
+.ajtb-v1-option-btn:disabled {
+    background: #d7e3f1;
+    color: #48607d;
+    cursor: not-allowed;
+}
+
 .ajtb-v1-tab-panel h2 {
     margin: 0 0 12px;
     color: #17304d;
@@ -1596,6 +1712,19 @@ body.single-st_tours .footer-bottom {
     .ajtb-v1-media-row img {
         width: 100%;
         min-height: 160px;
+    }
+
+    .ajtb-v1-optional-card {
+        grid-template-columns: 1fr;
+    }
+
+    .ajtb-v1-optional-media img {
+        height: 150px;
+    }
+
+    .ajtb-v1-optional-footer {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .ajtb-v1-fallback-footer__grid {

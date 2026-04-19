@@ -681,6 +681,89 @@
         window.addEventListener("load", updateStuckState);
     }
 
+    function initOptionalActivitiesActions() {
+        var page = document.getElementById("ajtb-v1-page");
+        if (!page) {
+            return;
+        }
+
+        var ajaxUrl = window.ajtbData && window.ajtbData.ajaxUrl ? window.ajtbData.ajaxUrl : "";
+        var nonce = window.ajtbData && window.ajtbData.activityNonce ? window.ajtbData.activityNonce : "";
+        if (!ajaxUrl || !nonce) {
+            return;
+        }
+
+        function setBusy(button, busy) {
+            if (!button) {
+                return;
+            }
+            button.disabled = !!busy;
+            button.classList.toggle("is-loading", !!busy);
+        }
+
+        function showButtonState(button, text, done) {
+            if (!button) {
+                return;
+            }
+            button.textContent = text;
+            if (done) {
+                button.classList.add("is-done");
+            }
+        }
+
+        page.addEventListener("click", function (event) {
+            var button = event.target.closest("[data-ajtb-v1-action='add-activity']");
+            if (!button || button.disabled) {
+                return;
+            }
+
+            event.preventDefault();
+            var tourId = parseInt(button.getAttribute("data-tour-id") || "0", 10);
+            var dayId = parseInt(button.getAttribute("data-day-id") || "0", 10);
+            var activityId = parseInt(button.getAttribute("data-activity-id") || "0", 10);
+            if (!tourId || !dayId || !activityId) {
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("action", "ajtb_v1_toggle_activity");
+            formData.append("nonce", nonce);
+            formData.append("tour_id", String(tourId));
+            formData.append("day_id", String(dayId));
+            formData.append("activity_id", String(activityId));
+            formData.append("activity_action", "added");
+
+            setBusy(button, true);
+            fetch(ajaxUrl, {
+                method: "POST",
+                credentials: "same-origin",
+                body: formData,
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    if (!json || !json.success) {
+                        throw new Error((json && json.data && json.data.message) || "Action impossible");
+                    }
+                    showButtonState(button, "Ajoutée", true);
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 350);
+                })
+                .catch(function () {
+                    var fallback = window.ajtbData && window.ajtbData.activityMessages && window.ajtbData.activityMessages.error
+                        ? window.ajtbData.activityMessages.error
+                        : "Impossible d’ajouter l’activité pour le moment.";
+                    showButtonState(button, fallback, false);
+                    setTimeout(function () {
+                        showButtonState(button, "Ajouter à votre programme", false);
+                        setBusy(button, false);
+                    }, 1500);
+                });
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initTabs();
         initDayChips();
@@ -688,5 +771,6 @@
         initGuestsPicker();
         initDynamicStartingPrice();
         initStickySearchBox();
+        initOptionalActivitiesActions();
     });
 })();
