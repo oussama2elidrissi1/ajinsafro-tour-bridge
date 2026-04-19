@@ -43,6 +43,7 @@ class AJTB_V1_Data_Provider
             }
         }
 
+        $open_activities = [];
         if (class_exists('AJTB_Laravel_Repository')) {
             $laravel_repo = new AJTB_Laravel_Repository($tour_id);
             if (class_exists('AJTB_Activity_Selections')) {
@@ -57,6 +58,7 @@ class AJTB_V1_Data_Provider
             $flights = $laravel_repo->get_flights();
             $departure_places = $laravel_repo->get_departure_places(true);
             $departure_dates = $laravel_repo->get_departure_dates(true);
+            $open_activities = $laravel_repo->get_open_optional_activities();
         }
 
         $title = trim((string) get_the_title($tour_id));
@@ -139,6 +141,7 @@ class AJTB_V1_Data_Provider
             'inclusions' => $inclusions,
             'exclusions' => $exclusions,
             'days' => $normalized_days,
+            'open_activities' => $open_activities,
             'stats' => $stats,
             'summary_rows' => self::build_summary_rows($normalized_days),
             'coupons' => $coupon_items,

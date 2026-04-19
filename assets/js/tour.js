@@ -693,70 +693,104 @@
             return;
         }
 
-        function setBusy(button, busy) {
-            if (!button) {
-                return;
+        var openActivities = window.ajtbOpenActivities || [];
+        var overlay = document.getElementById("ajtb-act-modal-overlay");
+        var modalBody = document.getElementById("ajtb-act-modal-body");
+        var currentDayId = 0;
+        var currentTourId = parseInt(String(window.ajtbTourId || "0"), 10);
+        // Track added activity_ids per day: { dayId: Set<activityId> }
+        var addedByDay = {};
+
+        function formatPrice(price) {
+            if (price === null || price === undefined) {
+                return "Prix sur demande";
             }
-            button.disabled = !!busy;
-            button.classList.toggle("is-loading", !!busy);
+            return new Intl.NumberFormat("fr-MA").format(price) + " MAD";
         }
 
-        function showButtonState(button, text, done) {
-            if (!button) {
-                return;
-            }
-            button.textContent = text;
-            if (done) {
-                button.classList.add("is-done");
-            }
+        function isAdded(dayId, activityId) {
+            return !!(addedByDay[dayId] && addedByDay[dayId][activityId]);
         }
 
-        function toggleOptionalPanel(button) {
-            var targetSelector = button.getAttribute("data-ajtb-target") || "";
-            if (!targetSelector) {
-                return;
+        function markAdded(dayId, activityId) {
+            if (!addedByDay[dayId]) {
+                addedByDay[dayId] = {};
             }
+            addedByDay[dayId][activityId] = true;
+        }
 
-            var panel = document.querySelector(targetSelector);
-            if (!panel) {
-                return;
+        function buildActivityCard(act, dayId, tourId) {
+            var added = isAdded(dayId, act.activity_id);
+            var img = act.image_url
+                ? ‘<img src="’ + act.image_url + ‘" alt="" loading="lazy">’
+                : ‘<div class="ajtb-act-card-img-placeholder"></div>’;
+            var btnHtml = added
+                ? ‘<button type="button" class="ajtb-act-card-btn is-done" disabled>Ajout\u00e9e</button>’
+                : ‘<button type="button" class="ajtb-act-card-btn" data-ajtb-v1-action="add-activity" data-tour-id="’ + tourId + ‘" data-day-id="’ + dayId + ‘" data-activity-id="’ + act.activity_id + ‘">Ajouter</button>’;
+            return ‘<article class="ajtb-act-card" data-activity-id="’ + act.activity_id + ‘">’ +
+                ‘<div class="ajtb-act-card-media">’ + img + ‘</div>’ +
+                ‘<div class="ajtb-act-card-body">’ +
+                ‘<span class="ajtb-act-card-badge">Option client</span>’ +
+                ‘<h4 class="ajtb-act-card-title">’ + escHtml(act.title) + ‘</h4>’ +
+                ‘<p class="ajtb-act-card-desc">’ + escHtml(act.description) + ‘</p>’ +
+                ‘<div class="ajtb-act-card-footer">’ +
+                ‘<span class="ajtb-act-card-price">’ + escHtml(formatPrice(act.price)) + ‘</span>’ +
+                btnHtml +
+                ‘</div></div></article>’;
+        }
+
+        function escHtml(str) {
+            if (!str) { return ""; }
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function openModal(dayId, tourId, dayFixedOpts) {
+            currentDayId = dayId;
+            if (!overlay || !modalBody) { return; }
+
+            var cards = [];
+            // Fixed optional for this day
+            if (dayFixedOpts && dayFixedOpts.length) {
+                dayFixedOpts.forEach(function (act) {
+                    cards.push(buildActivityCard(act, dayId, tourId));
+                });
             }
+            // Open activities (available from any day)
+            openActivities.forEach(function (act) {
+                cards.push(buildActivityCard(act, dayId, tourId));
+            });
 
-            var isHidden = panel.hasAttribute("hidden");
-            if (isHidden) {
-                panel.removeAttribute("hidden");
-                button.classList.add("is-open");
-                button.setAttribute("aria-expanded", "true");
-                setTimeout(function () {
-                    panel.scrollIntoView({ behavior: "smooth", block: "start" });
-                }, 80);
+            if (cards.length === 0) {
+                modalBody.innerHTML = ‘<p class="ajtb-act-modal-empty">Aucune activit\u00e9 optionnelle disponible pour ce jour.</p>’;
             } else {
-                panel.setAttribute("hidden", "");
-                button.classList.remove("is-open");
-                button.setAttribute("aria-expanded", "false");
+                modalBody.innerHTML = ‘<div class="ajtb-act-modal-grid">’ + cards.join("") + ‘</div>’;
             }
+
+            overlay.removeAttribute("hidden");
+            document.body.classList.add("ajtb-modal-open");
+            var closeBtn = overlay.querySelector("[data-ajtb-v1-action=’close-activity-modal’]");
+            if (closeBtn) { closeBtn.focus(); }
         }
 
-        page.addEventListener("click", function (event) {
-            var panelToggle = event.target.closest("[data-ajtb-v1-action='toggle-optional']");
-            if (panelToggle) {
-                event.preventDefault();
-                toggleOptionalPanel(panelToggle);
-                return;
-            }
+        function closeModal() {
+            if (!overlay) { return; }
+            overlay.setAttribute("hidden", "");
+            document.body.classList.remove("ajtb-modal-open");
+        }
 
-            var button = event.target.closest("[data-ajtb-v1-action='add-activity']");
-            if (!button || button.disabled) {
-                return;
-            }
-
-            event.preventDefault();
+        function addActivity(button) {
             var tourId = parseInt(button.getAttribute("data-tour-id") || "0", 10);
             var dayId = parseInt(button.getAttribute("data-day-id") || "0", 10);
             var activityId = parseInt(button.getAttribute("data-activity-id") || "0", 10);
-            if (!tourId || !dayId || !activityId) {
-                return;
-            }
+            if (!tourId || !dayId || !activityId) { return; }
+
+            button.disabled = true;
+            button.classList.add("is-loading");
+            button.textContent = "\u2026";
 
             var formData = new FormData();
             formData.append("action", "ajtb_v1_toggle_activity");
@@ -766,34 +800,73 @@
             formData.append("activity_id", String(activityId));
             formData.append("activity_action", "added");
 
-            setBusy(button, true);
             fetch(ajaxUrl, {
                 method: "POST",
                 credentials: "same-origin",
                 body: formData,
             })
-                .then(function (response) {
-                    return response.json();
-                })
+                .then(function (r) { return r.json(); })
                 .then(function (json) {
                     if (!json || !json.success) {
-                        throw new Error((json && json.data && json.data.message) || "Action impossible");
+                        throw new Error((json && json.data && json.data.message) || "Erreur");
                     }
-                    showButtonState(button, "Ajoutée", true);
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 350);
+                    markAdded(dayId, activityId);
+                    button.classList.remove("is-loading");
+                    button.classList.add("is-done");
+                    button.textContent = "Ajout\u00e9e";
+                    // Reload after short delay so the activity appears in the day
+                    setTimeout(function () { window.location.reload(); }, 600);
                 })
                 .catch(function () {
-                    var fallback = window.ajtbData && window.ajtbData.activityMessages && window.ajtbData.activityMessages.error
-                        ? window.ajtbData.activityMessages.error
-                        : "Impossible d’ajouter l’activité pour le moment.";
-                    showButtonState(button, fallback, false);
-                    setTimeout(function () {
-                        showButtonState(button, "Ajouter à votre programme", false);
-                        setBusy(button, false);
-                    }, 1500);
+                    button.disabled = false;
+                    button.classList.remove("is-loading", "is-done");
+                    button.textContent = "Ajouter";
                 });
+        }
+
+        // Close on overlay background click
+        if (overlay) {
+            overlay.addEventListener("click", function (e) {
+                if (e.target === overlay) { closeModal(); }
+            });
+        }
+
+        // Close on Escape key
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && overlay && !overlay.hasAttribute("hidden")) {
+                closeModal();
+            }
+        });
+
+        page.addEventListener("click", function (event) {
+            // Open modal CTA
+            var openBtn = event.target.closest("[data-ajtb-v1-action=’open-activity-modal’]");
+            if (openBtn) {
+                event.preventDefault();
+                var dayId = parseInt(openBtn.getAttribute("data-day-id") || "0", 10);
+                var tourId = parseInt(openBtn.getAttribute("data-tour-id") || "0", 10);
+                var rawOpts = openBtn.getAttribute("data-day-opts") || "[]";
+                var dayFixedOpts = [];
+                try { dayFixedOpts = JSON.parse(rawOpts); } catch (e) {}
+                openModal(dayId, tourId, dayFixedOpts);
+                return;
+            }
+
+            // Close button
+            var closeBtn = event.target.closest("[data-ajtb-v1-action=’close-activity-modal’]");
+            if (closeBtn) {
+                event.preventDefault();
+                closeModal();
+                return;
+            }
+
+            // Add activity inside modal
+            var addBtn = event.target.closest("[data-ajtb-v1-action=’add-activity’]");
+            if (addBtn && !addBtn.disabled) {
+                event.preventDefault();
+                addActivity(addBtn);
+                return;
+            }
         });
     }
 

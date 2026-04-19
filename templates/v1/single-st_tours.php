@@ -174,6 +174,7 @@ $price_date_map = !empty($tour_data['search']['date_prices']) && is_array($tour_
 $price_date_map_json = wp_json_encode($price_date_map);
 $price_note = !empty($tour_data['pricing']['note']) ? (string) $tour_data['pricing']['note'] : 'Tarif indicatif par adulte.';
 $client_activity_enabled = !empty($tour_data['session_token']) && !empty($tour_id);
+$open_activities = is_array($tour_data['open_activities'] ?? null) ? $tour_data['open_activities'] : [];
 
 if (empty($days)) {
     $days = [
@@ -576,53 +577,43 @@ get_header();
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                                <?php if (!empty($optional_activities)): ?>
+                                                <?php
+                                                // Collect fixed optional activity IDs for this day (day_scope='fixed' or missing)
+                                                $day_fixed_optional = [];
+                                                foreach ($optional_activities as $_oa) {
+                                                    $scope = isset($_oa['day_scope']) ? $_oa['day_scope'] : 'fixed';
+                                                    if ($scope === 'fixed') {
+                                                        $day_fixed_optional[] = $_oa;
+                                                    }
+                                                }
+                                                $has_optional_cta = !empty($day_fixed_optional) || !empty($open_activities);
+                                                ?>
+                                                <?php if ($has_optional_cta && $client_activity_enabled): ?>
+                                                    <?php
+                                                    // Build JSON data for this day's fixed optional activities
+                                                    $day_opts_json = wp_json_encode(array_values(array_map(function ($oa) {
+                                                        $price = isset($oa['custom_price']) && $oa['custom_price'] !== null
+                                                            ? (float) $oa['custom_price']
+                                                            : (isset($oa['base_price']) && $oa['base_price'] !== null ? (float) $oa['base_price'] : null);
+                                                        return [
+                                                            'activity_id' => (int) ($oa['activity_id'] ?? 0),
+                                                            'title' => (string) ($oa['title'] ?? ''),
+                                                            'description' => (string) ($oa['description'] ?? ''),
+                                                            'image_url' => $oa['image_url'] ?? null,
+                                                            'price' => $price,
+                                                        ];
+                                                    }, $day_fixed_optional)));
+                                                    ?>
                                                     <div class="ajtb-v1-optional-cta-wrap">
-                                                        <button type="button" class="ajtb-v1-optional-trigger" data-ajtb-v1-action="toggle-optional" data-ajtb-target="#<?php echo esc_attr($optional_panel_id); ?>">
-                                                            Ajouter à votre programme
-                                                            <span><?php echo esc_html((string) count($optional_activities)); ?> option<?php echo count($optional_activities) > 1 ? 's' : ''; ?></span>
+                                                        <button type="button"
+                                                            class="ajtb-v1-optional-trigger"
+                                                            data-ajtb-v1-action="open-activity-modal"
+                                                            data-day-id="<?php echo esc_attr((string) $day_db_id); ?>"
+                                                            data-tour-id="<?php echo esc_attr((string) $tour_id); ?>"
+                                                            data-day-opts="<?php echo esc_attr($day_opts_json); ?>">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                                            Ajouter une activité
                                                         </button>
-                                                        <div class="ajtb-v1-optional-panel" id="<?php echo esc_attr($optional_panel_id); ?>" hidden>
-                                                            <div class="ajtb-v1-optional-block">
-                                                                <h4 class="ajtb-v1-optional-title">Activités option client</h4>
-                                                                <p class="ajtb-v1-optional-subtitle">Ces activités restent cachées tant que le client ne les ouvre pas.</p>
-                                                                <div class="ajtb-v1-optional-grid">
-                                                                    <?php foreach ($optional_activities as $optional_activity): ?>
-                                                                        <?php
-                                                                        $opt_activity_id = isset($optional_activity['activity_id']) ? (int) $optional_activity['activity_id'] : 0;
-                                                                        $opt_img = $pick($optional_activity, ['image_url'], '');
-                                                                        $opt_title = $pick($optional_activity, ['title'], 'Activité optionnelle');
-                                                                        $opt_desc = $pick($optional_activity, ['description'], 'Activité disponible sur demande.');
-                                                                        $opt_price = isset($optional_activity['custom_price']) && $optional_activity['custom_price'] !== null
-                                                                            ? (float) $optional_activity['custom_price']
-                                                                            : (isset($optional_activity['base_price']) && $optional_activity['base_price'] !== null ? (float) $optional_activity['base_price'] : null);
-                                                                        ?>
-                                                                        <article class="ajtb-v1-optional-card" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>">
-                                                                            <div class="ajtb-v1-optional-media">
-                                                                                <img src="<?php echo $safe_image($opt_img, $default_activity_image); ?>" alt="<?php echo esc_attr($opt_title); ?>" loading="lazy">
-                                                                            </div>
-                                                                            <div class="ajtb-v1-optional-body">
-                                                                                <span class="ajtb-v1-optional-badge">Option client</span>
-                                                                                <h5><?php echo esc_html($opt_title); ?></h5>
-                                                                                <p><?php echo esc_html($opt_desc); ?></p>
-                                                                                <div class="ajtb-v1-optional-footer">
-                                                                                    <span class="ajtb-v1-optional-price"><?php echo $opt_price !== null ? esc_html(number_format($opt_price, 0, ',', ' ') . ' MAD') : 'Prix sur demande'; ?></span>
-                                                                                    <?php if ($client_activity_enabled && $opt_activity_id > 0 && $day_db_id > 0): ?>
-                                                                                        <button type="button" class="ajtb-v1-option-btn" data-ajtb-v1-action="add-activity" data-tour-id="<?php echo esc_attr((string) $tour_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>">
-                                                                                            Ajouter à votre programme
-                                                                                        </button>
-                                                                                    <?php else: ?>
-                                                                                        <button type="button" class="ajtb-v1-option-btn is-disabled" disabled>
-                                                                                            Disponible à la réservation
-                                                                                        </button>
-                                                                                    <?php endif; ?>
-                                                                                </div>
-                                                                            </div>
-                                                                        </article>
-                                                                    <?php endforeach; ?>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 <?php endif; ?>
 
@@ -640,6 +631,41 @@ get_header();
                             </div>
                         </div>
                     </section>
+
+                    <?php if ($client_activity_enabled): ?>
+                    <script>
+                    window.ajtbOpenActivities = <?php echo wp_json_encode(array_values(array_map(function ($oa) {
+                        $price = isset($oa['custom_price']) && $oa['custom_price'] !== null
+                            ? (float) $oa['custom_price']
+                            : (isset($oa['base_price']) && $oa['base_price'] !== null ? (float) $oa['base_price'] : null);
+                        return [
+                            'activity_id' => (int) ($oa['activity_id'] ?? 0),
+                            'title' => (string) ($oa['title'] ?? ''),
+                            'description' => (string) ($oa['description'] ?? ''),
+                            'image_url' => $oa['image_url'] ?? null,
+                            'price' => $price,
+                        ];
+                    }, $open_activities))); ?>;
+                    window.ajtbTourId = <?php echo (int) $tour_id; ?>;
+                    </script>
+                    <?php endif; ?>
+
+                    <div id="ajtb-act-modal-overlay" class="ajtb-act-modal-overlay" hidden aria-modal="true" role="dialog" aria-label="Ajouter une activité">
+                        <div class="ajtb-act-modal-drawer">
+                            <div class="ajtb-act-modal-header">
+                                <div>
+                                    <h3 class="ajtb-act-modal-title">Ajouter une activité</h3>
+                                    <p class="ajtb-act-modal-subtitle">Personnalisez votre programme en ajoutant des activités optionnelles.</p>
+                                </div>
+                                <button type="button" class="ajtb-act-modal-close" data-ajtb-v1-action="close-activity-modal" aria-label="Fermer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                            <div class="ajtb-act-modal-body" id="ajtb-act-modal-body">
+                                <!-- populated by JS -->
+                            </div>
+                        </div>
+                    </div>
 
                     <section class="ajtb-v1-tab-panel" id="ajtb-v1-panel-policies" role="tabpanel" hidden>
                         <article class="ajtb-v1-card">
