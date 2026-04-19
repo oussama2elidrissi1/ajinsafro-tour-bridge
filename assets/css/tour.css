@@ -938,6 +938,53 @@ body.single-st_tours .footer-bottom {
     background: #f1f7ff;
 }
 
+.ajtb-v1-optional-cta-wrap {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.ajtb-v1-optional-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 14px;
+    border: 1px solid #cfdfee;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff, #f7fbff);
+    color: #16324f;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: left;
+}
+
+.ajtb-v1-optional-trigger span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: #eaf4ff;
+    color: #0a6bdc;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ajtb-v1-optional-trigger.is-open {
+    border-color: #9bc8ff;
+    background: linear-gradient(180deg, #eef6ff, #e9f3ff);
+}
+
+.ajtb-v1-optional-panel {
+    padding-left: 2px;
+}
+
 .ajtb-v1-optional-block {
     margin-top: 16px;
     padding: 14px;
@@ -1716,6 +1763,11 @@ body.single-st_tours .footer-bottom {
 
     .ajtb-v1-optional-card {
         grid-template-columns: 1fr;
+    }
+
+    .ajtb-v1-optional-trigger {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .ajtb-v1-optional-media img {

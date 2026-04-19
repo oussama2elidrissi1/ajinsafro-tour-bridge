@@ -431,6 +431,7 @@ get_header();
                                     $meals = is_array($day['meals'] ?? null) ? $day['meals'] : [];
                                     $hotel = !empty($day['hotel']) && is_array($day['hotel']) ? $day['hotel'] : null;
                                     $show_hotel_card = false;
+                                    $optional_panel_id = 'ajtb-v1-day-options-' . $day_num;
                                     if ($has_any_hotel) {
                                         if (!$hotel_displayed_once && !empty($hotel)) {
                                             $show_hotel_card = true;
@@ -576,43 +577,51 @@ get_header();
                                                 <?php endforeach; ?>
 
                                                 <?php if (!empty($optional_activities)): ?>
-                                                    <div class="ajtb-v1-optional-block">
-                                                        <h4 class="ajtb-v1-optional-title">Activités option client</h4>
-                                                        <p class="ajtb-v1-optional-subtitle">Ces activités ne sont pas incluses. Le client peut les ajouter à son programme.</p>
-                                                        <div class="ajtb-v1-optional-grid">
-                                                            <?php foreach ($optional_activities as $optional_activity): ?>
-                                                                <?php
-                                                                $opt_activity_id = isset($optional_activity['activity_id']) ? (int) $optional_activity['activity_id'] : 0;
-                                                                $opt_img = $pick($optional_activity, ['image_url'], '');
-                                                                $opt_title = $pick($optional_activity, ['title'], 'Activité optionnelle');
-                                                                $opt_desc = $pick($optional_activity, ['description'], 'Activité disponible sur demande.');
-                                                                $opt_price = isset($optional_activity['custom_price']) && $optional_activity['custom_price'] !== null
-                                                                    ? (float) $optional_activity['custom_price']
-                                                                    : (isset($optional_activity['base_price']) && $optional_activity['base_price'] !== null ? (float) $optional_activity['base_price'] : null);
-                                                                ?>
-                                                                <article class="ajtb-v1-optional-card" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>">
-                                                                    <div class="ajtb-v1-optional-media">
-                                                                        <img src="<?php echo $safe_image($opt_img, $default_activity_image); ?>" alt="<?php echo esc_attr($opt_title); ?>" loading="lazy">
-                                                                    </div>
-                                                                    <div class="ajtb-v1-optional-body">
-                                                                        <span class="ajtb-v1-optional-badge">Option client</span>
-                                                                        <h5><?php echo esc_html($opt_title); ?></h5>
-                                                                        <p><?php echo esc_html($opt_desc); ?></p>
-                                                                        <div class="ajtb-v1-optional-footer">
-                                                                            <span class="ajtb-v1-optional-price"><?php echo $opt_price !== null ? esc_html(number_format($opt_price, 0, ',', ' ') . ' MAD') : 'Prix sur demande'; ?></span>
-                                                                            <?php if ($client_activity_enabled && $opt_activity_id > 0 && $day_db_id > 0): ?>
-                                                                                <button type="button" class="ajtb-v1-option-btn" data-ajtb-v1-action="add-activity" data-tour-id="<?php echo esc_attr((string) $tour_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>">
-                                                                                    Ajouter à votre programme
-                                                                                </button>
-                                                                            <?php else: ?>
-                                                                                <button type="button" class="ajtb-v1-option-btn is-disabled" disabled>
-                                                                                    Disponible à la réservation
-                                                                                </button>
-                                                                            <?php endif; ?>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>
-                                                            <?php endforeach; ?>
+                                                    <div class="ajtb-v1-optional-cta-wrap">
+                                                        <button type="button" class="ajtb-v1-optional-trigger" data-ajtb-v1-action="toggle-optional" data-ajtb-target="#<?php echo esc_attr($optional_panel_id); ?>">
+                                                            Ajouter à votre programme
+                                                            <span><?php echo esc_html((string) count($optional_activities)); ?> option<?php echo count($optional_activities) > 1 ? 's' : ''; ?></span>
+                                                        </button>
+                                                        <div class="ajtb-v1-optional-panel" id="<?php echo esc_attr($optional_panel_id); ?>" hidden>
+                                                            <div class="ajtb-v1-optional-block">
+                                                                <h4 class="ajtb-v1-optional-title">Activités option client</h4>
+                                                                <p class="ajtb-v1-optional-subtitle">Ces activités restent cachées tant que le client ne les ouvre pas.</p>
+                                                                <div class="ajtb-v1-optional-grid">
+                                                                    <?php foreach ($optional_activities as $optional_activity): ?>
+                                                                        <?php
+                                                                        $opt_activity_id = isset($optional_activity['activity_id']) ? (int) $optional_activity['activity_id'] : 0;
+                                                                        $opt_img = $pick($optional_activity, ['image_url'], '');
+                                                                        $opt_title = $pick($optional_activity, ['title'], 'Activité optionnelle');
+                                                                        $opt_desc = $pick($optional_activity, ['description'], 'Activité disponible sur demande.');
+                                                                        $opt_price = isset($optional_activity['custom_price']) && $optional_activity['custom_price'] !== null
+                                                                            ? (float) $optional_activity['custom_price']
+                                                                            : (isset($optional_activity['base_price']) && $optional_activity['base_price'] !== null ? (float) $optional_activity['base_price'] : null);
+                                                                        ?>
+                                                                        <article class="ajtb-v1-optional-card" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>">
+                                                                            <div class="ajtb-v1-optional-media">
+                                                                                <img src="<?php echo $safe_image($opt_img, $default_activity_image); ?>" alt="<?php echo esc_attr($opt_title); ?>" loading="lazy">
+                                                                            </div>
+                                                                            <div class="ajtb-v1-optional-body">
+                                                                                <span class="ajtb-v1-optional-badge">Option client</span>
+                                                                                <h5><?php echo esc_html($opt_title); ?></h5>
+                                                                                <p><?php echo esc_html($opt_desc); ?></p>
+                                                                                <div class="ajtb-v1-optional-footer">
+                                                                                    <span class="ajtb-v1-optional-price"><?php echo $opt_price !== null ? esc_html(number_format($opt_price, 0, ',', ' ') . ' MAD') : 'Prix sur demande'; ?></span>
+                                                                                    <?php if ($client_activity_enabled && $opt_activity_id > 0 && $day_db_id > 0): ?>
+                                                                                        <button type="button" class="ajtb-v1-option-btn" data-ajtb-v1-action="add-activity" data-tour-id="<?php echo esc_attr((string) $tour_id); ?>" data-day-id="<?php echo esc_attr((string) $day_db_id); ?>" data-activity-id="<?php echo esc_attr((string) $opt_activity_id); ?>">
+                                                                                            Ajouter à votre programme
+                                                                                        </button>
+                                                                                    <?php else: ?>
+                                                                                        <button type="button" class="ajtb-v1-option-btn is-disabled" disabled>
+                                                                                            Disponible à la réservation
+                                                                                        </button>
+                                                                                    <?php endif; ?>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
+                                                                    <?php endforeach; ?>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>

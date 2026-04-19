@@ -711,7 +711,40 @@
             }
         }
 
+        function toggleOptionalPanel(button) {
+            var targetSelector = button.getAttribute("data-ajtb-target") || "";
+            if (!targetSelector) {
+                return;
+            }
+
+            var panel = document.querySelector(targetSelector);
+            if (!panel) {
+                return;
+            }
+
+            var isHidden = panel.hasAttribute("hidden");
+            if (isHidden) {
+                panel.removeAttribute("hidden");
+                button.classList.add("is-open");
+                button.setAttribute("aria-expanded", "true");
+                setTimeout(function () {
+                    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 80);
+            } else {
+                panel.setAttribute("hidden", "");
+                button.classList.remove("is-open");
+                button.setAttribute("aria-expanded", "false");
+            }
+        }
+
         page.addEventListener("click", function (event) {
+            var panelToggle = event.target.closest("[data-ajtb-v1-action='toggle-optional']");
+            if (panelToggle) {
+                event.preventDefault();
+                toggleOptionalPanel(panelToggle);
+                return;
+            }
+
             var button = event.target.closest("[data-ajtb-v1-action='add-activity']");
             if (!button || button.disabled) {
                 return;
