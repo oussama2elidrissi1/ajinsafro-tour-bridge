@@ -986,6 +986,174 @@ body.single-st_tours .footer-bottom {
     overflow: hidden;
 }
 
+.ajtb-v1-summary-card {
+    display: grid;
+    gap: 14px;
+}
+
+.ajtb-v1-summary-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ajtb-v1-summary-head h3 {
+    margin: 0;
+    color: #152842;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.ajtb-v1-summary-subtitle {
+    margin: 4px 0 0;
+    color: #687a93;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.ajtb-v1-summary-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: #ecf7ff;
+    color: #0f6aa8;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ajtb-v1-summary-price-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid #d9e6f5;
+    background: linear-gradient(180deg, #fbfdff, #f3f9ff);
+}
+
+.ajtb-v1-summary-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #6a7d97;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ajtb-v1-summary-price {
+    margin: 0;
+    color: #13243d;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ajtb-v1-summary-price span {
+    color: #0f2a46;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.ajtb-v1-summary-unit {
+    color: #2f4c70;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ajtb-v1-summary-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.ajtb-v1-summary-list div {
+    padding: 11px 12px;
+    border-radius: 14px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
+}
+
+.ajtb-v1-summary-list dt {
+    margin: 0 0 3px;
+    color: #6d7f99;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ajtb-v1-summary-list dd {
+    margin: 0;
+    color: #16304d;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.ajtb-v1-summary-block {
+    display: grid;
+    gap: 8px;
+}
+
+.ajtb-v1-summary-chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ajtb-v1-summary-chips li {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid #d9e7f6;
+    background: #f8fbff;
+    color: #50627d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ajtb-v1-summary-footnote {
+    color: #6c7d95;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.ajtb-v1-summary-action {
+    width: 100%;
+    min-height: 46px;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #1d8eff, #005ff7);
+    box-shadow: 0 14px 22px rgba(0, 95, 247, 0.22);
+}
+
+.ajtb-v1-summary-action:hover {
+    filter: brightness(1.04);
+}
+
 .ajtb-v1-side-card h3 {
     margin: 0 0 10px;
     color: #152842;
