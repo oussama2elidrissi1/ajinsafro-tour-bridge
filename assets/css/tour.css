@@ -1914,6 +1914,30 @@ body.ajtb-modal-open {
     margin-top: 14px;
 }
 
+.ajtb-v1-recap-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.ajtb-v1-recap-edit-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 131, 196, 0.16);
+    padding: 14px 16px;
+    min-height: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+    box-shadow: 0 6px 16px rgba(15, 79, 121, 0.08);
+}
+
+.ajtb-v1-recap-dl--readonly {
+    margin-top: 0;
+}
+
 .ajtb-v1-recap-dl {
     margin: 0;
     display: grid;
@@ -2054,6 +2078,9 @@ body.ajtb-modal-open {
         grid-template-columns: 1fr;
     }
     .ajtb-v1-recap-dl {
+        grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-edit-grid {
         grid-template-columns: 1fr;
     }
 }

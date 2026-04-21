@@ -1494,9 +1494,23 @@
         } catch (e) {
             payload = null;
         }
+        // Allow direct open: create a minimal payload from defaults.
         if (!payload || payload.tourId !== tourId) {
             if (hint) { hint.hidden = false; }
-            return;
+            payload = {
+                version: 1,
+                capturedAt: Date.now(),
+                tourId: tourId,
+                departure: { id: 0, label: "—" },
+                date: { value: "", label: "—" },
+                guests: { adults: 2, children: 0, label: "" },
+                hotel: { label: "" },
+                flight: { label: "" },
+                transfers: { label: "—" },
+                activities: [],
+                options: [],
+                price: { total: 0, currency: "MAD" },
+            };
         }
 
         function setField(name, value) {
@@ -1505,49 +1519,156 @@
             el.textContent = (value === null || value === undefined || String(value).trim() === "") ? "—" : String(value);
         }
 
-        setField("departure", payload.departure && payload.departure.label ? payload.departure.label : "—");
-        setField("date", payload.date && payload.date.label ? payload.date.label : "—");
+        function computeTotalFromState(state) {
+            var base = window.ajtbRecapBase || {};
+            var pricing = base.pricing || {};
+            var datePrices = base.datePrices || {};
+            var currency = pricing.currency || (state.price ? state.price.currency : "MAD") || "MAD";
+            var baseAdult = parseFloat(pricing.adult || "0");
+            var baseChild = parseFloat(pricing.child || "0");
+            if (!isFinite(baseAdult) || baseAdult < 0) { baseAdult = 0; }
+            if (!isFinite(baseChild) || baseChild < 0) { baseChild = 0; }
 
-        var guestsLabel = payload.guests && payload.guests.label ? payload.guests.label : "";
-        if (!guestsLabel) {
-            guestsLabel = payload.guests ? (payload.guests.adults + " adulte(s)" + (payload.guests.children > 0 ? (", " + payload.guests.children + " enfant(s)") : "")) : "—";
-        }
-        setField("guests", guestsLabel);
-        setField(
-            "guestBreakdown",
-            (payload.guests ? (payload.guests.adults + " adulte(s)" + (payload.guests.children > 0 ? (" • " + payload.guests.children + " enfant(s)") : "")) : "—"),
-        );
+            var adults = state.guests ? parseInt(state.guests.adults || "2", 10) : 2;
+            var children = state.guests ? parseInt(state.guests.children || "0", 10) : 0;
+            if (!isFinite(adults) || adults < 1) { adults = 1; }
+            if (!isFinite(children) || children < 0) { children = 0; }
 
-        setField("hotel", payload.hotel && payload.hotel.label ? payload.hotel.label : "—");
-        setField("flight", payload.flight && payload.flight.label ? payload.flight.label : "Non indiqué");
-        setField("transfers", payload.transfers && payload.transfers.label ? payload.transfers.label : "—");
+            var adultUnit = baseAdult;
+            var dateValue = state.date ? String(state.date.value || "") : "";
+            if (dateValue && datePrices && datePrices[dateValue] && datePrices[dateValue].specific_price !== null && datePrices[dateValue].specific_price !== undefined) {
+                var dp = parseFloat(datePrices[dateValue].specific_price);
+                if (isFinite(dp) && dp > 0) {
+                    adultUnit = dp;
+                }
+            }
+            if (!isFinite(adultUnit) || adultUnit < 0) { adultUnit = 0; }
+            var childUnit = baseChild > 0 ? baseChild : adultUnit;
 
-        var activitiesLabel = "—";
-        if (payload.activities && payload.activities.length) {
-            activitiesLabel = payload.activities.map(function (a) { return a.title; }).filter(Boolean).join(", ");
-        }
-        setField("activities", activitiesLabel);
+            var activitiesTotal = 0;
+            if (state.activities && state.activities.length) {
+                state.activities.forEach(function (a) {
+                    var p = parseFloat(a.price || "0");
+                    if (isFinite(p) && p > 0) { activitiesTotal += p; }
+                });
+            }
 
-        var optionsLabel = "—";
-        if (payload.options && payload.options.length) {
-            optionsLabel = payload.options.join(", ");
+            var total = adults * adultUnit + children * childUnit + activitiesTotal;
+            if (!isFinite(total) || total < 0) { total = 0; }
+            return { total: total, currency: currency, adultUnit: adultUnit, childUnit: childUnit, activitiesTotal: activitiesTotal };
         }
-        setField("options", optionsLabel);
 
-        setField("total", formatMoney(payload.price && payload.price.total ? payload.price.total : 0));
-        setField("currency", (payload.price && payload.price.currency) ? payload.price.currency : "MAD");
+        function syncFormFromPayload(state) {
+            var fromSelect = document.getElementById("ajtb-v1-search-from");
+            var dateSelect = document.getElementById("ajtb-v1-search-date");
+            var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+            var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
 
-        var detail = [];
-        if (payload.date && payload.date.label) {
-            detail.push("Date: " + payload.date.label);
+            if (fromSelect && state.departure && state.departure.id) {
+                fromSelect.value = String(state.departure.id);
+            }
+            if (dateSelect && state.date && state.date.value) {
+                dateSelect.value = String(state.date.value);
+            }
+            if (adultsInput && state.guests) {
+                adultsInput.value = String(Math.max(1, parseInt(state.guests.adults || "2", 10) || 2));
+            }
+            if (childrenInput && state.guests) {
+                childrenInput.value = String(Math.max(0, parseInt(state.guests.children || "0", 10) || 0));
+            }
+            // Re-render guest summary using existing picker logic (already initialised on page).
+            document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
         }
-        if (payload.departure && payload.departure.label) {
-            detail.push("Départ: " + payload.departure.label);
+
+        function readPayloadFromForm(state) {
+            var next = state || payload;
+            var fromSelect = document.getElementById("ajtb-v1-search-from");
+            var dateSelect = document.getElementById("ajtb-v1-search-date");
+            var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+            var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+
+            if (fromSelect && fromSelect.options && fromSelect.selectedIndex >= 0) {
+                var opt = fromSelect.options[fromSelect.selectedIndex];
+                next.departure = {
+                    id: parseInt(fromSelect.value || "0", 10) || 0,
+                    label: (opt.getAttribute("data-place-name") || opt.textContent || "—").trim(),
+                };
+            }
+            if (dateSelect && dateSelect.options && dateSelect.selectedIndex >= 0) {
+                var dopt = dateSelect.options[dateSelect.selectedIndex];
+                next.date = {
+                    value: String(dateSelect.value || ""),
+                    label: String(dopt.textContent || dateSelect.value || "—").trim(),
+                };
+            }
+            next.guests = next.guests || { adults: 2, children: 0, label: "" };
+            next.guests.adults = adultsInput ? (parseInt(adultsInput.value || "2", 10) || 2) : 2;
+            next.guests.children = childrenInput ? (parseInt(childrenInput.value || "0", 10) || 0) : 0;
+            return next;
         }
-        if (payload.activities && payload.activities.length) {
-            detail.push("Activités: " + payload.activities.length);
+
+        function renderRecap(state) {
+            state = state || payload;
+            var calc = computeTotalFromState(state);
+
+            setField("hotel", state.hotel && state.hotel.label ? state.hotel.label : "—");
+            setField("flight", state.flight && state.flight.label ? state.flight.label : "Non indiqué");
+            setField("transfers", state.transfers && state.transfers.label ? state.transfers.label : "—");
+
+            var activitiesLabel = "—";
+            if (state.activities && state.activities.length) {
+                activitiesLabel = state.activities.map(function (a) { return a.title; }).filter(Boolean).join(", ");
+            }
+            setField("activities", activitiesLabel);
+
+            var optionsLabel = "—";
+            if (state.options && state.options.length) {
+                optionsLabel = state.options.join(", ");
+            }
+            setField("options", optionsLabel);
+
+            var guestsLabel = (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (", " + state.guests.children + " enfant(s)") : "")) : "—");
+            setField("guests", guestsLabel);
+            setField("guestBreakdown", (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (" • " + state.guests.children + " enfant(s)") : "")) : "—"));
+            setField("departure", state.departure && state.departure.label ? state.departure.label : "—");
+            setField("date", state.date && state.date.label ? state.date.label : "—");
+
+            setField("total", formatMoney(calc.total));
+            setField("currency", calc.currency);
+            var detail = [];
+            if (calc.adultUnit > 0) { detail.push("Adulte: " + formatMoney(calc.adultUnit) + " " + calc.currency); }
+            if (state.guests && state.guests.children > 0) { detail.push("Enfant: " + formatMoney(calc.childUnit) + " " + calc.currency); }
+            if (calc.activitiesTotal > 0) { detail.push("Activités: +" + formatMoney(calc.activitiesTotal) + " " + calc.currency); }
+            setField("priceDetail", detail.length ? detail.join(" • ") : "—");
         }
-        setField("priceDetail", detail.length ? detail.join(" • ") : "—");
+
+        // Initial render from payload and hydrate controls.
+        syncFormFromPayload(payload);
+        payload = readPayloadFromForm(payload);
+        renderRecap(payload);
+
+        // Update live when changing departure/date.
+        var fromSelect = document.getElementById("ajtb-v1-search-from");
+        var dateSelect = document.getElementById("ajtb-v1-search-date");
+        if (fromSelect) {
+            fromSelect.addEventListener("change", function () {
+                payload = readPayloadFromForm(payload);
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            });
+        }
+        if (dateSelect) {
+            dateSelect.addEventListener("change", function () {
+                payload = readPayloadFromForm(payload);
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            });
+        }
+        document.addEventListener("ajtb:v1:travellers-changed", function () {
+            payload = readPayloadFromForm(payload);
+            renderRecap(payload);
+            try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+        });
 
         var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
         if (confirmBtn) {
@@ -1555,6 +1676,7 @@
                 // This is intentionally a validation gate only.
                 // The actual booking flow is handled by the next step (to be wired to Laravel/WP booking).
                 document.dispatchEvent(new CustomEvent("ajtb:v1:recap-confirmed", { detail: payload }));
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
                 confirmBtn.disabled = true;
                 confirmBtn.textContent = "Confirmé";
             });

@@ -30,8 +30,20 @@ $destination = isset($tour_data['destination']) ? (string) $tour_data['destinati
 $duration_label = isset($tour_data['duration_label']) ? (string) $tour_data['duration_label'] : '';
 $hero_main = $tour_data['hero']['main'] ?? (AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-main.svg');
 $recap_back_url = get_permalink($tour_id) ?: home_url('/');
-$edit_url = add_query_arg('ajtb_edit', '1', $recap_back_url);
-$edit_url .= '#ajtb-v1-search-box';
+
+$search_places = !empty($tour_data['search']['place_options']) && is_array($tour_data['search']['place_options'])
+    ? $tour_data['search']['place_options']
+    : [];
+$search_dates = !empty($tour_data['search']['date_options']) && is_array($tour_data['search']['date_options'])
+    ? $tour_data['search']['date_options']
+    : [];
+$date_prices = !empty($tour_data['search']['date_prices']) && is_array($tour_data['search']['date_prices'])
+    ? $tour_data['search']['date_prices']
+    : [];
+$pricing = !empty($tour_data['pricing']) && is_array($tour_data['pricing']) ? $tour_data['pricing'] : [];
+$base_adult = isset($pricing['adult_price']) ? (float) $pricing['adult_price'] : 0.0;
+$base_child = isset($pricing['child_price']) ? (float) $pricing['child_price'] : 0.0;
+$currency = isset($pricing['currency_symbol']) ? (string) $pricing['currency_symbol'] : 'MAD';
 
 get_header();
 ?>
@@ -40,9 +52,6 @@ get_header();
     <main class="ajtb-v1-main">
         <div class="ajtb-v1-container">
             <section class="ajtb-v1-recap-head">
-                <a class="ajtb-v1-recap-back" href="<?php echo esc_url($edit_url); ?>">
-                    ← Modifier ma sélection
-                </a>
                 <div>
                     <p class="ajtb-v1-kicker">Récapitulatif</p>
                     <h1 class="ajtb-v1-title"><?php echo esc_html($tour_title); ?></h1>
@@ -71,11 +80,97 @@ get_header();
 
                 <article class="ajtb-v1-card ajtb-v1-recap-selection">
                     <h2 class="ajtb-v1-recap-section-title">Votre sélection</h2>
-                    <dl class="ajtb-v1-recap-dl" id="ajtb-v1-recap-selection">
-                        <div><dt>Ville de départ</dt><dd data-ajtb-recap-field="departure">—</dd></div>
-                        <div><dt>Date de voyage</dt><dd data-ajtb-recap-field="date">—</dd></div>
-                        <div><dt>Voyageurs</dt><dd data-ajtb-recap-field="guests">—</dd></div>
-                        <div><dt>Détail</dt><dd data-ajtb-recap-field="guestBreakdown">—</dd></div>
+                    <div class="ajtb-v1-recap-edit-grid" id="ajtb-v1-recap-edit-grid">
+                        <div class="ajtb-v1-recap-edit-card">
+                            <span class="ajtb-v1-search-label">Ville de départ</span>
+                            <?php if (!empty($search_places)): ?>
+                                <span class="ajtb-v1-search-value ajtb-v1-search-value--select">
+                                    <select class="ajtb-v1-search-select" id="ajtb-v1-search-from" aria-label="Lieux de départ">
+                                        <?php foreach ($search_places as $place_option): ?>
+                                            <?php
+                                            $pid = isset($place_option['id']) ? (int) $place_option['id'] : 0;
+                                            $pname = isset($place_option['name']) ? trim((string) $place_option['name']) : '';
+                                            $pcode = isset($place_option['code']) ? trim((string) $place_option['code']) : '';
+                                            if ($pname === '') {
+                                                continue;
+                                            }
+                                            ?>
+                                            <option value="<?php echo esc_attr((string) $pid); ?>" data-place-name="<?php echo esc_attr($pname); ?>" data-place-code="<?php echo esc_attr($pcode); ?>">
+                                                <?php echo esc_html($pname); ?><?php echo $pcode !== '' ? esc_html(' (' . $pcode . ')') : ''; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <strong aria-hidden="true">▾</strong>
+                                </span>
+                            <?php else: ?>
+                                <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text">—</span><strong aria-hidden="true">▾</strong></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="ajtb-v1-recap-edit-card">
+                            <span class="ajtb-v1-search-label">Date de voyage</span>
+                            <?php if (!empty($search_dates)): ?>
+                                <span class="ajtb-v1-search-value ajtb-v1-search-value--select">
+                                    <select class="ajtb-v1-search-select" id="ajtb-v1-search-date" aria-label="Dates de départ">
+                                        <?php foreach ($search_dates as $date_option): ?>
+                                            <?php
+                                            $dv = isset($date_option['value']) ? trim((string) $date_option['value']) : '';
+                                            $dd = isset($date_option['display']) ? (string) $date_option['display'] : $dv;
+                                            if ($dv === '') {
+                                                continue;
+                                            }
+                                            ?>
+                                            <option value="<?php echo esc_attr($dv); ?>"><?php echo esc_html($dd !== '' ? $dd : $dv); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <strong aria-hidden="true">▾</strong>
+                                </span>
+                            <?php else: ?>
+                                <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text">—</span><strong aria-hidden="true">▾</strong></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="ajtb-v1-recap-edit-card">
+                            <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
+                            <div class="ajtb-v1-guests-picker" data-max-adults="20" data-max-children="8" data-max-total="28">
+                                <button type="button" class="ajtb-v1-guest-trigger" id="ajtb-v1-guest-trigger" aria-expanded="false">
+                                    <span class="ajtb-v1-search-value">
+                                        <span class="ajtb-v1-search-text" id="ajtb-v1-guest-summary">2 adultes</span>
+                                        <strong aria-hidden="true">▾</strong>
+                                    </span>
+                                </button>
+                                <div class="ajtb-v1-guest-popover" id="ajtb-v1-guest-popover" hidden>
+                                    <div class="ajtb-v1-guest-row">
+                                        <div>
+                                            <strong>Adultes</strong>
+                                            <span>Age 12+</span>
+                                        </div>
+                                        <div class="ajtb-v1-guest-stepper">
+                                            <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="adults">-</button>
+                                            <span id="ajtb-v1-guest-adults-value">2</span>
+                                            <button type="button" data-ajtb-guest-action="plus" data-ajtb-guest-target="adults">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="ajtb-v1-guest-row">
+                                        <div>
+                                            <strong>Enfants</strong>
+                                            <span>Age 2-11</span>
+                                        </div>
+                                        <div class="ajtb-v1-guest-stepper">
+                                            <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="children">-</button>
+                                            <span id="ajtb-v1-guest-children-value">0</span>
+                                            <button type="button" data-ajtb-guest-action="plus" data-ajtb-guest-target="children">+</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="ajtb-v1-guest-apply" id="ajtb-v1-guest-apply">Appliquer</button>
+                                </div>
+                                <input type="hidden" id="ajtb-v1-guest-adults-input" value="2">
+                                <input type="hidden" id="ajtb-v1-guest-children-input" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <dl class="ajtb-v1-recap-dl ajtb-v1-recap-dl--readonly" id="ajtb-v1-recap-selection">
                         <div><dt>Hébergement</dt><dd data-ajtb-recap-field="hotel">—</dd></div>
                         <div><dt>Vol</dt><dd data-ajtb-recap-field="flight">—</dd></div>
                         <div><dt>Transferts</dt><dd data-ajtb-recap-field="transfers">—</dd></div>
@@ -95,7 +190,7 @@ get_header();
                     </div>
                     <div class="ajtb-v1-recap-price-detail" data-ajtb-recap-field="priceDetail">—</div>
                     <div class="ajtb-v1-recap-actions">
-                        <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($edit_url); ?>">Modifier</a>
+                        <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($recap_back_url); ?>">Retour au voyage</a>
                         <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Confirmer</button>
                     </div>
                     <p class="ajtb-v1-recap-note">Aucune réservation n’est créée tant que vous n’avez pas confirmé.</p>
@@ -112,6 +207,12 @@ window.ajtbRecapBase = <?php echo wp_json_encode([
     'destination' => (string) $destination,
     'duration' => (string) $duration_label,
     'permalink' => (string) ($recap_back_url ?: ''),
+    'pricing' => [
+        'adult' => $base_adult,
+        'child' => $base_child,
+        'currency' => $currency,
+    ],
+    'datePrices' => $date_prices,
 ]); ?>;
 </script>
 
