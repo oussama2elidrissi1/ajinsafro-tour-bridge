@@ -588,9 +588,8 @@ get_header();
                                                 }
                                                 $has_optional_cta = !empty($day_fixed_optional) || !empty($open_activities);
                                                 ?>
-                                                <?php if ($has_optional_cta && $client_activity_enabled): ?>
+                                                <?php if ($day_db_id > 0): ?>
                                                     <?php
-                                                    // Build JSON data for this day's fixed optional activities
                                                     $day_opts_json = wp_json_encode(array_values(array_map(function ($oa) {
                                                         $price = isset($oa['custom_price']) && $oa['custom_price'] !== null
                                                             ? (float) $oa['custom_price']
@@ -632,7 +631,6 @@ get_header();
                         </div>
                     </section>
 
-                    <?php if ($client_activity_enabled): ?>
                     <script>
                     window.ajtbOpenActivities = <?php echo wp_json_encode(array_values(array_map(function ($oa) {
                         $price = isset($oa['custom_price']) && $oa['custom_price'] !== null
@@ -648,7 +646,6 @@ get_header();
                     }, $open_activities))); ?>;
                     window.ajtbTourId = <?php echo (int) $tour_id; ?>;
                     </script>
-                    <?php endif; ?>
 
                     <div id="ajtb-act-modal-overlay" class="ajtb-act-modal-overlay" hidden aria-modal="true" role="dialog" aria-label="Ajouter une activité">
                         <div class="ajtb-act-modal-drawer">
