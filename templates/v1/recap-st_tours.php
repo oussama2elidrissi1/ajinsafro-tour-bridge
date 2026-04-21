@@ -226,6 +226,39 @@ get_header();
                         </div>
                         <p class="ajtb-v1-recap-note">Vous pourrez finaliser la réservation à l’étape suivante.</p>
                     </article>
+
+                    <article class="ajtb-v1-side-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize" hidden>
+                        <h2 class="ajtb-v1-recap-section-title">Client & voyageurs</h2>
+                        <div class="ajtb-v1-recap-form">
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Prénom *</label>
+                                <input type="text" id="ajtb-client-first" autocomplete="given-name" placeholder="Prénom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Nom *</label>
+                                <input type="text" id="ajtb-client-last" autocomplete="family-name" placeholder="Nom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Téléphone</label>
+                                <input type="tel" id="ajtb-client-phone" autocomplete="tel" placeholder="+212 ...">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Email</label>
+                                <input type="email" id="ajtb-client-email" autocomplete="email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+
+                        <div class="ajtb-v1-recap-companions">
+                            <div class="ajtb-v1-recap-companions-head">
+                                <h3>Accompagnants</h3>
+                                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-companion">Ajouter</button>
+                            </div>
+                            <div id="ajtb-recap-companions-list"></div>
+                        </div>
+
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>
+                        <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
+                    </article>
                 </aside>
             </section>
         </div>

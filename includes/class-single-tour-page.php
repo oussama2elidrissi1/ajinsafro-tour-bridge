@@ -25,6 +25,8 @@ class AJTB_Single_Tour_Page
         add_action('wp_enqueue_scripts', [self::class, 'enqueue_assets'], 20);
         add_action('wp_ajax_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
         add_action('wp_ajax_nopriv_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
+        add_action('wp_ajax_ajtb_v1_create_reservation', [self::class, 'ajax_create_reservation']);
+        add_action('wp_ajax_nopriv_ajtb_v1_create_reservation', [self::class, 'ajax_create_reservation']);
     }
 
     public static function register_recap_endpoint(): void
@@ -170,6 +172,7 @@ class AJTB_Single_Tour_Page
             'tourTitle' => $post_id > 0 ? get_the_title($post_id) : '',
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'activityNonce' => wp_create_nonce('ajtb_v1_activity_toggle'),
+            'reservationNonce' => wp_create_nonce('ajtb_v1_create_reservation'),
             'activityMessages' => [
                 'added' => __('Activité ajoutée à votre programme.', 'ajinsafro-tour-bridge'),
                 'error' => __('Impossible d’ajouter l’activité pour le moment.', 'ajinsafro-tour-bridge'),
@@ -221,6 +224,194 @@ class AJTB_Single_Tour_Page
         wp_send_json_success([
             'message' => !empty($result['message']) ? (string) $result['message'] : __('Activité mise à jour.', 'ajinsafro-tour-bridge'),
             'day_activities' => isset($result['day_activities']) && is_array($result['day_activities']) ? $result['day_activities'] : [],
+        ]);
+    }
+
+    public static function ajax_create_reservation(): void
+    {
+        $nonce_ok = check_ajax_referer('ajtb_v1_create_reservation', 'nonce', false);
+        if (!$nonce_ok) {
+            wp_send_json_error([
+                'message' => __('Requête non autorisée.', 'ajinsafro-tour-bridge'),
+            ], 403);
+        }
+
+        global $wpdb;
+
+        $tour_id = isset($_POST['tour_id']) ? (int) $_POST['tour_id'] : 0;
+        $departure_place_id = isset($_POST['departure_place_id']) ? (int) $_POST['departure_place_id'] : 0;
+        $departure_date = isset($_POST['departure_date']) ? sanitize_text_field((string) $_POST['departure_date']) : '';
+        $adults = isset($_POST['adults']) ? max(1, (int) $_POST['adults']) : 1;
+        $children = isset($_POST['children']) ? max(0, (int) $_POST['children']) : 0;
+
+        $client_mode = isset($_POST['client_mode']) ? sanitize_text_field((string) $_POST['client_mode']) : 'new';
+        if ($client_mode !== 'existing') {
+            $client_mode = 'new';
+        }
+        $client_external_id = isset($_POST['client_external_id']) ? (int) $_POST['client_external_id'] : null;
+        $client_first_name = isset($_POST['client_first_name']) ? sanitize_text_field((string) $_POST['client_first_name']) : '';
+        $client_last_name = isset($_POST['client_last_name']) ? sanitize_text_field((string) $_POST['client_last_name']) : '';
+        $client_phone = isset($_POST['client_phone']) ? sanitize_text_field((string) $_POST['client_phone']) : '';
+        $client_email = isset($_POST['client_email']) ? sanitize_email((string) $_POST['client_email']) : '';
+        $client_document_type = isset($_POST['client_document_type']) ? sanitize_text_field((string) $_POST['client_document_type']) : '';
+        $client_document_number = isset($_POST['client_document_number']) ? sanitize_text_field((string) $_POST['client_document_number']) : '';
+
+        $passengers_json = isset($_POST['passengers']) ? (string) wp_unslash($_POST['passengers']) : '[]';
+        $extras_json = isset($_POST['extras_json']) ? (string) wp_unslash($_POST['extras_json']) : '[]';
+
+        if ($tour_id <= 0 || $departure_date === '') {
+            wp_send_json_error([
+                'message' => __('Paramètres incomplets.', 'ajinsafro-tour-bridge'),
+            ], 422);
+        }
+
+        if ($client_mode === 'new' && ($client_first_name === '' || $client_last_name === '')) {
+            wp_send_json_error([
+                'message' => __('Veuillez saisir le prénom et le nom du client.', 'ajinsafro-tour-bridge'),
+            ], 422);
+        }
+        if ($client_mode === 'existing' && empty($client_external_id)) {
+            wp_send_json_error([
+                'message' => __('Veuillez sélectionner un client existant.', 'ajinsafro-tour-bridge'),
+            ], 422);
+        }
+
+        $passengers = json_decode($passengers_json, true);
+        if (!is_array($passengers)) {
+            $passengers = [];
+        }
+        $extras = json_decode($extras_json, true);
+        if (!is_array($extras)) {
+            $extras = [];
+        }
+
+        $table_travel_dates = ajtb_table('aj_travel_dates');
+        $travel_date_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$table_travel_dates} WHERE travel_id = %d AND date = %s ORDER BY id DESC LIMIT 1",
+            $tour_id,
+            $departure_date
+        ));
+        if ($travel_date_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Date de départ introuvable.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        $voyage_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM voyages WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
+            $tour_id
+        ));
+        if ($voyage_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Voyage introuvable côté Laravel.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        $departure_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM departures WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
+            $voyage_id,
+            $travel_date_id
+        ));
+        if ($departure_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Départ introuvable côté Laravel.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        $reservations_table = 'reservations';
+        $passengers_table = 'reservation_passengers';
+        $extras_table = 'reservation_extras';
+
+        $passengers_count = 1;
+        foreach ($passengers as $p) {
+            if (!is_array($p)) {
+                continue;
+            }
+            $fn = trim((string) ($p['first_name'] ?? ''));
+            $ln = trim((string) ($p['last_name'] ?? ''));
+            if ($fn !== '' || $ln !== '') {
+                $passengers_count++;
+            }
+        }
+
+        $inserted = $wpdb->insert($reservations_table, [
+            'tour_id' => $voyage_id,
+            'voyage_id' => $voyage_id,
+            'departure_id' => $departure_id,
+            'travel_date_id' => $travel_date_id,
+            'client_mode' => $client_mode,
+            'client_external_id' => $client_external_id ?: null,
+            'client_first_name' => $client_first_name ?: null,
+            'client_last_name' => $client_last_name ?: null,
+            'client_email' => $client_email ?: null,
+            'client_phone' => $client_phone ?: null,
+            'client_document_type' => $client_document_type ?: null,
+            'client_document_number' => $client_document_number ?: null,
+            'status' => 'pending',
+            'passengers_count' => $passengers_count,
+            'wp_tour_post_id' => $tour_id,
+            'catalog_source_code' => 'wp_front_v1',
+            'notes' => 'Front booking (WP) - departure_place_id=' . $departure_place_id . ' adults=' . $adults . ' children=' . $children,
+            'created_at' => current_time('mysql', true),
+            'updated_at' => current_time('mysql', true),
+        ]);
+
+        if (!$inserted) {
+            wp_send_json_error([
+                'message' => __('Impossible de créer la réservation.', 'ajinsafro-tour-bridge'),
+                'debug' => $wpdb->last_error,
+            ], 500);
+        }
+
+        $reservation_id = (int) $wpdb->insert_id;
+
+        foreach ($passengers as $p) {
+            if (!is_array($p)) {
+                continue;
+            }
+            $first = sanitize_text_field((string) ($p['first_name'] ?? ''));
+            $last = sanitize_text_field((string) ($p['last_name'] ?? ''));
+            $type = sanitize_text_field((string) ($p['type'] ?? 'adult'));
+            if ($first === '' && $last === '') {
+                continue;
+            }
+            if (!in_array($type, ['adult', 'child', 'infant'], true)) {
+                $type = 'adult';
+            }
+            $wpdb->insert($passengers_table, [
+                'reservation_id' => $reservation_id,
+                'first_name' => $first ?: null,
+                'last_name' => $last ?: null,
+                'type' => $type,
+                'birth_date' => !empty($p['birth_date']) ? sanitize_text_field((string) $p['birth_date']) : null,
+                'document_type' => !empty($p['document_type']) ? sanitize_text_field((string) $p['document_type']) : null,
+                'document_number' => !empty($p['document_number']) ? sanitize_text_field((string) $p['document_number']) : null,
+                'created_at' => current_time('mysql', true),
+                'updated_at' => current_time('mysql', true),
+            ]);
+        }
+
+        foreach ($extras as $ex) {
+            if (!is_array($ex)) {
+                continue;
+            }
+            $name = trim((string) ($ex['name'] ?? ''));
+            if ($name === '') {
+                continue;
+            }
+            $wpdb->insert($extras_table, [
+                'reservation_id' => $reservation_id,
+                'name' => sanitize_text_field($name),
+                'price' => isset($ex['price']) ? (float) $ex['price'] : 0,
+                'passenger_key' => !empty($ex['passenger_key']) ? sanitize_text_field((string) $ex['passenger_key']) : null,
+                'created_at' => current_time('mysql', true),
+                'updated_at' => current_time('mysql', true),
+            ]);
+        }
+
+        wp_send_json_success([
+            'reservation_id' => $reservation_id,
+            'status' => 'pending',
         ]);
     }
 

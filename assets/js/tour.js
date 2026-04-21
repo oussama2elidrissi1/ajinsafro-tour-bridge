@@ -1673,41 +1673,123 @@
         var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
         if (confirmBtn) {
             confirmBtn.addEventListener("click", function () {
-                // This is intentionally a validation gate only.
-                // The actual booking flow is handled by the next step (to be wired to Laravel/WP booking).
-                document.dispatchEvent(new CustomEvent("ajtb:v1:recap-confirmed", { detail: payload }));
+                // Open finalize panel (client + companions) on the same page.
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+                var finalize = document.getElementById("ajtb-v1-recap-finalize");
+                if (finalize) {
+                    finalize.hidden = false;
+                    finalize.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            });
+        }
 
-                var base = window.ajtbRecapBase || {};
-                var bookingUrl = base.bookingUrl || "";
-                if (bookingUrl) {
-                    var url = new URL(bookingUrl);
-                    if (payload.departure && payload.departure.id) {
-                        url.searchParams.set("departure_place_id", String(payload.departure.id));
-                    }
-                    if (payload.date && payload.date.value) {
-                        url.searchParams.set("departure_date", String(payload.date.value));
-                    }
-                    if (payload.guests) {
-                        url.searchParams.set("adults", String(payload.guests.adults || 1));
-                        url.searchParams.set("children", String(payload.guests.children || 0));
-                    }
-                    url.searchParams.set("wp_tour_id", String(tourId));
-                    if (payload.activities && payload.activities.length) {
-                        url.searchParams.set("activities", payload.activities.map(function (a) { return a.activity_id; }).filter(Boolean).join(","));
-                    }
-                    if (payload.price && isFinite(payload.price.total)) {
-                        url.searchParams.set("total", String(Math.round(payload.price.total)));
-                    }
-                    // Redirect to the booking finalization flow (client + accompagnants, chambre, extras, etc.).
-                    window.location.href = url.toString();
+        (function bindFinalize() {
+            var finalize = document.getElementById("ajtb-v1-recap-finalize");
+            if (!finalize) return;
+
+            var list = document.getElementById("ajtb-recap-companions-list");
+            var addBtn = document.querySelector("[data-ajtb-recap-action='add-companion']");
+            var submitBtn = document.querySelector("[data-ajtb-recap-action='final-submit']");
+            if (!list || !submitBtn) return;
+
+            function companionRowHtml(idx) {
+                return '' +
+                    '<div class="ajtb-v1-recap-companion-row" data-companion-row="' + idx + '">' +
+                    '<input type="text" placeholder="Prénom" data-companion-first>' +
+                    '<input type="text" placeholder="Nom" data-companion-last>' +
+                    '<button type="button" data-companion-remove>✕</button>' +
+                    '</div>';
+            }
+
+            function addCompanion() {
+                var idx = list.querySelectorAll("[data-companion-row]").length;
+                list.insertAdjacentHTML("beforeend", companionRowHtml(idx));
+            }
+
+            if (addBtn) {
+                addBtn.addEventListener("click", addCompanion);
+            }
+
+            list.addEventListener("click", function (e) {
+                var rm = e.target && e.target.closest ? e.target.closest("[data-companion-remove]") : null;
+                if (!rm) return;
+                var row = rm.closest("[data-companion-row]");
+                if (row) row.remove();
+            });
+
+            function collectPassengers() {
+                return Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).map(function (row) {
+                    var first = row.querySelector("[data-companion-first]");
+                    var last = row.querySelector("[data-companion-last]");
+                    return {
+                        first_name: first ? String(first.value || "").trim() : "",
+                        last_name: last ? String(last.value || "").trim() : "",
+                        type: "adult",
+                    };
+                }).filter(function (p) {
+                    return p.first_name || p.last_name;
+                });
+            }
+
+            submitBtn.addEventListener("click", function () {
+                var first = document.getElementById("ajtb-client-first");
+                var last = document.getElementById("ajtb-client-last");
+                if (!first || !last) return;
+                var fn = String(first.value || "").trim();
+                var ln = String(last.value || "").trim();
+                if (!fn || !ln) {
+                    alert("Veuillez saisir le prénom et le nom du client.");
                     return;
                 }
 
-                confirmBtn.disabled = true;
-                confirmBtn.textContent = "Confirmé";
+                payload = readPayloadFromForm(payload);
+                var calc = computeTotalFromState(payload);
+                payload.price = payload.price || {};
+                payload.price.total = calc.total;
+                payload.price.currency = calc.currency;
+
+                var formData = new FormData();
+                formData.append("action", "ajtb_v1_create_reservation");
+                formData.append("nonce", (window.ajtbData && window.ajtbData.reservationNonce) ? window.ajtbData.reservationNonce : "");
+                formData.append("tour_id", String(tourId));
+                formData.append("departure_place_id", String(payload.departure && payload.departure.id ? payload.departure.id : 0));
+                formData.append("departure_date", String(payload.date && payload.date.value ? payload.date.value : ""));
+                formData.append("adults", String(payload.guests && payload.guests.adults ? payload.guests.adults : 1));
+                formData.append("children", String(payload.guests && payload.guests.children ? payload.guests.children : 0));
+                formData.append("client_mode", "new");
+                formData.append("client_first_name", fn);
+                formData.append("client_last_name", ln);
+                formData.append("client_phone", document.getElementById("ajtb-client-phone") ? document.getElementById("ajtb-client-phone").value : "");
+                formData.append("client_email", document.getElementById("ajtb-client-email") ? document.getElementById("ajtb-client-email").value : "");
+                formData.append("client_document_type", "");
+                formData.append("client_document_number", "");
+                formData.append("passengers", JSON.stringify(collectPassengers()));
+                formData.append("extras_json", "[]");
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = "En cours…";
+
+                fetch((window.ajtbData && window.ajtbData.ajaxUrl) ? window.ajtbData.ajaxUrl : "/wp-admin/admin-ajax.php", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    body: formData,
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (json) {
+                        if (!json || !json.success) {
+                            throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la réservation.");
+                        }
+                        alert("Réservation créée (ID " + json.data.reservation_id + "). Statut: " + json.data.status);
+                    })
+                    .catch(function (e) {
+                        alert(e && e.message ? e.message : "Erreur lors de la réservation.");
+                    })
+                    .finally(function () {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "Confirmer la réservation";
+                    });
             });
-        }
+        })();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
