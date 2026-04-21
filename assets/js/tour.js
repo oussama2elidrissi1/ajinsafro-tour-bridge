@@ -1618,25 +1618,40 @@
                 if (!isFinite(travellers) || travellers < 1) { travellers = 1; }
                 if (!rooms.length) { return; }
 
-                var remaining = travellers;
+                // Build selected room blocks and allocate travellers into supplemented rooms first.
+                // This matches user intent: if they select a "Single" with supplement, at least one traveller uses it.
+                var selected = [];
                 rooms.forEach(function (r) {
-                    if (remaining <= 0) { return; }
                     if (!r) { return; }
                     var id = String(r.id || "");
                     if (!id) { return; }
                     var qtyRooms = parseInt(alloc[id] || "0", 10) || 0;
                     qtyRooms = Math.max(0, qtyRooms);
                     if (qtyRooms <= 0) { return; }
-
                     var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
                     cap = Math.max(1, cap);
                     var covered = qtyRooms * cap;
                     if (covered <= 0) { return; }
-
-                    var assigned = Math.min(remaining, covered);
                     var supp = parseFloat(r.supplement || "0");
-                    if (isFinite(supp) && supp > 0) {
-                        roomTotal += assigned * supp;
+                    if (!isFinite(supp) || supp < 0) { supp = 0; }
+                    selected.push({ covered: covered, supp: supp });
+                });
+                if (!selected.length) { return; }
+
+                selected.sort(function (a, b) {
+                    // supplemented first, then higher supplement first
+                    var sa = a.supp > 0 ? 1 : 0;
+                    var sb = b.supp > 0 ? 1 : 0;
+                    if (sa !== sb) return sb - sa;
+                    return (b.supp || 0) - (a.supp || 0);
+                });
+
+                var remaining = travellers;
+                selected.forEach(function (blk) {
+                    if (remaining <= 0) { return; }
+                    var assigned = Math.min(remaining, blk.covered);
+                    if (blk.supp > 0) {
+                        roomTotal += assigned * blk.supp;
                     }
                     remaining -= assigned;
                 });
@@ -2478,7 +2493,32 @@
                         if (!json || !json.success) {
                             throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la réservation.");
                         }
-                        alert("Réservation créée (ID " + json.data.reservation_id + "). Statut: " + json.data.status);
+                        var rid = json.data && json.data.reservation_id ? json.data.reservation_id : null;
+                        var created = !!(json.data && json.data.account_created);
+                        var login = json.data && json.data.login ? String(json.data.login) : "";
+                        var password = json.data && json.data.password ? String(json.data.password) : "";
+
+                        var modalEl = document.getElementById("ajtb-account-modal");
+                        if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                            var msgEl = document.getElementById("ajtb-account-modal-message");
+                            var loginEl = document.getElementById("ajtb-account-login");
+                            var passEl = document.getElementById("ajtb-account-password");
+                            if (msgEl) {
+                                msgEl.textContent = created
+                                    ? ("Votre compte client a été créé. Réservation #" + String(rid) + ".")
+                                    : ("Réservation #" + String(rid) + " créée. Utilisez votre email pour vous connecter.");
+                            }
+                            if (loginEl) loginEl.textContent = login || "—";
+                            if (passEl) passEl.textContent = password || "—";
+                            try {
+                                var m = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+                                m.show();
+                            } catch (eModal) {
+                                alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                            }
+                        } else {
+                            alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                        }
                     })
                     .catch(function (e) {
                         alert(e && e.message ? e.message : "Erreur lors de la réservation.");
@@ -2487,6 +2527,30 @@
                         submitBtn.disabled = false;
                         submitBtn.textContent = "Confirmer la réservation";
                     });
+            });
+
+            // Copy helpers for modal credentials
+            document.addEventListener("click", function (e) {
+                var btn = e.target && e.target.closest ? e.target.closest("[data-ajtb-copy]") : null;
+                if (!btn) return;
+                var sel = btn.getAttribute("data-ajtb-copy") || "";
+                var el = sel ? document.querySelector(sel) : null;
+                var text = el ? String(el.textContent || "").trim() : "";
+                if (!text || text === "—") return;
+                if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).catch(function () {});
+                    return;
+                }
+                try {
+                    var ta = document.createElement("textarea");
+                    ta.value = text;
+                    ta.style.position = "fixed";
+                    ta.style.opacity = "0";
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+                } catch (e2) {}
             });
         })();
 
