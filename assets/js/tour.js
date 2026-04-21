@@ -1755,6 +1755,7 @@
                 return;
             }
             payload.roomAllocation = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
+            payload.availableRoomsCurrent = rooms;
 
             function travellersCount() {
                 var a = payload.guests ? (parseInt(payload.guests.adults || "1", 10) || 1) : 1;
@@ -1764,7 +1765,7 @@
 
             function allocationCapacity() {
                 var total = 0;
-                rooms.forEach(function (r) {
+                (payload.availableRoomsCurrent || rooms).forEach(function (r) {
                     var id = String(r.id || "");
                     var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
                     var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
@@ -1776,7 +1777,7 @@
             function suggestAllInOneRoom() {
                 var n = travellersCount();
                 var candidate = null;
-                rooms.forEach(function (r) {
+                (payload.availableRoomsCurrent || rooms).forEach(function (r) {
                     var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
                     var stock = parseInt(r.quantity || "0", 10) || 0;
                     if (stock <= 0) return;
@@ -1798,7 +1799,8 @@
             var hasAny = Object.keys(payload.roomAllocation).some(function (k) { return (parseInt(payload.roomAllocation[k] || "0", 10) || 0) > 0; });
             if (!hasAny) {
                 if (!suggestAllInOneRoom()) {
-                    var first = rooms.find(function (r) { return (parseInt(r.quantity || "0", 10) || 0) > 0; });
+                    var curRooms = payload.availableRoomsCurrent || rooms;
+                    var first = curRooms.find(function (r) { return (parseInt(r.quantity || "0", 10) || 0) > 0; });
                     if (first) {
                         payload.roomAllocation = {};
                         payload.roomAllocation[String(first.id)] = 1;
@@ -1818,7 +1820,7 @@
                     '</div>' +
                     '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
                     '</div>' +
-                    rooms.map(function (r) {
+                    (payload.availableRoomsCurrent || rooms).map(function (r) {
                         var id = String(r.id || "");
                         var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
                         var stock = parseInt(r.quantity || "0", 10) || 0;
@@ -1847,6 +1849,12 @@
             renderRecap(payload);
             try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
 
+            // IMPORTANT: avoid binding multiple listeners (otherwise + adds twice).
+            if (box.dataset.ajtbRoomHandlerBound === "1") {
+                return;
+            }
+            box.dataset.ajtbRoomHandlerBound = "1";
+
             box.addEventListener("click", function (e) {
                 var suggest = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-suggest]") : null;
                 if (suggest) {
@@ -1862,7 +1870,8 @@
                 var isMinus = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-minus]") : null;
                 if (!isPlus && !isMinus) return;
 
-                var r = rooms.find(function (x) { return String(x.id) === id; });
+                var curRooms = payload.availableRoomsCurrent || rooms;
+                var r = curRooms.find(function (x) { return String(x.id) === id; });
                 if (!r) return;
                 var stock = parseInt(r.quantity || "0", 10) || 0;
                 var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
