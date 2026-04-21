@@ -417,11 +417,11 @@ get_header();
                                     $day_num = (int) ($day['day'] ?? 1);
                                     $activities = is_array($day['activities'] ?? null) ? $day['activities'] : [];
                                     $included_activities = [];
-                                    $optional_activities = [];
+                                    $optional_activities = is_array($day['optional_activities'] ?? null) ? $day['optional_activities'] : [];
                                     foreach ($activities as $activity_row) {
                                         if (!empty($activity_row['is_included'])) {
                                             $included_activities[] = $activity_row;
-                                        } else {
+                                        } elseif (empty($optional_activities)) {
                                             $optional_activities[] = $activity_row;
                                         }
                                     }
