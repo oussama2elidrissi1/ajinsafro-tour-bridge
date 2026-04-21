@@ -82,37 +82,7 @@ get_header();
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-details">
-                        <h2 class="ajtb-v1-recap-section-title">Détails du voyage</h2>
-                        <?php if (!empty($days)): ?>
-                            <div class="ajtb-v1-recap-days">
-                                <?php foreach (array_slice($days, 0, 12) as $day): ?>
-                                    <?php
-                                    $day_num = (int) ($day['day'] ?? 0);
-                                    $day_title = (string) ($day['title'] ?? ('Jour ' . $day_num));
-                                    $day_desc = trim((string) ($day['description'] ?? ''));
-                                    ?>
-                                    <details class="ajtb-v1-recap-day" <?php echo $day_num === 1 ? 'open' : ''; ?>>
-                                        <summary>
-                                            <strong>J<?php echo esc_html((string) $day_num); ?></strong>
-                                            <span><?php echo esc_html($day_title); ?></span>
-                                        </summary>
-                                        <?php if ($day_desc !== ''): ?>
-                                            <div class="ajtb-v1-recap-day-body">
-                                                <p><?php echo esc_html($day_desc); ?></p>
-                                            </div>
-                                        <?php endif; ?>
-                                    </details>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php else: ?>
-                            <p class="ajtb-v1-recap-muted">Le programme détaillé sera affiché dès que les données sont disponibles.</p>
-                        <?php endif; ?>
-                    </article>
-                </div>
-
-                <aside class="ajtb-v1-recap-sidebar">
-                    <article class="ajtb-v1-side-card ajtb-v1-recap-selection">
+                    <article class="ajtb-v1-card ajtb-v1-recap-selection">
                         <h2 class="ajtb-v1-recap-section-title">Votre sélection</h2>
                         <div class="ajtb-v1-recap-edit-grid" id="ajtb-v1-recap-edit-grid">
                             <div class="ajtb-v1-recap-edit-card">
@@ -165,7 +135,7 @@ get_header();
                             </div>
 
                             <div class="ajtb-v1-recap-edit-card ajtb-v1-recap-edit-card--full">
-                                <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
+                                <span class="ajtb-v1-search-label">Voyageurs</span>
                                 <div class="ajtb-v1-guests-picker" data-max-adults="20" data-max-children="8" data-max-total="28">
                                     <button type="button" class="ajtb-v1-guest-trigger" id="ajtb-v1-guest-trigger" aria-expanded="false">
                                         <span class="ajtb-v1-search-value">
@@ -213,6 +183,36 @@ get_header();
                         </dl>
                     </article>
 
+                    <article class="ajtb-v1-card ajtb-v1-recap-details">
+                        <h2 class="ajtb-v1-recap-section-title">Détails du voyage</h2>
+                        <?php if (!empty($days)): ?>
+                            <div class="ajtb-v1-recap-days">
+                                <?php foreach (array_slice($days, 0, 12) as $day): ?>
+                                    <?php
+                                    $day_num = (int) ($day['day'] ?? 0);
+                                    $day_title = (string) ($day['title'] ?? ('Jour ' . $day_num));
+                                    $day_desc = trim((string) ($day['description'] ?? ''));
+                                    ?>
+                                    <details class="ajtb-v1-recap-day" <?php echo $day_num === 1 ? 'open' : ''; ?>>
+                                        <summary>
+                                            <strong>J<?php echo esc_html((string) $day_num); ?></strong>
+                                            <span><?php echo esc_html($day_title); ?></span>
+                                        </summary>
+                                        <?php if ($day_desc !== ''): ?>
+                                            <div class="ajtb-v1-recap-day-body">
+                                                <p><?php echo esc_html($day_desc); ?></p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </details>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <p class="ajtb-v1-recap-muted">Le programme détaillé sera affiché dès que les données sont disponibles.</p>
+                        <?php endif; ?>
+                    </article>
+                </div>
+
+                <aside class="ajtb-v1-recap-sidebar">
                     <article class="ajtb-v1-side-card ajtb-v1-recap-price">
                         <h2 class="ajtb-v1-recap-section-title">Prix</h2>
                         <div class="ajtb-v1-recap-total">
@@ -227,7 +227,7 @@ get_header();
                         <p class="ajtb-v1-recap-note">Vous pourrez finaliser la réservation à l’étape suivante.</p>
                     </article>
 
-                    <article class="ajtb-v1-side-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize" hidden>
+                    <article class="ajtb-v1-side-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
                         <h2 class="ajtb-v1-recap-section-title">Client & voyageurs</h2>
                         <div class="ajtb-v1-recap-form">
                             <div class="ajtb-v1-recap-form-row">
@@ -251,9 +251,12 @@ get_header();
                         <div class="ajtb-v1-recap-companions">
                             <div class="ajtb-v1-recap-companions-head">
                                 <h3>Accompagnants</h3>
-                                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-companion">Ajouter</button>
+                                <div class="ajtb-v1-recap-companion-actions">
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-adult">+ Adulte</button>
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-child">+ Enfant</button>
+                                </div>
                             </div>
-                            <div id="ajtb-recap-companions-list"></div>
+                            <div id="ajtb-recap-companions-list" data-ajtb-companions></div>
                         </div>
 
                         <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>

@@ -2196,6 +2196,13 @@ body.ajtb-modal-open {
     margin-bottom: 10px;
 }
 
+.ajtb-v1-recap-companion-actions {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .ajtb-v1-recap-companions-head h3 {
     margin: 0;
     font-size: 14px;
@@ -2218,9 +2225,20 @@ body.ajtb-modal-open {
 
 .ajtb-v1-recap-companion-row {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 110px 1fr 1fr auto;
     gap: 8px;
     margin-bottom: 8px;
+}
+
+.ajtb-v1-recap-companion-row select {
+    min-height: 42px;
+    border-radius: 12px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 900;
+    color: #16304d;
 }
 
 .ajtb-v1-recap-companion-row input {
@@ -2258,6 +2276,15 @@ body.ajtb-modal-open {
     }
     .ajtb-v1-recap-edit-grid {
         grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-companion-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    .ajtb-v1-recap-companion-row select {
+        grid-column: 1 / -1;
+    }
+    .ajtb-v1-recap-companion-row button {
+        grid-column: 1 / -1;
     }
 }
 

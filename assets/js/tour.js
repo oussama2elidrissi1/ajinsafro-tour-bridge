@@ -1673,12 +1673,12 @@
         var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
         if (confirmBtn) {
             confirmBtn.addEventListener("click", function () {
-                // Open finalize panel (client + companions) on the same page.
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
                 var finalize = document.getElementById("ajtb-v1-recap-finalize");
                 if (finalize) {
-                    finalize.hidden = false;
                     finalize.scrollIntoView({ behavior: "smooth", block: "start" });
+                    var first = document.getElementById("ajtb-client-first");
+                    if (first) { first.focus(); }
                 }
             });
         }
@@ -1688,48 +1688,135 @@
             if (!finalize) return;
 
             var list = document.getElementById("ajtb-recap-companions-list");
-            var addBtn = document.querySelector("[data-ajtb-recap-action='add-companion']");
+            var addAdultBtn = document.querySelector("[data-ajtb-recap-action='add-adult']");
+            var addChildBtn = document.querySelector("[data-ajtb-recap-action='add-child']");
             var submitBtn = document.querySelector("[data-ajtb-recap-action='final-submit']");
             if (!list || !submitBtn) return;
 
-            function companionRowHtml(idx) {
+            function companionRowHtml(idx, type) {
+                type = type === "child" ? "child" : "adult";
                 return '' +
                     '<div class="ajtb-v1-recap-companion-row" data-companion-row="' + idx + '">' +
+                    '<select data-companion-type aria-label="Type voyageur">' +
+                    '<option value="adult"' + (type === "adult" ? " selected" : "") + '>Adulte</option>' +
+                    '<option value="child"' + (type === "child" ? " selected" : "") + '>Enfant</option>' +
+                    '</select>' +
                     '<input type="text" placeholder="Prénom" data-companion-first>' +
                     '<input type="text" placeholder="Nom" data-companion-last>' +
                     '<button type="button" data-companion-remove>✕</button>' +
                     '</div>';
             }
 
-            function addCompanion() {
-                var idx = list.querySelectorAll("[data-companion-row]").length;
-                list.insertAdjacentHTML("beforeend", companionRowHtml(idx));
+            function ensureCompanionsMatchCounts() {
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                var adults = adultsInput ? parseInt(adultsInput.value || "1", 10) : 1;
+                var children = childrenInput ? parseInt(childrenInput.value || "0", 10) : 0;
+                if (!isFinite(adults) || adults < 1) adults = 1;
+                if (!isFinite(children) || children < 0) children = 0;
+
+                var desiredAdultCompanions = Math.max(0, adults - 1);
+                var desiredChildCompanions = Math.max(0, children);
+
+                var rows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
+                var adultRows = rows.filter(function (r) {
+                    var sel = r.querySelector("[data-companion-type]");
+                    return !sel || String(sel.value || "adult") === "adult";
+                });
+                var childRows = rows.filter(function (r) {
+                    var sel = r.querySelector("[data-companion-type]");
+                    return sel && String(sel.value || "") === "child";
+                });
+
+                function addRow(type) {
+                    var idx = list.querySelectorAll("[data-companion-row]").length;
+                    list.insertAdjacentHTML("beforeend", companionRowHtml(idx, type));
+                }
+                function removeLastOfType(type) {
+                    var candidates = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).filter(function (r) {
+                        var sel = r.querySelector("[data-companion-type]");
+                        var t = sel ? String(sel.value || "adult") : "adult";
+                        return t === type;
+                    });
+                    var last = candidates.length ? candidates[candidates.length - 1] : null;
+                    if (last) last.remove();
+                }
+
+                while (adultRows.length < desiredAdultCompanions) {
+                    addRow("adult");
+                    adultRows.push(true);
+                }
+                while (adultRows.length > desiredAdultCompanions) {
+                    removeLastOfType("adult");
+                    adultRows.pop();
+                }
+                while (childRows.length < desiredChildCompanions) {
+                    addRow("child");
+                    childRows.push(true);
+                }
+                while (childRows.length > desiredChildCompanions) {
+                    removeLastOfType("child");
+                    childRows.pop();
+                }
             }
 
-            if (addBtn) {
-                addBtn.addEventListener("click", addCompanion);
+            function adjustCounts(deltaAdults, deltaChildren) {
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                if (!adultsInput || !childrenInput) return;
+                var a = parseInt(adultsInput.value || "1", 10) || 1;
+                var c = parseInt(childrenInput.value || "0", 10) || 0;
+                a = Math.max(1, a + (deltaAdults || 0));
+                c = Math.max(0, c + (deltaChildren || 0));
+                adultsInput.value = String(a);
+                childrenInput.value = String(c);
+                document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
+                ensureCompanionsMatchCounts();
+            }
+
+            if (addAdultBtn) {
+                addAdultBtn.addEventListener("click", function () {
+                    adjustCounts(1, 0);
+                });
+            }
+            if (addChildBtn) {
+                addChildBtn.addEventListener("click", function () {
+                    adjustCounts(0, 1);
+                });
             }
 
             list.addEventListener("click", function (e) {
                 var rm = e.target && e.target.closest ? e.target.closest("[data-companion-remove]") : null;
                 if (!rm) return;
                 var row = rm.closest("[data-companion-row]");
-                if (row) row.remove();
+                if (row) {
+                    var sel = row.querySelector("[data-companion-type]");
+                    var type = sel ? String(sel.value || "adult") : "adult";
+                    row.remove();
+                    // Keep counts consistent with UI intent: removing a row reduces counts.
+                    if (type === "child") adjustCounts(0, -1);
+                    else adjustCounts(-1, 0);
+                }
             });
 
             function collectPassengers() {
                 return Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).map(function (row) {
+                    var typeSel = row.querySelector("[data-companion-type]");
                     var first = row.querySelector("[data-companion-first]");
                     var last = row.querySelector("[data-companion-last]");
                     return {
                         first_name: first ? String(first.value || "").trim() : "",
                         last_name: last ? String(last.value || "").trim() : "",
-                        type: "adult",
+                        type: typeSel ? String(typeSel.value || "adult") : "adult",
                     };
                 }).filter(function (p) {
                     return p.first_name || p.last_name;
                 });
             }
+
+            // Keep companion rows aligned with current adults/children selections.
+            ensureCompanionsMatchCounts();
+            document.addEventListener("ajtb:v1:travellers-changed", ensureCompanionsMatchCounts);
 
             submitBtn.addEventListener("click", function () {
                 var first = document.getElementById("ajtb-client-first");
