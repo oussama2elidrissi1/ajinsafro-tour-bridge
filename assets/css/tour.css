@@ -2223,60 +2223,6 @@ body.ajtb-modal-open {
     letter-spacing: 0.04em;
 }
 
-.ajtb-v1-recap-activities-editor {
-    margin-top: 12px;
-    border-top: 1px dashed #d6e6f6;
-    padding-top: 12px;
-    display: grid;
-    gap: 10px;
-}
-
-.ajtb-v1-recap-activity-row {
-    display: grid;
-    grid-template-columns: 1fr 170px auto;
-    gap: 10px;
-    align-items: center;
-}
-
-.ajtb-v1-recap-activity-row strong {
-    font-size: 13px;
-    color: #16304d;
-}
-
-.ajtb-v1-recap-activity-row small {
-    display: block;
-    margin-top: 2px;
-    color: #6b87a4;
-    font-weight: 700;
-}
-
-.ajtb-v1-recap-activity-row select {
-    min-height: 42px;
-    border-radius: 12px;
-    border: 1px solid #dce7f4;
-    background: #ffffff;
-    padding: 0 10px;
-    font-size: 12px;
-    font-weight: 900;
-    color: #16304d;
-}
-
-.ajtb-v1-recap-activity-row .ajtb-v1-recap-activity-subtotal {
-    font-weight: 900;
-    color: #17304d;
-    white-space: nowrap;
-}
-
-.ajtb-v1-recap-activity-assign {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    color: #3a5876;
-    font-weight: 900;
-    white-space: nowrap;
-}
-
 .ajtb-v1-recap-client-activities {
     margin-top: 14px;
     padding-top: 12px;
@@ -2288,6 +2234,11 @@ body.ajtb-modal-open {
     font-size: 13px;
     font-weight: 900;
     color: #17304d;
+}
+
+.ajtb-v1-recap-client-activities h3,
+.ajtb-v1-recap-companions-head h3 {
+    letter-spacing: 0.01em;
 }
 
 .ajtb-v1-recap-companion-activities,
@@ -2442,10 +2393,6 @@ body.ajtb-modal-open {
     }
     .ajtb-v1-recap-companion-row button {
         grid-column: auto;
-    }
-    .ajtb-v1-recap-activity-row {
-        grid-template-columns: 1fr;
-        align-items: start;
     }
 }
 
