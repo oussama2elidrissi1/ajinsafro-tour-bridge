@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 class AJTB_Single_Tour_Page
 {
     private const RECAP_ENDPOINT = 'ajtb-recap';
+    private const RECAP_QUERY_VAR = 'ajtb_recap';
 
     /**
      * Initialize V1 single tour flow.
@@ -34,11 +35,19 @@ class AJTB_Single_Tour_Page
     public static function register_query_vars(array $vars): array
     {
         $vars[] = self::RECAP_ENDPOINT;
+        $vars[] = self::RECAP_QUERY_VAR;
         return $vars;
     }
 
     public static function is_recap_request(): bool
     {
+        if (isset($_GET[self::RECAP_QUERY_VAR]) && (string) $_GET[self::RECAP_QUERY_VAR] !== '') {
+            return true;
+        }
+        $qv = get_query_var(self::RECAP_QUERY_VAR, '');
+        if ($qv !== '' && $qv !== null) {
+            return true;
+        }
         global $wp_query;
         if (!isset($wp_query) || !is_object($wp_query)) {
             return false;
@@ -52,7 +61,8 @@ class AJTB_Single_Tour_Page
         if (!$permalink) {
             return '';
         }
-        return trailingslashit($permalink) . trailingslashit(self::RECAP_ENDPOINT);
+        // Prefer query arg so it works even without flush_rewrite_rules / permalinks.
+        return add_query_arg(self::RECAP_QUERY_VAR, '1', $permalink);
     }
 
     /**
