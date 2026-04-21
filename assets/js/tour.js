@@ -736,18 +736,19 @@
                 : '<div class="ajtb-act-card-img-placeholder"></div>';
             var btnHtml = added
                 ? '<button type="button" class="ajtb-act-card-btn is-done" disabled>Ajoutee</button>'
-                : (canSubmitSelection
-                    ? '<button type="button" class="ajtb-act-card-btn" data-ajtb-v1-action="add-activity" data-tour-id="' + tourId + '" data-day-id="' + dayId + '" data-day-number="' + dayNumber + '" data-activity-id="' + act.activity_id + '">Ajouter</button>'
-                    : '<button type="button" class="ajtb-act-card-btn is-done" disabled>Indisponible</button>');
+                : '<button type="button" class="ajtb-act-card-btn" data-ajtb-v1-action="add-activity" data-tour-id="' + tourId + '" data-day-id="' + dayId + '" data-day-number="' + dayNumber + '" data-activity-id="' + act.activity_id + '">Ajouter</button>';
             return '<article class="ajtb-act-card" data-activity-id="' + act.activity_id + '">' +
                 '<div class="ajtb-act-card-media">' + img + '</div>' +
                 '<div class="ajtb-act-card-body">' +
                 '<span class="ajtb-act-card-badge">Option client</span>' +
                 '<h4 class="ajtb-act-card-title">' + escHtml(act.title) + '</h4>' +
-                '<p class="ajtb-act-card-desc">' + escHtml(act.description) + '</p>' +
-                '<div class="ajtb-act-card-footer">' +
+                '<div class="ajtb-act-card-actions">' +
                 '<span class="ajtb-act-card-price">' + escHtml(formatPrice(act.price)) + '</span>' +
                 btnHtml +
+                '</div>' +
+                '<p class="ajtb-act-card-desc">' + escHtml(act.description) + '</p>' +
+                '<div class="ajtb-act-card-footer">' +
+                (!canSubmitSelection ? '<span class="ajtb-act-card-note">Ajout visuel. Activez le module AJAX pour persister la selection.</span>' : '') +
                 '</div></div></article>';
         }
 
@@ -847,10 +848,6 @@
         }
 
         function addActivity(button) {
-            if (!ajaxUrl || !nonce) {
-                return;
-            }
-
             var tourId = parseInt(button.getAttribute("data-tour-id") || "0", 10);
             var dayId = parseInt(button.getAttribute("data-day-id") || "0", 10);
             var dayNumber = parseInt(button.getAttribute("data-day-number") || "0", 10);
@@ -860,6 +857,20 @@
             button.disabled = true;
             button.classList.add("is-loading");
             button.textContent = "\u2026";
+
+            function finishAdded() {
+                markAdded(dayId, activityId);
+                addActivityToProgram(dayId, dayNumber, currentModalActivitiesById[activityId] || { activity_id: activityId });
+                button.classList.remove("is-loading");
+                button.classList.add("is-done");
+                button.textContent = "Ajoutee";
+                button.disabled = true;
+            }
+
+            if (!ajaxUrl || !nonce) {
+                finishAdded();
+                return;
+            }
 
             var formData = new FormData();
             formData.append("action", "ajtb_v1_toggle_activity");
@@ -879,11 +890,7 @@
                     if (!json || !json.success) {
                         throw new Error((json && json.data && json.data.message) || "Erreur");
                     }
-                    markAdded(dayId, activityId);
-                    addActivityToProgram(dayId, dayNumber, currentModalActivitiesById[activityId] || { activity_id: activityId });
-                    button.classList.remove("is-loading");
-                    button.classList.add("is-done");
-                    button.textContent = "Ajoutee";
+                    finishAdded();
                 })
                 .catch(function () {
                     button.disabled = false;
