@@ -1863,9 +1863,23 @@ body.ajtb-modal-open {
 
 .ajtb-v1-recap-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: minmax(0, 1fr) 380px;
     gap: 18px;
     align-items: start;
+}
+
+.ajtb-v1-recap-main {
+    min-width: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.ajtb-v1-recap-sidebar {
+    position: sticky;
+    top: var(--ajtb-v1-rail-top);
+    display: grid;
+    gap: 14px;
+    align-self: start;
 }
 
 .ajtb-v1-recap-tour {
@@ -1911,7 +1925,8 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-recap-selection {
-    margin-top: 14px;
+    padding: 18px;
+    margin-top: 0;
 }
 
 .ajtb-v1-recap-edit-grid {
@@ -1919,6 +1934,10 @@ body.ajtb-modal-open {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 14px;
+}
+
+.ajtb-v1-recap-edit-card--full {
+    grid-column: 1 / -1;
 }
 
 .ajtb-v1-recap-edit-card {
@@ -1967,6 +1986,74 @@ body.ajtb-modal-open {
     font-size: 13px;
     font-weight: 700;
     line-height: 1.45;
+}
+
+.ajtb-v1-recap-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+}
+
+.ajtb-v1-recap-details {
+    padding: 18px;
+}
+
+.ajtb-v1-recap-days {
+    display: grid;
+    gap: 10px;
+}
+
+.ajtb-v1-recap-day {
+    border: 1px solid #dce7f4;
+    border-radius: 14px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.ajtb-v1-recap-day summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #16304d;
+    font-weight: 800;
+}
+
+.ajtb-v1-recap-day summary::-webkit-details-marker {
+    display: none;
+}
+
+.ajtb-v1-recap-day summary strong {
+    width: 34px;
+    height: 28px;
+    border-radius: 10px;
+    background: #eef7ff;
+    border: 1px solid #cfe3f7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.ajtb-v1-recap-day summary span {
+    font-size: 13px;
+}
+
+.ajtb-v1-recap-day-body {
+    padding: 0 14px 14px;
+    color: #60718b;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.ajtb-v1-recap-muted {
+    margin: 0;
+    color: #60718b;
+    font-size: 13px;
+    line-height: 1.65;
 }
 
 .ajtb-v1-recap-hint {
@@ -2069,6 +2156,9 @@ body.ajtb-modal-open {
         grid-template-columns: 1fr;
     }
     .ajtb-v1-recap-price {
+        position: static;
+    }
+    .ajtb-v1-recap-sidebar {
         position: static;
     }
 }
