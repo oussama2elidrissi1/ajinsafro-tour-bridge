@@ -45,6 +45,8 @@ $base_adult = isset($pricing['adult_price']) ? (float) $pricing['adult_price'] :
 $base_child = isset($pricing['child_price']) ? (float) $pricing['child_price'] : 0.0;
 $currency = isset($pricing['currency_symbol']) ? (string) $pricing['currency_symbol'] : 'MAD';
 $days = !empty($tour_data['days']) && is_array($tour_data['days']) ? $tour_data['days'] : [];
+$booking_slug = get_post_field('post_name', $tour_id);
+$booking_url = 'https://booking.ajinsafro.net/voyages/' . rawurlencode((string) $booking_slug);
 
 get_header();
 ?>
@@ -237,6 +239,7 @@ window.ajtbRecapBase = <?php echo wp_json_encode([
     'destination' => (string) $destination,
     'duration' => (string) $duration_label,
     'permalink' => (string) ($recap_back_url ?: ''),
+    'bookingUrl' => (string) $booking_url,
     'pricing' => [
         'adult' => $base_adult,
         'child' => $base_child,

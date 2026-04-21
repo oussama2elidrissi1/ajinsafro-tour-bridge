@@ -1677,6 +1677,33 @@
                 // The actual booking flow is handled by the next step (to be wired to Laravel/WP booking).
                 document.dispatchEvent(new CustomEvent("ajtb:v1:recap-confirmed", { detail: payload }));
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+
+                var base = window.ajtbRecapBase || {};
+                var bookingUrl = base.bookingUrl || "";
+                if (bookingUrl) {
+                    var url = new URL(bookingUrl);
+                    if (payload.departure && payload.departure.id) {
+                        url.searchParams.set("departure_place_id", String(payload.departure.id));
+                    }
+                    if (payload.date && payload.date.value) {
+                        url.searchParams.set("departure_date", String(payload.date.value));
+                    }
+                    if (payload.guests) {
+                        url.searchParams.set("adults", String(payload.guests.adults || 1));
+                        url.searchParams.set("children", String(payload.guests.children || 0));
+                    }
+                    url.searchParams.set("wp_tour_id", String(tourId));
+                    if (payload.activities && payload.activities.length) {
+                        url.searchParams.set("activities", payload.activities.map(function (a) { return a.activity_id; }).filter(Boolean).join(","));
+                    }
+                    if (payload.price && isFinite(payload.price.total)) {
+                        url.searchParams.set("total", String(Math.round(payload.price.total)));
+                    }
+                    // Redirect to the booking finalization flow (client + accompagnants, chambre, extras, etc.).
+                    window.location.href = url.toString();
+                    return;
+                }
+
                 confirmBtn.disabled = true;
                 confirmBtn.textContent = "Confirmé";
             });
