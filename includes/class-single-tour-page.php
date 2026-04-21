@@ -25,6 +25,8 @@ class AJTB_Single_Tour_Page
         add_action('wp_enqueue_scripts', [self::class, 'enqueue_assets'], 20);
         add_action('wp_ajax_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
         add_action('wp_ajax_nopriv_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
+        add_action('wp_ajax_ajtb_v1_get_rooms_extras', [self::class, 'ajax_get_rooms_extras']);
+        add_action('wp_ajax_nopriv_ajtb_v1_get_rooms_extras', [self::class, 'ajax_get_rooms_extras']);
         add_action('wp_ajax_ajtb_v1_create_reservation', [self::class, 'ajax_create_reservation']);
         add_action('wp_ajax_nopriv_ajtb_v1_create_reservation', [self::class, 'ajax_create_reservation']);
     }
@@ -258,6 +260,7 @@ class AJTB_Single_Tour_Page
 
         $passengers_json = isset($_POST['passengers']) ? (string) wp_unslash($_POST['passengers']) : '[]';
         $extras_json = isset($_POST['extras_json']) ? (string) wp_unslash($_POST['extras_json']) : '[]';
+        $room_id = isset($_POST['room_id']) ? (int) $_POST['room_id'] : 0;
 
         if ($tour_id <= 0 || $departure_date === '') {
             wp_send_json_error([
@@ -351,7 +354,7 @@ class AJTB_Single_Tour_Page
             'passengers_count' => $passengers_count,
             'wp_tour_post_id' => $tour_id,
             'catalog_source_code' => 'wp_front_v1',
-            'notes' => 'Front booking (WP) - departure_place_id=' . $departure_place_id . ' adults=' . $adults . ' children=' . $children,
+            'notes' => 'Front booking (WP) - departure_place_id=' . $departure_place_id . ' adults=' . $adults . ' children=' . $children . ($room_id > 0 ? (' room_id=' . $room_id) : ''),
             'created_at' => current_time('mysql', true),
             'updated_at' => current_time('mysql', true),
         ]);
@@ -412,6 +415,118 @@ class AJTB_Single_Tour_Page
         wp_send_json_success([
             'reservation_id' => $reservation_id,
             'status' => 'pending',
+        ]);
+    }
+
+    /**
+     * Fetch rooms availability (departure_hotel_rooms) and voyage extras (voyage_extras)
+     * for the selected tour + date.
+     */
+    public static function ajax_get_rooms_extras(): void
+    {
+        $nonce_ok = check_ajax_referer('ajtb_v1_create_reservation', 'nonce', false);
+        if (!$nonce_ok) {
+            wp_send_json_error([
+                'message' => __('Requête non autorisée.', 'ajinsafro-tour-bridge'),
+            ], 403);
+        }
+
+        global $wpdb;
+
+        $tour_id = isset($_POST['tour_id']) ? (int) $_POST['tour_id'] : 0;
+        $departure_date = isset($_POST['departure_date']) ? sanitize_text_field((string) $_POST['departure_date']) : '';
+        if ($tour_id <= 0 || $departure_date === '') {
+            wp_send_json_error([
+                'message' => __('Paramètres incomplets.', 'ajinsafro-tour-bridge'),
+            ], 422);
+        }
+
+        $table_travel_dates = ajtb_table('aj_travel_dates');
+        $travel_date_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$table_travel_dates} WHERE travel_id = %d AND date = %s ORDER BY id DESC LIMIT 1",
+            $tour_id,
+            $departure_date
+        ));
+        if ($travel_date_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Date de départ introuvable.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        $voyage_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM voyages WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
+            $tour_id
+        ));
+        if ($voyage_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Voyage introuvable côté Laravel.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        $departure_id = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM departures WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
+            $voyage_id,
+            $travel_date_id
+        ));
+        if ($departure_id <= 0) {
+            wp_send_json_error([
+                'message' => __('Départ introuvable côté Laravel.', 'ajinsafro-tour-bridge'),
+            ], 404);
+        }
+
+        // Rooms (departure-specific)
+        $rooms = [];
+        $rooms_sql = "
+            SELECT r.*, dh.hotel_name
+            FROM departure_hotel_rooms r
+            INNER JOIN departure_hotels dh ON dh.id = r.departure_hotel_id
+            WHERE dh.departure_id = %d
+              AND COALESCE(dh.is_active, 1) = 1
+              AND COALESCE(r.status, 'available') IN ('available', 'limited')
+            ORDER BY dh.sort_order ASC, r.supplement ASC, r.id ASC
+        ";
+        $room_rows = $wpdb->get_results($wpdb->prepare($rooms_sql, $departure_id), ARRAY_A);
+        foreach ($room_rows ?: [] as $row) {
+            $rooms[] = [
+                'id' => (int) ($row['id'] ?? 0),
+                'departure_hotel_id' => (int) ($row['departure_hotel_id'] ?? 0),
+                'hotel_name' => isset($row['hotel_name']) ? (string) $row['hotel_name'] : '',
+                'room_type' => isset($row['room_type']) ? (string) $row['room_type'] : '',
+                'capacity_total' => isset($row['capacity_total']) ? (int) $row['capacity_total'] : 0,
+                'available_rooms' => isset($row['available_rooms']) ? (int) $row['available_rooms'] : 0,
+                'available_places' => isset($row['available_places']) ? (int) $row['available_places'] : 0,
+                'supplement' => isset($row['supplement']) ? (float) $row['supplement'] : 0.0,
+                'status' => isset($row['status']) ? (string) $row['status'] : 'available',
+            ];
+        }
+
+        // Extras (voyage-level)
+        $extras = [];
+        $extra_rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, name, description, price_adult, price_child, extra_type, icon
+             FROM voyage_extras
+             WHERE voyage_id = %d AND is_active = 1
+             ORDER BY sort_order ASC, id ASC",
+            $voyage_id
+        ), ARRAY_A);
+        foreach ($extra_rows ?: [] as $row) {
+            $extras[] = [
+                'id' => (int) ($row['id'] ?? 0),
+                'name' => isset($row['name']) ? (string) $row['name'] : '',
+                'description' => isset($row['description']) ? (string) $row['description'] : '',
+                'price_adult' => isset($row['price_adult']) ? (float) $row['price_adult'] : 0.0,
+                'price_child' => isset($row['price_child']) ? (float) $row['price_child'] : 0.0,
+                'extra_type' => isset($row['extra_type']) ? (string) $row['extra_type'] : '',
+                'icon' => isset($row['icon']) ? (string) $row['icon'] : '',
+            ];
+        }
+
+        wp_send_json_success([
+            'voyage_id' => $voyage_id,
+            'departure_id' => $departure_id,
+            'travel_date_id' => $travel_date_id,
+            'rooms' => $rooms,
+            'extras' => $extras,
         ]);
     }
 

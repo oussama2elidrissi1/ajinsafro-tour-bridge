@@ -2287,6 +2287,67 @@ body.ajtb-modal-open {
     background: #f7fbff;
 }
 
+.ajtb-v1-choice-list {
+    display: grid;
+    gap: 10px;
+}
+
+.ajtb-v1-choice-item {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 12px;
+    border: 1px solid #edf3fb;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.ajtb-v1-choice-item strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+    color: #17304d;
+}
+
+.ajtb-v1-choice-item small {
+    display: block;
+    color: #6b87a4;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.ajtb-v1-choice-item input[type="radio"],
+.ajtb-v1-choice-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.ajtb-v1-choice-price {
+    font-weight: 900;
+    color: #0f4f79;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .ajtb-v1-choice-item {
+        grid-template-columns: 18px 1fr;
+        grid-template-areas:
+            "chk main"
+            ". price";
+        align-items: start;
+    }
+    .ajtb-v1-choice-item input {
+        grid-area: chk;
+        margin-top: 2px;
+    }
+    .ajtb-v1-choice-item .ajtb-v1-choice-price {
+        grid-area: price;
+        justify-self: start;
+        margin-left: 28px;
+    }
+}
+
 .ajtb-v1-recap-companion-row {
     display: grid;
     grid-template-columns: 110px 1fr 1fr auto;

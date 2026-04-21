@@ -219,6 +219,20 @@ get_header();
                         <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
                     </article>
 
+                    <article class="ajtb-v1-card ajtb-v1-recap-room">
+                        <h2 class="ajtb-v1-recap-section-title">Choisissez votre chambre</h2>
+                        <div id="ajtb-v1-room-picker" class="ajtb-v1-choice-list">
+                            <p class="ajtb-v1-recap-muted">Sélectionnez une date et une ville de départ pour voir les chambres disponibles.</p>
+                        </div>
+                    </article>
+
+                    <article class="ajtb-v1-card ajtb-v1-recap-extras">
+                        <h2 class="ajtb-v1-recap-section-title">Suppléments & extras</h2>
+                        <div id="ajtb-v1-extras-picker" class="ajtb-v1-choice-list">
+                            <p class="ajtb-v1-recap-muted">Les extras disponibles s’affichent selon le voyage.</p>
+                        </div>
+                    </article>
+
                     <article class="ajtb-v1-card ajtb-v1-recap-details">
                         <h2 class="ajtb-v1-recap-section-title">Détails du voyage</h2>
                         <?php if (!empty($days)): ?>

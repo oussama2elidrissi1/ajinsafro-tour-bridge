@@ -1610,8 +1610,26 @@
             }
 
             var total = adults * adultUnit + children * childUnit + activitiesTotal;
+            var roomTotal = 0;
+            if (state.room && isFinite(state.room.supplement)) {
+                var rs = parseFloat(state.room.supplement || "0");
+                if (isFinite(rs) && rs > 0) {
+                    roomTotal = rs * (adults + children);
+                    total += roomTotal;
+                }
+            }
+            var extrasTotal = 0;
+            if (state.extras && state.extras.length) {
+                state.extras.forEach(function (ex) {
+                    var pa = parseFloat(ex.price_adult || "0");
+                    var pc = parseFloat(ex.price_child || "0");
+                    if (isFinite(pa) && pa > 0) extrasTotal += pa * adults;
+                    if (isFinite(pc) && pc > 0) extrasTotal += pc * children;
+                });
+                total += extrasTotal;
+            }
             if (!isFinite(total) || total < 0) { total = 0; }
-            return { total: total, currency: currency, adultUnit: adultUnit, childUnit: childUnit, activitiesTotal: activitiesTotal };
+            return { total: total, currency: currency, adultUnit: adultUnit, childUnit: childUnit, activitiesTotal: activitiesTotal, roomTotal: roomTotal, extrasTotal: extrasTotal };
         }
 
         function syncFormFromPayload(state) {
@@ -1695,6 +1713,8 @@
             if (calc.adultUnit > 0) { detail.push("Adulte: " + formatMoney(calc.adultUnit) + " " + calc.currency); }
             if (state.guests && state.guests.children > 0) { detail.push("Enfant: " + formatMoney(calc.childUnit) + " " + calc.currency); }
             if (calc.activitiesTotal > 0) { detail.push("Activités: +" + formatMoney(calc.activitiesTotal) + " " + calc.currency); }
+            if (calc.roomTotal > 0) { detail.push("Chambre: +" + formatMoney(calc.roomTotal) + " " + calc.currency); }
+            if (calc.extrasTotal > 0) { detail.push("Extras: +" + formatMoney(calc.extrasTotal) + " " + calc.currency); }
             setField("priceDetail", detail.length ? detail.join(" • ") : "—");
         }
 
@@ -1702,6 +1722,86 @@
         syncFormFromPayload(payload);
         payload = readPayloadFromForm(payload);
         renderRecap(payload);
+
+        function renderRooms(rooms) {
+            var box = document.getElementById("ajtb-v1-room-picker");
+            if (!box) return;
+            if (!rooms || !rooms.length) {
+                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce départ.</p>';
+                return;
+            }
+            var selectedId = payload.room && payload.room.id ? String(payload.room.id) : "";
+            box.innerHTML = rooms.map(function (r) {
+                var label = (r.room_type || "Chambre") + (r.hotel_name ? (" • " + r.hotel_name) : "");
+                var cap = r.capacity_total ? ("Capacité " + r.capacity_total) : "";
+                var dispo = (r.available_places !== null && r.available_places !== undefined) ? ("Dispo: " + r.available_places + " places") : "";
+                var meta = [cap, dispo].filter(Boolean).join(" • ");
+                var price = (r.supplement && parseFloat(r.supplement) > 0) ? ("+ " + formatMoney(r.supplement) + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD") + " / pers") : "Inclus";
+                return '' +
+                    '<label class="ajtb-v1-choice-item">' +
+                    '<input type="radio" name="ajtb_room" value="' + escapeHtml(String(r.id || "")) + '"' + (selectedId === String(r.id) ? ' checked' : '') + '>' +
+                    '<span><strong>' + escapeHtml(label) + '</strong>' + (meta ? ('<small>' + escapeHtml(meta) + '</small>') : '') + '</span>' +
+                    '<span class="ajtb-v1-choice-price">' + escapeHtml(price) + '</span>' +
+                    '</label>';
+            }).join("");
+        }
+
+        function renderExtras(extras) {
+            var box = document.getElementById("ajtb-v1-extras-picker");
+            if (!box) return;
+            if (!extras || !extras.length) {
+                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucun extra disponible.</p>';
+                return;
+            }
+            var selected = {};
+            (payload.extras || []).forEach(function (e) { if (e && e.id) selected[String(e.id)] = true; });
+            box.innerHTML = extras.map(function (ex) {
+                var priceParts = [];
+                if (ex.price_adult && parseFloat(ex.price_adult) > 0) priceParts.push("Adulte " + formatMoney(ex.price_adult));
+                if (ex.price_child && parseFloat(ex.price_child) > 0) priceParts.push("Enfant " + formatMoney(ex.price_child));
+                var price = priceParts.length ? (priceParts.join(" / ") + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD")) : "—";
+                return '' +
+                    '<label class="ajtb-v1-choice-item">' +
+                    '<input type="checkbox" value="' + escapeHtml(String(ex.id || "")) + '"' + (selected[String(ex.id)] ? ' checked' : '') + '>' +
+                    '<span><strong>' + escapeHtml(String(ex.name || "Extra")) + '</strong>' + (ex.description ? ('<small>' + escapeHtml(String(ex.description)) + '</small>') : '') + '</span>' +
+                    '<span class="ajtb-v1-choice-price">' + escapeHtml(price) + '</span>' +
+                    '</label>';
+            }).join("");
+        }
+
+        function loadRoomsExtras() {
+            var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+            var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+            var dateSelect = document.getElementById("ajtb-v1-search-date");
+            if (!dateSelect || !dateSelect.value) {
+                return;
+            }
+            var formData = new FormData();
+            formData.append("action", "ajtb_v1_get_rooms_extras");
+            formData.append("nonce", (window.ajtbData && window.ajtbData.reservationNonce) ? window.ajtbData.reservationNonce : "");
+            formData.append("tour_id", String(tourId));
+            formData.append("departure_date", String(dateSelect.value || ""));
+            formData.append("adults", String(adultsInput ? adultsInput.value : "1"));
+            formData.append("children", String(childrenInput ? childrenInput.value : "0"));
+
+            fetch((window.ajtbData && window.ajtbData.ajaxUrl) ? window.ajtbData.ajaxUrl : "/wp-admin/admin-ajax.php", {
+                method: "POST",
+                credentials: "same-origin",
+                body: formData,
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (json) {
+                    if (!json || !json.success) return;
+                    payload.availableRooms = (json.data && json.data.rooms) ? json.data.rooms : [];
+                    payload.availableExtras = (json.data && json.data.extras) ? json.data.extras : [];
+                    renderRooms(payload.availableRooms);
+                    renderExtras(payload.availableExtras);
+                })
+                .catch(function () {});
+        }
+
+        // initial fetch
+        loadRoomsExtras();
 
         // Update live when changing departure/date.
         var fromSelect = document.getElementById("ajtb-v1-search-from");
@@ -1711,6 +1811,7 @@
                 payload = readPayloadFromForm(payload);
                 renderRecap(payload);
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+                loadRoomsExtras();
             });
         }
         if (dateSelect) {
@@ -1718,13 +1819,50 @@
                 payload = readPayloadFromForm(payload);
                 renderRecap(payload);
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+                loadRoomsExtras();
             });
         }
         document.addEventListener("ajtb:v1:travellers-changed", function () {
             payload = readPayloadFromForm(payload);
             renderRecap(payload);
             try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            loadRoomsExtras();
         });
+
+        // Bind room/extras interactions
+        var roomBox = document.getElementById("ajtb-v1-room-picker");
+        if (roomBox) {
+            roomBox.addEventListener("change", function (e) {
+                var radio = e.target && e.target.closest ? e.target.closest("input[type='radio'][name='ajtb_room']") : null;
+                if (!radio) return;
+                var rid = parseInt(radio.value || "0", 10) || 0;
+                var found = (payload.availableRooms || []).find(function (r) { return (parseInt(r.id, 10) || 0) === rid; });
+                payload.room = found || null;
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            });
+        }
+        var extrasBox = document.getElementById("ajtb-v1-extras-picker");
+        if (extrasBox) {
+            extrasBox.addEventListener("change", function () {
+                var checked = Array.prototype.slice.call(extrasBox.querySelectorAll("input[type='checkbox']:checked")).map(function (el) {
+                    return parseInt(el.value || "0", 10) || 0;
+                }).filter(function (id) { return id > 0; });
+                payload.extras = (payload.availableExtras || []).filter(function (ex) {
+                    return checked.indexOf(parseInt(ex.id, 10) || 0) !== -1;
+                }).map(function (ex) {
+                    return {
+                        id: ex.id,
+                        name: ex.name,
+                        description: ex.description,
+                        price_adult: ex.price_adult,
+                        price_child: ex.price_child,
+                    };
+                });
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            });
+        }
 
         // (Activities are managed per traveller in "Client & voyageurs")
 
@@ -2022,7 +2160,27 @@
                 formData.append("client_document_type", "");
                 formData.append("client_document_number", "");
                 formData.append("passengers", JSON.stringify(collectPassengers()));
-                formData.append("extras_json", "[]");
+                formData.append("room_id", String(payload.room && payload.room.id ? payload.room.id : 0));
+
+                var extrasPayload = [];
+                if (payload.extras && payload.extras.length) {
+                    payload.extras.forEach(function (ex) {
+                        extrasPayload.push({
+                            id: ex.id,
+                            name: ex.name,
+                            price_adult: ex.price_adult,
+                            price_child: ex.price_child,
+                        });
+                    });
+                }
+                // Add room supplement as an extra line (if any).
+                if (payload.room && payload.room.supplement && parseFloat(payload.room.supplement) > 0) {
+                    extrasPayload.push({
+                        name: "Supplément chambre (" + (payload.room.room_type || "chambre") + ")",
+                        price: (parseFloat(payload.room.supplement) || 0) * ((payload.guests ? (payload.guests.adults || 1) : 1) + (payload.guests ? (payload.guests.children || 0) : 0)),
+                    });
+                }
+                formData.append("extras_json", JSON.stringify(extrasPayload));
 
                 submitBtn.disabled = true;
                 submitBtn.textContent = "En cours…";
