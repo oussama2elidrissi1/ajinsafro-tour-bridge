@@ -1830,6 +1830,8 @@
                     renderRooms(payload.availableRooms);
                     renderExtras(payload.availableExtras);
                     renderRecap(payload);
+                    document.dispatchEvent(new CustomEvent("ajtb:v1:extras-loaded"));
+                    try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
                 })
                 .catch(function () {});
         }
@@ -2226,6 +2228,10 @@
                 // Rows may change; rerender toggles
                 renderActivityToggles();
                 renderExtraToggles();
+            });
+            document.addEventListener("ajtb:v1:extras-loaded", function () {
+                renderExtraToggles();
+                renderRecap(payload);
             });
 
             submitBtn.addEventListener("click", function () {
