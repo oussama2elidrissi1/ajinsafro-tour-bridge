@@ -1062,6 +1062,7 @@ class AJTB_Laravel_Repository
                                 'is_mandatory' => !empty($ar['is_mandatory']),
                                 'is_included' => !empty($ar['is_included']),
                                 'day_scope' => isset($ar['day_scope']) ? (string) $ar['day_scope'] : 'fixed',
+                                'day_number' => isset($days_by_id[$day_id]['day']) ? (int) $days_by_id[$day_id]['day'] : 1,
                             ];
                         }
                     }

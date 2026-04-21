@@ -614,7 +614,7 @@ get_header();
                                                             'image_url' => $oa['image_url'] ?? null,
                                                             'price' => $price,
                                                             'visibility' => $scope === 'open' ? 'all_days' : 'fixed',
-                                                            'day_number' => (int) ($oa['day_number'] ?? 1),
+                                                            'day_number' => (int) ($oa['day_number'] ?? $day_num),
                                                         ];
                                                     }, $day_fixed_optional)));
                                                     ?>
