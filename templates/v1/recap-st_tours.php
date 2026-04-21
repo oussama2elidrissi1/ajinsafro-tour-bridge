@@ -204,6 +204,11 @@ get_header();
                             </div>
                         </div>
 
+                        <div class="ajtb-v1-recap-client-extras">
+                            <h3>Extras (client)</h3>
+                            <div data-ajtb-client-extras></div>
+                        </div>
+
                         <div class="ajtb-v1-recap-companions">
                             <div class="ajtb-v1-recap-companions-head">
                                 <h3>Accompagnants</h3>

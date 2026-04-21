@@ -2287,6 +2287,27 @@ body.ajtb-modal-open {
     background: #f7fbff;
 }
 
+.ajtb-v1-recap-client-extras {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #d6e6f6;
+}
+
+.ajtb-v1-recap-client-extras h3 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 900;
+    color: #17304d;
+    letter-spacing: 0.01em;
+}
+
+[data-ajtb-client-extras] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
 .ajtb-v1-choice-list {
     display: grid;
     gap: 10px;

@@ -1620,11 +1620,35 @@
             }
             var extrasTotal = 0;
             if (state.extras && state.extras.length) {
+                var travellerTypes = Array.isArray(state.travellerTypes) ? state.travellerTypes : null;
                 state.extras.forEach(function (ex) {
+                    if (!ex) return;
                     var pa = parseFloat(ex.price_adult || "0");
                     var pc = parseFloat(ex.price_child || "0");
-                    if (isFinite(pa) && pa > 0) extrasTotal += pa * adults;
-                    if (isFinite(pc) && pc > 0) extrasTotal += pc * children;
+                    if (!isFinite(pa) || pa < 0) pa = 0;
+                    if (!isFinite(pc) || pc < 0) pc = 0;
+                    var travellers = adults + children;
+                    if (!isFinite(travellers) || travellers < 1) travellers = 1;
+
+                    var assigned = [];
+                    if (Array.isArray(ex.assigned) && ex.assigned.length) {
+                        assigned = ex.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
+                            return isFinite(n) && n >= 0 && n < travellers;
+                        });
+                    } else {
+                        for (var i = 0; i < travellers; i++) assigned.push(i);
+                    }
+
+                    var adultCount = 0;
+                    var childCount = 0;
+                    assigned.forEach(function (slot) {
+                        var t = (travellerTypes && travellerTypes[slot]) ? travellerTypes[slot] : (slot === 0 ? "adult" : "adult");
+                        if (t === "child") childCount += 1;
+                        else adultCount += 1;
+                    });
+
+                    if (pa > 0) extrasTotal += pa * adultCount;
+                    if (pc > 0) extrasTotal += pc * childCount;
                 });
                 total += extrasTotal;
             }
@@ -1753,19 +1777,17 @@
                 box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucun extra disponible.</p>';
                 return;
             }
-            var selected = {};
-            (payload.extras || []).forEach(function (e) { if (e && e.id) selected[String(e.id)] = true; });
             box.innerHTML = extras.map(function (ex) {
                 var priceParts = [];
                 if (ex.price_adult && parseFloat(ex.price_adult) > 0) priceParts.push("Adulte " + formatMoney(ex.price_adult));
                 if (ex.price_child && parseFloat(ex.price_child) > 0) priceParts.push("Enfant " + formatMoney(ex.price_child));
                 var price = priceParts.length ? (priceParts.join(" / ") + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD")) : "—";
                 return '' +
-                    '<label class="ajtb-v1-choice-item">' +
-                    '<input type="checkbox" value="' + escapeHtml(String(ex.id || "")) + '"' + (selected[String(ex.id)] ? ' checked' : '') + '>' +
+                    '<div class="ajtb-v1-choice-item">' +
+                    '<span></span>' +
                     '<span><strong>' + escapeHtml(String(ex.name || "Extra")) + '</strong>' + (ex.description ? ('<small>' + escapeHtml(String(ex.description)) + '</small>') : '') + '</span>' +
                     '<span class="ajtb-v1-choice-price">' + escapeHtml(price) + '</span>' +
-                    '</label>';
+                    '</div>';
             }).join("");
         }
 
@@ -1794,8 +1816,20 @@
                     if (!json || !json.success) return;
                     payload.availableRooms = (json.data && json.data.rooms) ? json.data.rooms : [];
                     payload.availableExtras = (json.data && json.data.extras) ? json.data.extras : [];
+                    // Default extras selection: all extras enabled for all travellers.
+                    payload.extras = (payload.availableExtras || []).map(function (ex) {
+                        return {
+                            id: ex.id,
+                            name: ex.name,
+                            description: ex.description,
+                            price_adult: ex.price_adult,
+                            price_child: ex.price_child,
+                            assigned: Array.isArray(ex.assigned) ? ex.assigned : [],
+                        };
+                    });
                     renderRooms(payload.availableRooms);
                     renderExtras(payload.availableExtras);
+                    renderRecap(payload);
                 })
                 .catch(function () {});
         }
@@ -1829,7 +1863,7 @@
             loadRoomsExtras();
         });
 
-        // Bind room/extras interactions
+        // Bind room interactions
         var roomBox = document.getElementById("ajtb-v1-room-picker");
         if (roomBox) {
             roomBox.addEventListener("change", function (e) {
@@ -1838,27 +1872,6 @@
                 var rid = parseInt(radio.value || "0", 10) || 0;
                 var found = (payload.availableRooms || []).find(function (r) { return (parseInt(r.id, 10) || 0) === rid; });
                 payload.room = found || null;
-                renderRecap(payload);
-                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
-            });
-        }
-        var extrasBox = document.getElementById("ajtb-v1-extras-picker");
-        if (extrasBox) {
-            extrasBox.addEventListener("change", function () {
-                var checked = Array.prototype.slice.call(extrasBox.querySelectorAll("input[type='checkbox']:checked")).map(function (el) {
-                    return parseInt(el.value || "0", 10) || 0;
-                }).filter(function (id) { return id > 0; });
-                payload.extras = (payload.availableExtras || []).filter(function (ex) {
-                    return checked.indexOf(parseInt(ex.id, 10) || 0) !== -1;
-                }).map(function (ex) {
-                    return {
-                        id: ex.id,
-                        name: ex.name,
-                        description: ex.description,
-                        price_adult: ex.price_adult,
-                        price_child: ex.price_child,
-                    };
-                });
                 renderRecap(payload);
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             });
@@ -1901,7 +1914,18 @@
                     '<input type="text" placeholder="Nom" data-companion-last>' +
                     '<button type="button" data-companion-remove>✕</button>' +
                     '<div class="ajtb-v1-recap-companion-activities" data-companion-activities></div>' +
+                    '<div class="ajtb-v1-recap-companion-activities" data-companion-extras></div>' +
                     '</div>';
+            }
+
+            function getTravellerTypes() {
+                var types = ["adult"]; // slot 0 = client
+                Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).forEach(function (row) {
+                    var sel = row.querySelector("[data-companion-type]");
+                    var t = sel ? String(sel.value || "adult") : "adult";
+                    types.push(t === "child" ? "child" : "adult");
+                });
+                return types;
             }
 
             function ensureCompanionsMatchCounts() {
@@ -2011,6 +2035,63 @@
                 }
             }
 
+            function ensureExtraAssignments() {
+                try { payload = readPayloadFromForm(payload); } catch (e) {}
+                if (!payload) return;
+                payload.extras = Array.isArray(payload.extras) ? payload.extras : [];
+                var types = getTravellerTypes();
+                var travellers = types.length;
+                payload.travellerTypes = types;
+                payload.extras.forEach(function (ex) {
+                    if (!ex) return;
+                    if (!Array.isArray(ex.assigned) || !ex.assigned.length) {
+                        ex.assigned = [];
+                        for (var i = 0; i < travellers; i++) ex.assigned.push(i);
+                        return;
+                    }
+                    ex.assigned = ex.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
+                        return isFinite(n) && n >= 0 && n < travellers;
+                    });
+                    for (var j = 0; j < travellers; j++) {
+                        if (ex.assigned.indexOf(j) === -1) ex.assigned.push(j);
+                    }
+                });
+            }
+
+            function renderExtraToggles() {
+                ensureExtraAssignments();
+                var types = getTravellerTypes();
+                var travellers = types.length;
+                var principalBox = finalize.querySelector("[data-ajtb-client-extras]");
+                var allRows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
+
+                function hostForSlot(slotIdx) {
+                    if (slotIdx === 0) return principalBox;
+                    return allRows[slotIdx - 1] ? allRows[slotIdx - 1].querySelector("[data-companion-extras]") : null;
+                }
+
+                for (var slot = 0; slot < travellers; slot++) {
+                    var host = hostForSlot(slot);
+                    if (!host) continue;
+                    if (!payload.extras || !payload.extras.length) {
+                        host.innerHTML = '<span class="ajtb-v1-recap-muted">—</span>';
+                        continue;
+                    }
+                    host.innerHTML = payload.extras.map(function (ex, exIdx) {
+                        var checked = ex && Array.isArray(ex.assigned) && ex.assigned.indexOf(slot) !== -1;
+                        var t = types[slot] === "child" ? "child" : "adult";
+                        var p = t === "child" ? parseFloat(ex.price_child || "0") : parseFloat(ex.price_adult || "0");
+                        if (!isFinite(p) || p < 0) p = 0;
+                        var label = String(ex.name || "Extra") + (p > 0 ? (" · " + formatMoney(p) + " " + ((window.ajtbRecapBase && window.ajtbRecapBase.pricing) ? window.ajtbRecapBase.pricing.currency : "MAD")) : "");
+                        return '' +
+                            '<label class="ajtb-v1-recap-activity-toggle">' +
+                            '<input type="checkbox" data-ajtb-extra-toggle data-slot="' + slot + '" data-extra-idx="' + exIdx + '"' + (checked ? ' checked' : '') + '>' +
+                            '<span>' + escapeHtml(label) + '</span>' +
+                            '</label>';
+                    }).join("");
+                }
+            }
+
             function syncCountsFromCompanionRows() {
                 var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
                 var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
@@ -2099,6 +2180,24 @@
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             });
 
+            finalize.addEventListener("change", function (e) {
+                var chk = e.target && e.target.closest ? e.target.closest("[data-ajtb-extra-toggle]") : null;
+                if (!chk) return;
+                var slot = parseInt(chk.getAttribute("data-slot") || "-1", 10);
+                var exIdx = parseInt(chk.getAttribute("data-extra-idx") || "-1", 10);
+                if (!payload.extras || slot < 0 || exIdx < 0 || exIdx >= payload.extras.length) return;
+                payload.extras[exIdx].assigned = payload.extras[exIdx].assigned || [];
+                var i = payload.extras[exIdx].assigned.indexOf(slot);
+                if (chk.checked) {
+                    if (i === -1) payload.extras[exIdx].assigned.push(slot);
+                } else {
+                    if (i !== -1) payload.extras[exIdx].assigned.splice(i, 1);
+                }
+                payload.travellerTypes = getTravellerTypes();
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e2) {}
+            });
+
             function collectPassengers() {
                 return Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).map(function (row) {
                     var typeSel = row.querySelector("[data-companion-type]");
@@ -2122,9 +2221,11 @@
             setTimeout(ensureCompanionsMatchCounts, 250);
             // Render activity toggles per traveller
             renderActivityToggles();
+            renderExtraToggles();
             document.addEventListener("ajtb:v1:travellers-changed", function () {
                 // Rows may change; rerender toggles
                 renderActivityToggles();
+                renderExtraToggles();
             });
 
             submitBtn.addEventListener("click", function () {
@@ -2163,13 +2264,24 @@
                 formData.append("room_id", String(payload.room && payload.room.id ? payload.room.id : 0));
 
                 var extrasPayload = [];
+                // Per-traveller extras -> one row per assigned slot (passenger_key = slot:N)
                 if (payload.extras && payload.extras.length) {
+                    var types = getTravellerTypes();
                     payload.extras.forEach(function (ex) {
-                        extrasPayload.push({
-                            id: ex.id,
-                            name: ex.name,
-                            price_adult: ex.price_adult,
-                            price_child: ex.price_child,
+                        if (!ex || !ex.name) return;
+                        var assigned = Array.isArray(ex.assigned) && ex.assigned.length ? ex.assigned : [];
+                        if (!assigned.length) {
+                            for (var s = 0; s < types.length; s++) assigned.push(s);
+                        }
+                        assigned.forEach(function (slot) {
+                            var t = types[slot] === "child" ? "child" : "adult";
+                            var p = t === "child" ? parseFloat(ex.price_child || "0") : parseFloat(ex.price_adult || "0");
+                            if (!isFinite(p) || p <= 0) return;
+                            extrasPayload.push({
+                                name: ex.name,
+                                price: p,
+                                passenger_key: "slot:" + String(slot),
+                            });
                         });
                     });
                 }
