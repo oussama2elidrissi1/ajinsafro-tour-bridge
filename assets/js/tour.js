@@ -1845,6 +1845,9 @@
             // Keep companion rows aligned with current adults/children selections.
             ensureCompanionsMatchCounts();
             document.addEventListener("ajtb:v1:travellers-changed", ensureCompanionsMatchCounts);
+            // Some themes/plugins update inputs after initial paint; re-sync on next ticks.
+            setTimeout(ensureCompanionsMatchCounts, 0);
+            setTimeout(ensureCompanionsMatchCounts, 250);
 
             submitBtn.addEventListener("click", function () {
                 var first = document.getElementById("ajtb-client-first");
@@ -1905,6 +1908,9 @@
                     });
             });
         })();
+
+        // Final sync pass after all handlers are bound.
+        document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
     }
 
     document.addEventListener("DOMContentLoaded", function () {
