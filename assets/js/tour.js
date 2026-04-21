@@ -874,7 +874,13 @@
                 '<h4>' + escHtml(act.title) + '</h4>' +
                 '<p>' + escHtml(act.description) + '</p>' +
                 '<div class="ajtb-v1-meta-line">' + price + '</div>' +
-                '</div></div></div>';
+                '</div></div>' +
+                '<div class="ajtb-v1-service-progress">' +
+                '<div class="ajtb-act-progress" data-ajtb-remove-progress hidden>' +
+                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Preparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
+                '<div class="ajtb-act-progress-track"><span data-ajtb-progress-fill style="width: 0%"></span></div>' +
+                '</div>' +
+                '</div></div>';
         }
 
         function addActivityToProgram(dayId, dayNumber, activity) {
@@ -933,9 +939,15 @@
             document.body.classList.remove("ajtb-modal-open");
         }
 
-        function startAddProgress(button) {
-            var card = button.closest(".ajtb-act-card");
-            var progressEl = card ? card.querySelector("[data-ajtb-add-progress]") : null;
+        function startButtonProgress(button, options) {
+            options = options || {};
+            var cardSelector = options.cardSelector || ".ajtb-act-card";
+            var progressSelector = options.progressSelector || "[data-ajtb-add-progress]";
+            var busyClass = options.busyClass || "is-adding";
+            var finalState = options.finalState || "Ajoute au programme";
+
+            var card = button.closest(cardSelector);
+            var progressEl = card ? card.querySelector(progressSelector) : null;
             var fillEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-fill]") : null;
             var percentEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-percent]") : null;
             var stateEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-state]") : null;
@@ -971,7 +983,7 @@
                 progressEl.classList.remove("is-error", "is-complete");
             }
             if (card) {
-                card.classList.add("is-adding");
+                card.classList.add(busyClass);
             }
 
             apply(8, "Preparation");
@@ -989,14 +1001,14 @@
                         if (timer) {
                             window.clearInterval(timer);
                         }
-                        apply(100, "Ajoute au programme");
+                        apply(100, finalState);
                         button.textContent = "100%";
                         if (progressEl) {
                             progressEl.classList.add("is-complete");
                         }
                         window.setTimeout(function () {
                             if (card) {
-                                card.classList.remove("is-adding");
+                                card.classList.remove(busyClass);
                             }
                             if (typeof callback === "function") {
                                 callback();
@@ -1013,10 +1025,28 @@
                         progressEl.classList.add("is-error");
                     }
                     if (card) {
-                        card.classList.remove("is-adding");
+                        card.classList.remove(busyClass);
                     }
                 },
             };
+        }
+
+        function startAddProgress(button) {
+            return startButtonProgress(button, {
+                cardSelector: ".ajtb-act-card",
+                progressSelector: "[data-ajtb-add-progress]",
+                busyClass: "is-adding",
+                finalState: "Ajoute au programme",
+            });
+        }
+
+        function startRemoveProgress(button) {
+            return startButtonProgress(button, {
+                cardSelector: ".activity-card",
+                progressSelector: "[data-ajtb-remove-progress]",
+                busyClass: "is-removing",
+                finalState: "Retire du programme",
+            });
         }
 
         function addActivity(button) {
@@ -1082,23 +1112,27 @@
             if (!tourId || !dayId || !activityId) { return; }
 
             var card = button.closest(".activity-card");
+            var progress = startRemoveProgress(button);
             button.disabled = true;
             button.classList.add("is-loading");
+            button.textContent = "0%";
 
             function finishRemoved() {
-                unmarkAdded(dayId, activityId);
-                if (card) {
-                    card.remove();
-                }
-                document.dispatchEvent(new CustomEvent("ajtb:v1:activities-changed"));
-                if (modalBody) {
-                    var modalBtn = modalBody.querySelector('[data-ajtb-v1-action="add-activity"][data-day-id="' + dayId + '"][data-activity-id="' + activityId + '"]');
-                    if (modalBtn) {
-                        modalBtn.disabled = false;
-                        modalBtn.classList.remove("is-done", "is-loading");
-                        modalBtn.textContent = "Ajouter";
+                progress.complete(function () {
+                    unmarkAdded(dayId, activityId);
+                    if (card) {
+                        card.remove();
                     }
-                }
+                    document.dispatchEvent(new CustomEvent("ajtb:v1:activities-changed"));
+                    if (modalBody) {
+                        var modalBtn = modalBody.querySelector('[data-ajtb-v1-action="add-activity"][data-day-id="' + dayId + '"][data-activity-id="' + activityId + '"]');
+                        if (modalBtn) {
+                            modalBtn.disabled = false;
+                            modalBtn.classList.remove("is-done", "is-loading");
+                            modalBtn.textContent = "Ajouter";
+                        }
+                    }
+                });
             }
 
             if (!ajaxUrl || !nonce) {
@@ -1127,8 +1161,10 @@
                     finishRemoved();
                 })
                 .catch(function () {
+                    progress.fail();
                     button.disabled = false;
                     button.classList.remove("is-loading");
+                    button.textContent = "Retirer";
                 });
         }
 

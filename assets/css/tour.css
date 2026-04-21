@@ -853,6 +853,13 @@ body.single-st_tours .footer-bottom {
     cursor: wait;
 }
 
+.ajtb-v1-service-remove.is-loading:disabled {
+    min-width: 58px;
+    background: linear-gradient(180deg, #c95634, #b54322);
+    color: #fff;
+    opacity: 1;
+}
+
 .ajtb-v1-service-body {
     padding: 14px;
 }
@@ -1191,6 +1198,10 @@ body.ajtb-modal-open {
     justify-content: space-between;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.ajtb-v1-service-progress {
+    padding: 0 14px 14px;
 }
 
 .ajtb-act-progress {
