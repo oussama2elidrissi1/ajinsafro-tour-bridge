@@ -30,6 +30,8 @@ $destination = isset($tour_data['destination']) ? (string) $tour_data['destinati
 $duration_label = isset($tour_data['duration_label']) ? (string) $tour_data['duration_label'] : '';
 $hero_main = $tour_data['hero']['main'] ?? (AJTB_PLUGIN_URL . 'assets/images/tour-v1/hero-main.svg');
 $recap_back_url = get_permalink($tour_id) ?: home_url('/');
+$edit_url = add_query_arg('ajtb_edit', '1', $recap_back_url);
+$edit_url .= '#ajtb-v1-search-box';
 
 get_header();
 ?>
@@ -38,7 +40,7 @@ get_header();
     <main class="ajtb-v1-main">
         <div class="ajtb-v1-container">
             <section class="ajtb-v1-recap-head">
-                <a class="ajtb-v1-recap-back" href="<?php echo esc_url($recap_back_url); ?>">
+                <a class="ajtb-v1-recap-back" href="<?php echo esc_url($edit_url); ?>">
                     ← Modifier ma sélection
                 </a>
                 <div>
@@ -93,7 +95,7 @@ get_header();
                     </div>
                     <div class="ajtb-v1-recap-price-detail" data-ajtb-recap-field="priceDetail">—</div>
                     <div class="ajtb-v1-recap-actions">
-                        <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($recap_back_url); ?>">Modifier ma sélection</a>
+                        <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($edit_url); ?>">Modifier</a>
                         <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Confirmer</button>
                     </div>
                     <p class="ajtb-v1-recap-note">Aucune réservation n’est créée tant que vous n’avez pas confirmé.</p>

@@ -1425,6 +1425,62 @@
         });
     }
 
+    function initRestoreSelectionFromRecap() {
+        var priceCard = document.getElementById("ajtb-v1-summary-card");
+        if (!priceCard) {
+            return;
+        }
+        // Only when user clicks "Modifier" from recap page.
+        if (!window.location.search || window.location.search.indexOf("ajtb_edit=1") === -1) {
+            return;
+        }
+
+        var tourId = (window.ajtbData && window.ajtbData.tourId) ? parseInt(String(window.ajtbData.tourId), 10) : 0;
+        if (!tourId) {
+            tourId = parseInt(priceCard.getAttribute("data-tour-id") || "0", 10) || 0;
+        }
+        if (!tourId) {
+            return;
+        }
+
+        var payload = null;
+        try {
+            payload = safeJsonParse(localStorage.getItem("ajtb:v1:recap:" + String(tourId)), null);
+        } catch (e) {
+            payload = null;
+        }
+        if (!payload || payload.tourId !== tourId) {
+            return;
+        }
+
+        var fromSelect = document.getElementById("ajtb-v1-search-from");
+        var dateSelect = document.getElementById("ajtb-v1-search-date");
+        var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+        var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+
+        if (fromSelect && payload.departure && payload.departure.id) {
+            fromSelect.value = String(payload.departure.id);
+            fromSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        if (dateSelect && payload.date && payload.date.value) {
+            dateSelect.value = String(payload.date.value);
+            dateSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        if (adultsInput && payload.guests && isFinite(payload.guests.adults)) {
+            adultsInput.value = String(Math.max(1, parseInt(payload.guests.adults, 10) || 1));
+        }
+        if (childrenInput && payload.guests && isFinite(payload.guests.children)) {
+            childrenInput.value = String(Math.max(0, parseInt(payload.guests.children, 10) || 0));
+        }
+        document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
+
+        // Scroll back to selection.
+        var searchBox = document.getElementById("ajtb-v1-search-box");
+        if (searchBox) {
+            searchBox.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
     function initRecapPage() {
         var root = document.querySelector("[data-ajtb-recap-root]");
         if (!root) {
@@ -1515,6 +1571,7 @@
         initStickySearchBox();
         initOptionalActivitiesActions();
         initContinueToRecap();
+        initRestoreSelectionFromRecap();
         initRecapPage();
     });
 })();
