@@ -822,6 +822,10 @@
                 '</div>' +
                 '<p class="ajtb-act-card-desc">' + escHtml(act.description) + '</p>' +
                 '<div class="ajtb-act-card-footer">' +
+                '<div class="ajtb-act-progress" data-ajtb-add-progress hidden>' +
+                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Preparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
+                '<div class="ajtb-act-progress-track"><span data-ajtb-progress-fill style="width: 0%"></span></div>' +
+                '</div>' +
                 '</div></div></article>';
         }
 
@@ -929,6 +933,92 @@
             document.body.classList.remove("ajtb-modal-open");
         }
 
+        function startAddProgress(button) {
+            var card = button.closest(".ajtb-act-card");
+            var progressEl = card ? card.querySelector("[data-ajtb-add-progress]") : null;
+            var fillEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-fill]") : null;
+            var percentEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-percent]") : null;
+            var stateEl = progressEl ? progressEl.querySelector("[data-ajtb-progress-state]") : null;
+            var value = 0;
+            var startedAt = Date.now();
+            var timer = null;
+
+            function stateFor(nextValue) {
+                if (nextValue >= 92) { return "Confirmation"; }
+                if (nextValue >= 64) { return "Mise a jour du programme"; }
+                if (nextValue >= 35) { return "Enregistrement"; }
+                return "Preparation";
+            }
+
+            function apply(nextValue, label) {
+                value = Math.max(0, Math.min(100, Math.round(nextValue)));
+                if (fillEl) {
+                    fillEl.style.width = value + "%";
+                }
+                if (percentEl) {
+                    percentEl.textContent = value + "%";
+                }
+                if (stateEl) {
+                    stateEl.textContent = label || stateFor(value);
+                }
+                if (value < 100) {
+                    button.textContent = value + "%";
+                }
+            }
+
+            if (progressEl) {
+                progressEl.hidden = false;
+                progressEl.classList.remove("is-error", "is-complete");
+            }
+            if (card) {
+                card.classList.add("is-adding");
+            }
+
+            apply(8, "Preparation");
+            timer = window.setInterval(function () {
+                if (value >= 88) {
+                    return;
+                }
+                apply(value + Math.max(4, Math.round((90 - value) / 5)));
+            }, 90);
+
+            return {
+                complete: function (callback) {
+                    var wait = Math.max(0, 420 - (Date.now() - startedAt));
+                    window.setTimeout(function () {
+                        if (timer) {
+                            window.clearInterval(timer);
+                        }
+                        apply(100, "Ajoute au programme");
+                        button.textContent = "100%";
+                        if (progressEl) {
+                            progressEl.classList.add("is-complete");
+                        }
+                        window.setTimeout(function () {
+                            if (card) {
+                                card.classList.remove("is-adding");
+                            }
+                            if (typeof callback === "function") {
+                                callback();
+                            }
+                        }, 180);
+                    }, wait);
+                },
+                fail: function () {
+                    if (timer) {
+                        window.clearInterval(timer);
+                    }
+                    apply(value > 0 ? value : 1, "Erreur, reessayez");
+                    if (progressEl) {
+                        progressEl.classList.add("is-error");
+                    }
+                    if (card) {
+                        card.classList.remove("is-adding");
+                    }
+                },
+            };
+        }
+
         function addActivity(button) {
             var tourId = parseInt(button.getAttribute("data-tour-id") || "0", 10);
             var dayId = parseInt(button.getAttribute("data-day-id") || "0", 10);
@@ -936,17 +1026,20 @@
             var activityId = parseInt(button.getAttribute("data-activity-id") || "0", 10);
             if (!tourId || !dayId || !activityId) { return; }
 
+            var progress = startAddProgress(button);
             button.disabled = true;
             button.classList.add("is-loading");
-            button.textContent = "\u2026";
+            button.textContent = "0%";
 
             function finishAdded() {
-                markAdded(dayId, activityId);
-                addActivityToProgram(dayId, dayNumber, currentModalActivitiesById[activityId] || { activity_id: activityId });
-                button.classList.remove("is-loading");
-                button.classList.add("is-done");
-                button.textContent = "Ajoutee";
-                button.disabled = true;
+                progress.complete(function () {
+                    markAdded(dayId, activityId);
+                    addActivityToProgram(dayId, dayNumber, currentModalActivitiesById[activityId] || { activity_id: activityId });
+                    button.classList.remove("is-loading");
+                    button.classList.add("is-done");
+                    button.textContent = "Ajoutee";
+                    button.disabled = true;
+                });
             }
 
             if (!ajaxUrl || !nonce) {
@@ -975,6 +1068,7 @@
                     finishAdded();
                 })
                 .catch(function () {
+                    progress.fail();
                     button.disabled = false;
                     button.classList.remove("is-loading", "is-done");
                     button.textContent = "Ajouter";

@@ -1193,6 +1193,80 @@ body.ajtb-modal-open {
     flex-wrap: wrap;
 }
 
+.ajtb-act-progress {
+    width: 100%;
+    padding: 8px 9px;
+    border-radius: 10px;
+    background: #f2f7ff;
+    border: 1px solid #d7e8ff;
+}
+
+.ajtb-act-progress[hidden] {
+    display: none;
+}
+
+.ajtb-act-progress-top {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #315a87;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.ajtb-act-progress-top strong {
+    color: #075fbd;
+    font-size: 11px;
+}
+
+.ajtb-act-progress-track {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #dbe9f8;
+}
+
+.ajtb-act-progress-track span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0f78ff, #39c2ff);
+    transition: width 0.16s ease-out;
+}
+
+.ajtb-act-progress.is-complete {
+    background: #eefaf4;
+    border-color: #c4edd7;
+}
+
+.ajtb-act-progress.is-complete .ajtb-act-progress-track span {
+    background: linear-gradient(90deg, #1f9f64, #44d087);
+}
+
+.ajtb-act-progress.is-complete .ajtb-act-progress-top,
+.ajtb-act-progress.is-complete .ajtb-act-progress-top strong {
+    color: #14784a;
+}
+
+.ajtb-act-progress.is-error {
+    background: #fff3f0;
+    border-color: #ffd2c7;
+}
+
+.ajtb-act-progress.is-error .ajtb-act-progress-track span {
+    background: linear-gradient(90deg, #d94c28, #ff8b64);
+}
+
+.ajtb-act-progress.is-error .ajtb-act-progress-top,
+.ajtb-act-progress.is-error .ajtb-act-progress-top strong {
+    color: #b43619;
+}
+
 .ajtb-act-card-price {
     color: #0e2d4e;
     font-size: 12px;
@@ -1233,6 +1307,14 @@ body.ajtb-modal-open {
     background: #d7e3f1;
     color: #48607d;
     cursor: not-allowed;
+}
+
+.ajtb-act-card-btn.is-loading:disabled {
+    min-width: 58px;
+    background: linear-gradient(180deg, #0f78ff, #075fd4);
+    color: #fff;
+    cursor: wait;
+    opacity: 1;
 }
 
 /* Legacy optional badge kept for included activities display */
