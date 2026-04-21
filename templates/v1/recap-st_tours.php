@@ -204,11 +204,6 @@ get_header();
                             </div>
                         </div>
 
-                        <div class="ajtb-v1-recap-client-activities">
-                            <h3>Activités (client principal)</h3>
-                            <div data-ajtb-client-activities></div>
-                        </div>
-
                         <div class="ajtb-v1-recap-companions">
                             <div class="ajtb-v1-recap-companions-head">
                                 <h3>Accompagnants</h3>

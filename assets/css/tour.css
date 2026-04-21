@@ -2223,26 +2223,11 @@ body.ajtb-modal-open {
     letter-spacing: 0.04em;
 }
 
-.ajtb-v1-recap-client-activities {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px dashed #d6e6f6;
-}
-
-.ajtb-v1-recap-client-activities h3 {
-    margin: 0 0 10px 0;
-    font-size: 13px;
-    font-weight: 900;
-    color: #17304d;
-}
-
-.ajtb-v1-recap-client-activities h3,
 .ajtb-v1-recap-companions-head h3 {
     letter-spacing: 0.01em;
 }
 
-.ajtb-v1-recap-companion-activities,
-[data-ajtb-client-activities] {
+.ajtb-v1-recap-companion-activities {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;

@@ -1848,12 +1848,9 @@
                 if (!payload || !payload.activities) return;
                 ensureActivityAssignments();
 
-                // principal slot = 0 (client)
-                var principalBox = finalize.querySelector("[data-ajtb-client-activities]");
                 var allRows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
 
                 function rowForSlot(slotIdx) {
-                    if (slotIdx === 0) return principalBox;
                     return allRows[slotIdx - 1] ? allRows[slotIdx - 1].querySelector("[data-companion-activities]") : null;
                 }
 
