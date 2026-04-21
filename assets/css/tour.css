@@ -2299,28 +2299,87 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-recap-activity-toggle {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    border: 1px solid #dce7f4;
+    border: 1px solid #d7e7f7;
     background: #ffffff;
     border-radius: 999px;
-    padding: 8px 10px;
+    padding: 6px 10px;
     font-size: 12px;
     font-weight: 900;
     color: #16304d;
+    cursor: pointer;
+    user-select: none;
 }
 
 .ajtb-v1-recap-activity-toggle input {
-    width: 16px;
-    height: 16px;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ajtb-v1-recap-activity-toggle span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.ajtb-v1-recap-activity-toggle span::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1.5px solid #9db9d4;
+    background: #ffffff;
+    display: inline-block;
+}
+
+.ajtb-v1-recap-activity-toggle input:checked + span::before {
+    border-color: #2c7be5;
+    background: linear-gradient(180deg, #3b8cff 0%, #1d6fe6 100%);
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+}
+
+.ajtb-v1-recap-activity-toggle input:checked + span {
+    color: #0f4f79;
+}
+
+.ajtb-v1-recap-activity-toggle:hover {
+    border-color: #bcd8f2;
+    background: #f7fbff;
 }
 
 .ajtb-v1-recap-companion-row {
     display: grid;
     grid-template-columns: 110px 1fr 1fr auto;
+    grid-template-areas:
+        "type first last remove"
+        "acts acts acts acts";
     gap: 8px;
     margin-bottom: 8px;
+    padding: 10px;
+    border: 1px solid #edf3fb;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.ajtb-v1-recap-companion-row [data-companion-type] {
+    grid-area: type;
+}
+.ajtb-v1-recap-companion-row [data-companion-first] {
+    grid-area: first;
+}
+.ajtb-v1-recap-companion-row [data-companion-last] {
+    grid-area: last;
+}
+.ajtb-v1-recap-companion-row [data-companion-remove] {
+    grid-area: remove;
+}
+.ajtb-v1-recap-companion-row [data-companion-activities] {
+    grid-area: acts;
+    margin-top: 6px;
 }
 
 .ajtb-v1-recap-companion-row select {
@@ -2372,12 +2431,17 @@ body.ajtb-modal-open {
     }
     .ajtb-v1-recap-companion-row {
         grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "type type"
+            "first last"
+            "remove remove"
+            "acts acts";
     }
     .ajtb-v1-recap-companion-row select {
-        grid-column: 1 / -1;
+        grid-column: auto;
     }
     .ajtb-v1-recap-companion-row button {
-        grid-column: 1 / -1;
+        grid-column: auto;
     }
     .ajtb-v1-recap-activity-row {
         grid-template-columns: 1fr;
