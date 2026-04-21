@@ -748,7 +748,6 @@
                 '</div>' +
                 '<p class="ajtb-act-card-desc">' + escHtml(act.description) + '</p>' +
                 '<div class="ajtb-act-card-footer">' +
-                (!canSubmitSelection ? '<span class="ajtb-act-card-note">Ajout visuel. Activez le module AJAX pour persister la selection.</span>' : '') +
                 '</div></div></article>';
         }
 
