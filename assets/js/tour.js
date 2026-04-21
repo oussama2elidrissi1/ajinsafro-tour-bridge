@@ -1732,11 +1732,11 @@
             }
             var selectedId = payload.room && payload.room.id ? String(payload.room.id) : "";
             box.innerHTML = rooms.map(function (r) {
-                var label = (r.room_type || "Chambre") + (r.hotel_name ? (" • " + r.hotel_name) : "");
-                var cap = r.capacity_total ? ("Capacité " + r.capacity_total) : "";
-                var dispo = (r.available_places !== null && r.available_places !== undefined) ? ("Dispo: " + r.available_places + " places") : "";
+                var label = (r.room_type || "Chambre");
+                var cap = r.capacity_per_room ? ("Cap./chambre: " + r.capacity_per_room) : "";
+                var dispo = (r.quantity !== null && r.quantity !== undefined) ? ("Quantité: " + r.quantity) : "";
                 var meta = [cap, dispo].filter(Boolean).join(" • ");
-                var price = (r.supplement && parseFloat(r.supplement) > 0) ? ("+ " + formatMoney(r.supplement) + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD") + " / pers") : "Inclus";
+                var price = "Inclus";
                 return '' +
                     '<label class="ajtb-v1-choice-item">' +
                     '<input type="radio" name="ajtb_room" value="' + escapeHtml(String(r.id || "")) + '"' + (selectedId === String(r.id) ? ' checked' : '') + '>' +

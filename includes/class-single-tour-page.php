@@ -474,29 +474,27 @@ class AJTB_Single_Tour_Page
             ], 404);
         }
 
-        // Rooms (departure-specific)
+        // Rooms allocations (CRUD "Repartition des chambres par depart")
         $rooms = [];
-        $rooms_sql = "
-            SELECT r.*, dh.hotel_name
-            FROM departure_hotel_rooms r
-            INNER JOIN departure_hotels dh ON dh.id = r.departure_hotel_id
-            WHERE dh.departure_id = %d
-              AND COALESCE(dh.is_active, 1) = 1
-              AND COALESCE(r.status, 'available') IN ('available', 'limited')
-            ORDER BY dh.sort_order ASC, r.supplement ASC, r.id ASC
-        ";
-        $room_rows = $wpdb->get_results($wpdb->prepare($rooms_sql, $departure_id), ARRAY_A);
+        $room_rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, hotel_id, room_type, quantity, capacity_per_room
+             FROM departure_room_allocations
+             WHERE departure_id = %d
+             ORDER BY sort_order ASC, id ASC",
+            $departure_id
+        ), ARRAY_A);
         foreach ($room_rows ?: [] as $row) {
+            $qty = isset($row['quantity']) ? (int) $row['quantity'] : 0;
+            $cap = isset($row['capacity_per_room']) ? (int) $row['capacity_per_room'] : 1;
             $rooms[] = [
                 'id' => (int) ($row['id'] ?? 0),
-                'departure_hotel_id' => (int) ($row['departure_hotel_id'] ?? 0),
-                'hotel_name' => isset($row['hotel_name']) ? (string) $row['hotel_name'] : '',
+                'hotel_id' => isset($row['hotel_id']) && $row['hotel_id'] !== null ? (int) $row['hotel_id'] : null,
                 'room_type' => isset($row['room_type']) ? (string) $row['room_type'] : '',
-                'capacity_total' => isset($row['capacity_total']) ? (int) $row['capacity_total'] : 0,
-                'available_rooms' => isset($row['available_rooms']) ? (int) $row['available_rooms'] : 0,
-                'available_places' => isset($row['available_places']) ? (int) $row['available_places'] : 0,
-                'supplement' => isset($row['supplement']) ? (float) $row['supplement'] : 0.0,
-                'status' => isset($row['status']) ? (string) $row['status'] : 'available',
+                'quantity' => $qty,
+                'capacity_per_room' => $cap,
+                'available_rooms' => $qty,
+                'available_places' => max(0, $qty) * max(1, $cap),
+                'supplement' => 0.0,
             ];
         }
 
