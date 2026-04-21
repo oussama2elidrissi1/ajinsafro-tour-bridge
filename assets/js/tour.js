@@ -5,6 +5,15 @@
 (function () {
     "use strict";
 
+    function escapeHtml(str) {
+        if (!str) { return ""; }
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
     function initTabs() {
         var tabButtons = Array.prototype.slice.call(
             document.querySelectorAll(".ajtb-v1-tab-btn"),
@@ -741,14 +750,7 @@
                 '</div></div></article>';
         }
 
-        function escHtml(str) {
-            if (!str) { return ""; }
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;");
-        }
+        var escHtml = escapeHtml;
 
         function openModal(dayId, tourId, dayFixedOpts) {
             if (!overlay || !modalBody) { return; }
