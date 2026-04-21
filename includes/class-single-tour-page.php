@@ -11,15 +11,48 @@ if (!defined('ABSPATH')) {
 
 class AJTB_Single_Tour_Page
 {
+    private const RECAP_ENDPOINT = 'ajtb-recap';
+
     /**
      * Initialize V1 single tour flow.
      */
     public static function boot(): void
     {
         add_filter('template_include', [self::class, 'override_template'], 999);
+        add_action('init', [self::class, 'register_recap_endpoint']);
+        add_filter('query_vars', [self::class, 'register_query_vars']);
         add_action('wp_enqueue_scripts', [self::class, 'enqueue_assets'], 20);
         add_action('wp_ajax_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
         add_action('wp_ajax_nopriv_ajtb_v1_toggle_activity', [self::class, 'ajax_toggle_activity']);
+    }
+
+    public static function register_recap_endpoint(): void
+    {
+        add_rewrite_endpoint(self::RECAP_ENDPOINT, EP_PERMALINK);
+    }
+
+    public static function register_query_vars(array $vars): array
+    {
+        $vars[] = self::RECAP_ENDPOINT;
+        return $vars;
+    }
+
+    public static function is_recap_request(): bool
+    {
+        global $wp_query;
+        if (!isset($wp_query) || !is_object($wp_query)) {
+            return false;
+        }
+        return is_array($wp_query->query_vars) && array_key_exists(self::RECAP_ENDPOINT, $wp_query->query_vars);
+    }
+
+    public static function recap_url(int $tour_id): string
+    {
+        $permalink = get_permalink($tour_id);
+        if (!$permalink) {
+            return '';
+        }
+        return trailingslashit($permalink) . trailingslashit(self::RECAP_ENDPOINT);
     }
 
     /**
@@ -29,6 +62,13 @@ class AJTB_Single_Tour_Page
     {
         if (!self::is_target_request()) {
             return $template;
+        }
+
+        if (self::is_recap_request()) {
+            $recap_template = AJTB_PLUGIN_DIR . 'templates/v1/recap-st_tours.php';
+            if (file_exists($recap_template)) {
+                return $recap_template;
+            }
         }
 
         $v1_template = AJTB_PLUGIN_DIR . 'templates/v1/single-st_tours.php';

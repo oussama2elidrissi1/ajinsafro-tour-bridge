@@ -1280,6 +1280,231 @@
         seedAddedFromProgram();
     }
 
+    function safeJsonParse(raw, fallback) {
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    function formatMoney(amount) {
+        var num = typeof amount === "number" ? amount : parseFloat(String(amount || "0"));
+        if (!isFinite(num)) {
+            num = 0;
+        }
+        return Math.round(num)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function collectRecapPayloadFromSingle() {
+        var priceCard = document.getElementById("ajtb-v1-summary-card");
+        if (!priceCard) {
+            return null;
+        }
+        var tourId = (window.ajtbData && window.ajtbData.tourId) ? parseInt(String(window.ajtbData.tourId), 10) : 0;
+        if (!tourId) {
+            tourId = parseInt(priceCard.getAttribute("data-tour-id") || "0", 10) || 0;
+        }
+
+        var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+        var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+        var fromSelect = document.getElementById("ajtb-v1-search-from");
+        var dateSelect = document.getElementById("ajtb-v1-search-date");
+
+        var adults = adultsInput ? parseInt(adultsInput.value || "2", 10) : 2;
+        var children = childrenInput ? parseInt(childrenInput.value || "0", 10) : 0;
+        if (!isFinite(adults) || adults < 1) { adults = 1; }
+        if (!isFinite(children) || children < 0) { children = 0; }
+
+        var departureLabel = priceCard.getAttribute("data-default-departure") || "—";
+        var departurePlaceId = 0;
+        if (fromSelect && fromSelect.options && fromSelect.selectedIndex >= 0) {
+            var opt = fromSelect.options[fromSelect.selectedIndex];
+            departurePlaceId = parseInt(fromSelect.value || "0", 10) || 0;
+            departureLabel = (opt.getAttribute("data-place-name") || opt.textContent || departureLabel).trim();
+        }
+
+        var dateValue = "";
+        var dateLabel = priceCard.getAttribute("data-default-date") || "—";
+        if (dateSelect && dateSelect.options && dateSelect.selectedIndex >= 0) {
+            var dateOpt = dateSelect.options[dateSelect.selectedIndex];
+            dateValue = String(dateSelect.value || "");
+            dateLabel = String(dateOpt.textContent || dateValue || dateLabel).trim();
+        }
+
+        var currency = priceCard.getAttribute("data-currency") || "MAD";
+        var totalTextEl = document.getElementById("ajtb-v1-price-amount");
+        var totalText = totalTextEl ? String(totalTextEl.textContent || "").trim() : "";
+        var total = parseFloat(totalText.replace(/\s+/g, "").replace(",", ".")) || 0;
+
+        // Selected activities are the DOM-added client cards.
+        var activities = Array.prototype.slice.call(document.querySelectorAll(".activity-card[data-client-added='1']"))
+            .map(function (row) {
+                return {
+                    activity_id: parseInt(row.getAttribute("data-activity-id") || "0", 10) || 0,
+                    title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activité"),
+                    price: row.getAttribute("data-activity-price") || "",
+                };
+            })
+            .filter(function (a) { return a.activity_id > 0; });
+
+        // Options shown in summary chips (best deals + activities selections).
+        var options = [];
+        var optionsEl = document.getElementById("ajtb-v1-summary-options");
+        if (optionsEl) {
+            options = Array.prototype.slice.call(optionsEl.querySelectorAll("li")).map(function (li) {
+                return String(li.textContent || "").trim();
+            }).filter(Boolean);
+        }
+
+        var recapUrl = priceCard.getAttribute("data-recap-url") || "";
+
+        return {
+            version: 1,
+            capturedAt: Date.now(),
+            tourId: tourId,
+            departure: {
+                id: departurePlaceId,
+                label: departureLabel || "—",
+            },
+            date: {
+                value: dateValue,
+                label: dateLabel || "—",
+            },
+            guests: {
+                adults: adults,
+                children: children,
+                label: (document.getElementById("ajtb-v1-summary-guests") ? document.getElementById("ajtb-v1-summary-guests").textContent : "") || "",
+            },
+            hotel: {
+                label: (document.getElementById("ajtb-v1-summary-hotel") ? document.getElementById("ajtb-v1-summary-hotel").textContent : "") || "",
+            },
+            flight: {
+                label: (document.getElementById("ajtb-v1-summary-flight") ? document.getElementById("ajtb-v1-summary-flight").textContent : "") || "",
+            },
+            transfers: {
+                label: "—",
+            },
+            activities: activities,
+            options: options,
+            price: {
+                total: isFinite(total) ? total : 0,
+                currency: currency,
+            },
+            recapUrl: recapUrl,
+        };
+    }
+
+    function initContinueToRecap() {
+        var actionEl = document.getElementById("ajtb-v1-summary-action");
+        var priceCard = document.getElementById("ajtb-v1-summary-card");
+        if (!actionEl || !priceCard) {
+            return;
+        }
+
+        actionEl.addEventListener("click", function () {
+            var payload = collectRecapPayloadFromSingle();
+            if (!payload) {
+                return;
+            }
+            try {
+                localStorage.setItem("ajtb:v1:recap:" + String(payload.tourId || "0"), JSON.stringify(payload));
+            } catch (e) {}
+
+            var recapUrl = payload.recapUrl || priceCard.getAttribute("data-recap-url") || "";
+            if (!recapUrl && window.ajtbData && window.ajtbData.recapUrl) {
+                recapUrl = window.ajtbData.recapUrl;
+            }
+            if (!recapUrl) {
+                // Fallback: stay on page if recap URL missing.
+                return;
+            }
+            window.location.href = recapUrl;
+        });
+    }
+
+    function initRecapPage() {
+        var root = document.querySelector("[data-ajtb-recap-root]");
+        if (!root) {
+            return;
+        }
+        var tourId = parseInt(root.getAttribute("data-tour-id") || "0", 10) || 0;
+        var hint = document.querySelector("[data-ajtb-recap-hint]");
+        var payload = null;
+        try {
+            payload = safeJsonParse(localStorage.getItem("ajtb:v1:recap:" + String(tourId)), null);
+        } catch (e) {
+            payload = null;
+        }
+        if (!payload || payload.tourId !== tourId) {
+            if (hint) { hint.hidden = false; }
+            return;
+        }
+
+        function setField(name, value) {
+            var el = document.querySelector("[data-ajtb-recap-field='" + name + "']");
+            if (!el) { return; }
+            el.textContent = (value === null || value === undefined || String(value).trim() === "") ? "—" : String(value);
+        }
+
+        setField("departure", payload.departure && payload.departure.label ? payload.departure.label : "—");
+        setField("date", payload.date && payload.date.label ? payload.date.label : "—");
+
+        var guestsLabel = payload.guests && payload.guests.label ? payload.guests.label : "";
+        if (!guestsLabel) {
+            guestsLabel = payload.guests ? (payload.guests.adults + " adulte(s)" + (payload.guests.children > 0 ? (", " + payload.guests.children + " enfant(s)") : "")) : "—";
+        }
+        setField("guests", guestsLabel);
+        setField(
+            "guestBreakdown",
+            (payload.guests ? (payload.guests.adults + " adulte(s)" + (payload.guests.children > 0 ? (" • " + payload.guests.children + " enfant(s)") : "")) : "—"),
+        );
+
+        setField("hotel", payload.hotel && payload.hotel.label ? payload.hotel.label : "—");
+        setField("flight", payload.flight && payload.flight.label ? payload.flight.label : "Non indiqué");
+        setField("transfers", payload.transfers && payload.transfers.label ? payload.transfers.label : "—");
+
+        var activitiesLabel = "—";
+        if (payload.activities && payload.activities.length) {
+            activitiesLabel = payload.activities.map(function (a) { return a.title; }).filter(Boolean).join(", ");
+        }
+        setField("activities", activitiesLabel);
+
+        var optionsLabel = "—";
+        if (payload.options && payload.options.length) {
+            optionsLabel = payload.options.join(", ");
+        }
+        setField("options", optionsLabel);
+
+        setField("total", formatMoney(payload.price && payload.price.total ? payload.price.total : 0));
+        setField("currency", (payload.price && payload.price.currency) ? payload.price.currency : "MAD");
+
+        var detail = [];
+        if (payload.date && payload.date.label) {
+            detail.push("Date: " + payload.date.label);
+        }
+        if (payload.departure && payload.departure.label) {
+            detail.push("Départ: " + payload.departure.label);
+        }
+        if (payload.activities && payload.activities.length) {
+            detail.push("Activités: " + payload.activities.length);
+        }
+        setField("priceDetail", detail.length ? detail.join(" • ") : "—");
+
+        var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
+        if (confirmBtn) {
+            confirmBtn.addEventListener("click", function () {
+                // This is intentionally a validation gate only.
+                // The actual booking flow is handled by the next step (to be wired to Laravel/WP booking).
+                document.dispatchEvent(new CustomEvent("ajtb:v1:recap-confirmed", { detail: payload }));
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = "Confirmé";
+            });
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initTabs();
         initProgramFilters();
@@ -1289,5 +1514,7 @@
         initDynamicStartingPrice();
         initStickySearchBox();
         initOptionalActivitiesActions();
+        initContinueToRecap();
+        initRecapPage();
     });
 })();
