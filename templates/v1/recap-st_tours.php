@@ -204,11 +204,6 @@ get_header();
                             </div>
                         </div>
 
-                        <div class="ajtb-v1-recap-client-extras">
-                            <h3>Extras (client)</h3>
-                            <div data-ajtb-client-extras></div>
-                        </div>
-
                         <div class="ajtb-v1-recap-companions">
                             <div class="ajtb-v1-recap-companions-head">
                                 <h3>Accompagnants</h3>
@@ -236,6 +231,7 @@ get_header();
                         <div id="ajtb-v1-extras-picker" class="ajtb-v1-choice-list">
                             <p class="ajtb-v1-recap-muted">Les extras disponibles s’affichent selon le voyage.</p>
                         </div>
+                        <div class="ajtb-v1-extras-assign" id="ajtb-v1-extras-assign"></div>
                     </article>
 
                     <article class="ajtb-v1-card ajtb-v1-recap-details">

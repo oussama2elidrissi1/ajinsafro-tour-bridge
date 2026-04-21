@@ -1791,6 +1791,87 @@
             }).join("");
         }
 
+        function getTravellerTypesForExtras() {
+            var list = document.getElementById("ajtb-recap-companions-list");
+            if (list) {
+                var types = ["adult"]; // slot 0 = client
+                Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).forEach(function (row) {
+                    var sel = row.querySelector("[data-companion-type]");
+                    var t = sel ? String(sel.value || "adult") : "adult";
+                    types.push(t === "child" ? "child" : "adult");
+                });
+                return types;
+            }
+            // Fallback from guests picker.
+            var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+            var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+            var a = adultsInput ? (parseInt(adultsInput.value || "1", 10) || 1) : 1;
+            var c = childrenInput ? (parseInt(childrenInput.value || "0", 10) || 0) : 0;
+            a = Math.max(1, a); c = Math.max(0, c);
+            var out = ["adult"];
+            for (var i = 1; i < a; i++) out.push("adult");
+            for (var j = 0; j < c; j++) out.push("child");
+            return out;
+        }
+
+        function ensureExtraAssignments() {
+            payload.extras = Array.isArray(payload.extras) ? payload.extras : [];
+            var types = getTravellerTypesForExtras();
+            payload.travellerTypes = types;
+            var travellers = types.length;
+            payload.extras.forEach(function (ex) {
+                if (!ex) return;
+                if (!Array.isArray(ex.assigned) || !ex.assigned.length) {
+                    ex.assigned = [];
+                    for (var i = 0; i < travellers; i++) ex.assigned.push(i);
+                    return;
+                }
+                ex.assigned = ex.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
+                    return isFinite(n) && n >= 0 && n < travellers;
+                });
+                for (var k = 0; k < travellers; k++) {
+                    if (ex.assigned.indexOf(k) === -1) ex.assigned.push(k);
+                }
+            });
+        }
+
+        function renderExtrasAssignment() {
+            var box = document.getElementById("ajtb-v1-extras-assign");
+            if (!box) return;
+            if (!payload.extras || !payload.extras.length) {
+                box.innerHTML = "";
+                return;
+            }
+            ensureExtraAssignments();
+            var types = payload.travellerTypes || getTravellerTypesForExtras();
+            var travellers = types.length;
+            var labels = types.map(function (t, idx) {
+                if (idx === 0) return "Client";
+                return (t === "child" ? ("Enfant " + idx) : ("Adulte " + idx));
+            });
+
+            box.innerHTML = labels.map(function (title, slot) {
+                return '' +
+                    '<div class="ajtb-v1-extras-person" data-ajtb-extra-person="' + slot + '">' +
+                    '<h3>' + escapeHtml(title) + '</h3>' +
+                    '<div class="ajtb-v1-extras-chips">' +
+                    payload.extras.map(function (ex, exIdx) {
+                        var checked = ex && Array.isArray(ex.assigned) && ex.assigned.indexOf(slot) !== -1;
+                        var t = types[slot] === "child" ? "child" : "adult";
+                        var p = t === "child" ? parseFloat(ex.price_child || "0") : parseFloat(ex.price_adult || "0");
+                        if (!isFinite(p) || p < 0) p = 0;
+                        var label = String(ex.name || "Extra") + (p > 0 ? (" · " + formatMoney(p) + " " + ((window.ajtbRecapBase && window.ajtbRecapBase.pricing) ? window.ajtbRecapBase.pricing.currency : "MAD")) : "");
+                        return '' +
+                            '<label class="ajtb-v1-recap-activity-toggle">' +
+                            '<input type="checkbox" data-ajtb-extra-toggle data-slot="' + slot + '" data-extra-idx="' + exIdx + '"' + (checked ? ' checked' : '') + '>' +
+                            '<span>' + escapeHtml(label) + '</span>' +
+                            '</label>';
+                    }).join("") +
+                    '</div>' +
+                    '</div>';
+            }).join("");
+        }
+
         function loadRoomsExtras() {
             var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
             var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
@@ -1832,6 +1913,7 @@
                     renderRecap(payload);
                     document.dispatchEvent(new CustomEvent("ajtb:v1:extras-loaded"));
                     try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+                    renderExtrasAssignment();
                 })
                 .catch(function () {});
         }
@@ -1863,7 +1945,33 @@
             renderRecap(payload);
             try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             loadRoomsExtras();
+            renderExtrasAssignment();
         });
+
+        document.addEventListener("ajtb:v1:extras-loaded", function () {
+            renderExtrasAssignment();
+        });
+
+        var extrasAssign = document.getElementById("ajtb-v1-extras-assign");
+        if (extrasAssign) {
+            extrasAssign.addEventListener("change", function (e) {
+                var chk = e.target && e.target.closest ? e.target.closest("[data-ajtb-extra-toggle]") : null;
+                if (!chk) return;
+                var slot = parseInt(chk.getAttribute("data-slot") || "-1", 10);
+                var exIdx = parseInt(chk.getAttribute("data-extra-idx") || "-1", 10);
+                if (!payload.extras || slot < 0 || exIdx < 0 || exIdx >= payload.extras.length) return;
+                payload.extras[exIdx].assigned = payload.extras[exIdx].assigned || [];
+                var i = payload.extras[exIdx].assigned.indexOf(slot);
+                if (chk.checked) {
+                    if (i === -1) payload.extras[exIdx].assigned.push(slot);
+                } else {
+                    if (i !== -1) payload.extras[exIdx].assigned.splice(i, 1);
+                }
+                payload.travellerTypes = getTravellerTypesForExtras();
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e2) {}
+            });
+        }
 
         // Bind room interactions
         var roomBox = document.getElementById("ajtb-v1-room-picker");
@@ -1916,7 +2024,6 @@
                     '<input type="text" placeholder="Nom" data-companion-last>' +
                     '<button type="button" data-companion-remove>✕</button>' +
                     '<div class="ajtb-v1-recap-companion-activities" data-companion-activities></div>' +
-                    '<div class="ajtb-v1-recap-companion-activities" data-companion-extras></div>' +
                     '</div>';
             }
 
@@ -2037,62 +2144,6 @@
                 }
             }
 
-            function ensureExtraAssignments() {
-                try { payload = readPayloadFromForm(payload); } catch (e) {}
-                if (!payload) return;
-                payload.extras = Array.isArray(payload.extras) ? payload.extras : [];
-                var types = getTravellerTypes();
-                var travellers = types.length;
-                payload.travellerTypes = types;
-                payload.extras.forEach(function (ex) {
-                    if (!ex) return;
-                    if (!Array.isArray(ex.assigned) || !ex.assigned.length) {
-                        ex.assigned = [];
-                        for (var i = 0; i < travellers; i++) ex.assigned.push(i);
-                        return;
-                    }
-                    ex.assigned = ex.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
-                        return isFinite(n) && n >= 0 && n < travellers;
-                    });
-                    for (var j = 0; j < travellers; j++) {
-                        if (ex.assigned.indexOf(j) === -1) ex.assigned.push(j);
-                    }
-                });
-            }
-
-            function renderExtraToggles() {
-                ensureExtraAssignments();
-                var types = getTravellerTypes();
-                var travellers = types.length;
-                var principalBox = finalize.querySelector("[data-ajtb-client-extras]");
-                var allRows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
-
-                function hostForSlot(slotIdx) {
-                    if (slotIdx === 0) return principalBox;
-                    return allRows[slotIdx - 1] ? allRows[slotIdx - 1].querySelector("[data-companion-extras]") : null;
-                }
-
-                for (var slot = 0; slot < travellers; slot++) {
-                    var host = hostForSlot(slot);
-                    if (!host) continue;
-                    if (!payload.extras || !payload.extras.length) {
-                        host.innerHTML = '<span class="ajtb-v1-recap-muted">—</span>';
-                        continue;
-                    }
-                    host.innerHTML = payload.extras.map(function (ex, exIdx) {
-                        var checked = ex && Array.isArray(ex.assigned) && ex.assigned.indexOf(slot) !== -1;
-                        var t = types[slot] === "child" ? "child" : "adult";
-                        var p = t === "child" ? parseFloat(ex.price_child || "0") : parseFloat(ex.price_adult || "0");
-                        if (!isFinite(p) || p < 0) p = 0;
-                        var label = String(ex.name || "Extra") + (p > 0 ? (" · " + formatMoney(p) + " " + ((window.ajtbRecapBase && window.ajtbRecapBase.pricing) ? window.ajtbRecapBase.pricing.currency : "MAD")) : "");
-                        return '' +
-                            '<label class="ajtb-v1-recap-activity-toggle">' +
-                            '<input type="checkbox" data-ajtb-extra-toggle data-slot="' + slot + '" data-extra-idx="' + exIdx + '"' + (checked ? ' checked' : '') + '>' +
-                            '<span>' + escapeHtml(label) + '</span>' +
-                            '</label>';
-                    }).join("");
-                }
-            }
 
             function syncCountsFromCompanionRows() {
                 var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
@@ -2182,23 +2233,6 @@
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             });
 
-            finalize.addEventListener("change", function (e) {
-                var chk = e.target && e.target.closest ? e.target.closest("[data-ajtb-extra-toggle]") : null;
-                if (!chk) return;
-                var slot = parseInt(chk.getAttribute("data-slot") || "-1", 10);
-                var exIdx = parseInt(chk.getAttribute("data-extra-idx") || "-1", 10);
-                if (!payload.extras || slot < 0 || exIdx < 0 || exIdx >= payload.extras.length) return;
-                payload.extras[exIdx].assigned = payload.extras[exIdx].assigned || [];
-                var i = payload.extras[exIdx].assigned.indexOf(slot);
-                if (chk.checked) {
-                    if (i === -1) payload.extras[exIdx].assigned.push(slot);
-                } else {
-                    if (i !== -1) payload.extras[exIdx].assigned.splice(i, 1);
-                }
-                payload.travellerTypes = getTravellerTypes();
-                renderRecap(payload);
-                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e2) {}
-            });
 
             function collectPassengers() {
                 return Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]")).map(function (row) {
@@ -2223,15 +2257,9 @@
             setTimeout(ensureCompanionsMatchCounts, 250);
             // Render activity toggles per traveller
             renderActivityToggles();
-            renderExtraToggles();
             document.addEventListener("ajtb:v1:travellers-changed", function () {
                 // Rows may change; rerender toggles
                 renderActivityToggles();
-                renderExtraToggles();
-            });
-            document.addEventListener("ajtb:v1:extras-loaded", function () {
-                renderExtraToggles();
-                renderRecap(payload);
             });
 
             submitBtn.addEventListener("click", function () {

@@ -2287,13 +2287,22 @@ body.ajtb-modal-open {
     background: #f7fbff;
 }
 
-.ajtb-v1-recap-client-extras {
-    margin-top: 14px;
+.ajtb-v1-extras-assign {
+    margin-top: 12px;
     padding-top: 12px;
     border-top: 1px dashed #d6e6f6;
+    display: grid;
+    gap: 12px;
 }
 
-.ajtb-v1-recap-client-extras h3 {
+.ajtb-v1-extras-person {
+    border: 1px solid #edf3fb;
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 12px;
+}
+
+.ajtb-v1-extras-person h3 {
     margin: 0 0 10px 0;
     font-size: 13px;
     font-weight: 900;
@@ -2301,11 +2310,10 @@ body.ajtb-modal-open {
     letter-spacing: 0.01em;
 }
 
-[data-ajtb-client-extras] {
+.ajtb-v1-extras-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 10px;
 }
 
 .ajtb-v1-choice-list {
