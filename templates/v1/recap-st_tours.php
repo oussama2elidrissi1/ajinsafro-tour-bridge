@@ -183,6 +183,42 @@ get_header();
                         </dl>
                     </article>
 
+                    <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
+                        <h2 class="ajtb-v1-recap-section-title">Client & voyageurs</h2>
+                        <div class="ajtb-v1-recap-form">
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Prénom *</label>
+                                <input type="text" id="ajtb-client-first" autocomplete="given-name" placeholder="Prénom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Nom *</label>
+                                <input type="text" id="ajtb-client-last" autocomplete="family-name" placeholder="Nom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Téléphone</label>
+                                <input type="tel" id="ajtb-client-phone" autocomplete="tel" placeholder="+212 ...">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Email</label>
+                                <input type="email" id="ajtb-client-email" autocomplete="email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+
+                        <div class="ajtb-v1-recap-companions">
+                            <div class="ajtb-v1-recap-companions-head">
+                                <h3>Accompagnants</h3>
+                                <div class="ajtb-v1-recap-companion-actions">
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-adult">+ Adulte</button>
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-child">+ Enfant</button>
+                                </div>
+                            </div>
+                            <div id="ajtb-recap-companions-list" data-ajtb-companions></div>
+                        </div>
+
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>
+                        <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
+                    </article>
+
                     <article class="ajtb-v1-card ajtb-v1-recap-details">
                         <h2 class="ajtb-v1-recap-section-title">Détails du voyage</h2>
                         <?php if (!empty($days)): ?>
@@ -225,42 +261,6 @@ get_header();
                             <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Réserver maintenant</button>
                         </div>
                         <p class="ajtb-v1-recap-note">Vous pourrez finaliser la réservation à l’étape suivante.</p>
-                    </article>
-
-                    <article class="ajtb-v1-side-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
-                        <h2 class="ajtb-v1-recap-section-title">Client & voyageurs</h2>
-                        <div class="ajtb-v1-recap-form">
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Prénom *</label>
-                                <input type="text" id="ajtb-client-first" autocomplete="given-name" placeholder="Prénom">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Nom *</label>
-                                <input type="text" id="ajtb-client-last" autocomplete="family-name" placeholder="Nom">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Téléphone</label>
-                                <input type="tel" id="ajtb-client-phone" autocomplete="tel" placeholder="+212 ...">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Email</label>
-                                <input type="email" id="ajtb-client-email" autocomplete="email" placeholder="email@exemple.com">
-                            </div>
-                        </div>
-
-                        <div class="ajtb-v1-recap-companions">
-                            <div class="ajtb-v1-recap-companions-head">
-                                <h3>Accompagnants</h3>
-                                <div class="ajtb-v1-recap-companion-actions">
-                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-adult">+ Adulte</button>
-                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-child">+ Enfant</button>
-                                </div>
-                            </div>
-                            <div id="ajtb-recap-companions-list" data-ajtb-companions></div>
-                        </div>
-
-                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>
-                        <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
                     </article>
                 </aside>
             </section>
