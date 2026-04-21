@@ -1373,7 +1373,7 @@
                     activity_id: parseInt(row.getAttribute("data-activity-id") || "0", 10) || 0,
                     title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activité"),
                     price: row.getAttribute("data-activity-price") || "",
-                    appliesTo: "all",
+                    assigned: [],
                 };
             })
             .filter(function (a) { return a.activity_id > 0; });
@@ -1544,9 +1544,8 @@
         // Normalize activities: default pricing mode is "all" (per traveller)
         if (payload.activities && payload.activities.length) {
             payload.activities.forEach(function (a) {
-                if (a && !a.appliesTo) {
-                    a.appliesTo = "all";
-                }
+                if (!a) return;
+                if (!Array.isArray(a.assigned)) a.assigned = [];
             });
         }
 
@@ -1587,20 +1586,26 @@
                 state.activities.forEach(function (a) {
                     var p = parseFloat(a.price || "0");
                     if (!isFinite(p) || p <= 0) { return; }
-                    var mode = String(a.appliesTo || "all");
-                    var qty = 1;
-                    if (mode === "all") {
-                        qty = adults + children;
-                    } else if (mode === "adult") {
-                        qty = adults;
-                    } else if (mode === "child") {
-                        qty = children;
-                    } else if (mode === "one") {
-                        qty = 1;
-                    } else if (mode === "qty" && isFinite(a.qty)) {
-                        qty = Math.max(1, parseInt(a.qty, 10) || 1);
+                    var travellers = adults + children;
+                    if (!isFinite(travellers) || travellers < 1) { travellers = 1; }
+
+                    // Per-passenger activation:
+                    // a.assigned is an array of slot indexes (0 = principal client, 1.. = companions).
+                    // If missing, default to all travellers.
+                    var assignedCount = 0;
+                    if (a && Array.isArray(a.assigned) && a.assigned.length) {
+                        var uniq = {};
+                        a.assigned.forEach(function (idx) {
+                            var n = parseInt(idx, 10);
+                            if (!isFinite(n) || n < 0) { return; }
+                            uniq[String(n)] = true;
+                        });
+                        assignedCount = Object.keys(uniq).length;
+                    } else {
+                        assignedCount = travellers;
                     }
-                    activitiesTotal += p * qty;
+                    assignedCount = Math.max(0, Math.min(travellers, assignedCount));
+                    activitiesTotal += p * assignedCount;
                 });
             }
 
@@ -1685,28 +1690,41 @@
                 var travellers = (state.guests ? (parseInt(state.guests.adults || "1", 10) || 1) + (parseInt(state.guests.children || "0", 10) || 0) : 1);
                 if (!isFinite(travellers) || travellers < 1) travellers = 1;
 
-                // Ensure each activity has appliesTo.
+                // Ensure each activity has assigned slots, default to all.
                 state.activities.forEach(function (a) {
-                    if (!a.appliesTo) a.appliesTo = "all";
+                    if (!a) return;
+                    if (!Array.isArray(a.assigned) || !a.assigned.length) {
+                        a.assigned = [];
+                        for (var i = 0; i < travellers; i++) a.assigned.push(i);
+                    } else {
+                        // Clamp to travellers
+                        a.assigned = a.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
+                            return isFinite(n) && n >= 0 && n < travellers;
+                        });
+                        // If emptied, fallback to all.
+                        if (!a.assigned.length) {
+                            for (var j = 0; j < travellers; j++) a.assigned.push(j);
+                        }
+                    }
                 });
 
                 editor.hidden = false;
                 editor.innerHTML = state.activities.map(function (a, idx) {
                     var p = parseFloat(a.price || "0");
                     if (!isFinite(p) || p < 0) p = 0;
-                    var mode = String(a.appliesTo || "all");
-                    var qty = mode === "all" ? travellers : 1;
-                    var subtotal = p * qty;
+                    var assignedCount = (a && Array.isArray(a.assigned)) ? a.assigned.length : travellers;
+                    assignedCount = Math.max(0, Math.min(travellers, assignedCount));
+                    var subtotal = p * assignedCount;
                     return '' +
                         '<div class="ajtb-v1-recap-activity-row" data-ajtb-activity-row="' + idx + '">' +
                         '<div>' +
                         '<strong>' + escapeHtml(String(a.title || "Activité")) + '</strong>' +
                         '<small>' + (p > 0 ? (formatMoney(p) + ' ' + (calc.currency || "MAD")) : '—') + '</small>' +
                         '</div>' +
-                        '<select data-ajtb-activity-mode aria-label="Tarification activité">' +
-                        '<option value="all"' + (mode === "all" ? " selected" : "") + '>Tous les voyageurs (x' + travellers + ')</option>' +
-                        '<option value="one"' + (mode === "one" ? " selected" : "") + '>1 personne (x1)</option>' +
-                        '</select>' +
+                        '<div class="ajtb-v1-recap-activity-assign">' +
+                        '<span>' + escapeHtml(String(assignedCount)) + ' / ' + escapeHtml(String(travellers)) + '</span>' +
+                        '<button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-activity-reset="' + idx + '">Tous</button>' +
+                        '</div>' +
                         '<div class="ajtb-v1-recap-activity-subtotal">' + (p > 0 ? (formatMoney(subtotal) + ' ' + (calc.currency || "MAD")) : '—') + '</div>' +
                         '</div>';
                 }).join("");
@@ -1761,17 +1779,20 @@
             try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
         });
 
-        // Activities editor: update pricing mode and rerender totals
+        // Activities editor: reset to all
         var activitiesEditor = document.getElementById("ajtb-v1-recap-activities-editor");
         if (activitiesEditor) {
-            activitiesEditor.addEventListener("change", function (e) {
-                var sel = e.target && e.target.closest ? e.target.closest("[data-ajtb-activity-mode]") : null;
-                if (!sel) return;
-                var row = sel.closest("[data-ajtb-activity-row]");
-                if (!row) return;
-                var idx = parseInt(row.getAttribute("data-ajtb-activity-row") || "-1", 10);
+            activitiesEditor.addEventListener("click", function (e) {
+                var btn = e.target && e.target.closest ? e.target.closest("[data-ajtb-activity-reset]") : null;
+                if (!btn) return;
+                var idx = parseInt(btn.getAttribute("data-ajtb-activity-reset") || "-1", 10);
                 if (!payload.activities || idx < 0 || idx >= payload.activities.length) return;
-                payload.activities[idx].appliesTo = String(sel.value || "all");
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                var travellers = (adultsInput ? (parseInt(adultsInput.value || "1", 10) || 1) : 1) + (childrenInput ? (parseInt(childrenInput.value || "0", 10) || 0) : 0);
+                travellers = Math.max(1, travellers);
+                payload.activities[idx].assigned = [];
+                for (var i = 0; i < travellers; i++) payload.activities[idx].assigned.push(i);
                 renderRecap(payload);
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             });
@@ -1811,6 +1832,7 @@
                     '<input type="text" placeholder="Prénom" data-companion-first>' +
                     '<input type="text" placeholder="Nom" data-companion-last>' +
                     '<button type="button" data-companion-remove>✕</button>' +
+                    '<div class="ajtb-v1-recap-companion-activities" data-companion-activities></div>' +
                     '</div>';
             }
 
@@ -1867,6 +1889,63 @@
                 }
             }
 
+            function ensureActivityAssignments() {
+                // Ensure payload activities assigned array matches current travellers.
+                try { payload = readPayloadFromForm(payload); } catch (e) {}
+                if (!payload || !payload.activities) return;
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                var travellers = (adultsInput ? (parseInt(adultsInput.value || "1", 10) || 1) : 1) + (childrenInput ? (parseInt(childrenInput.value || "0", 10) || 0) : 0);
+                travellers = Math.max(1, travellers);
+                payload.activities.forEach(function (a) {
+                    if (!a) return;
+                    if (!Array.isArray(a.assigned) || !a.assigned.length) {
+                        a.assigned = [];
+                        for (var i = 0; i < travellers; i++) a.assigned.push(i);
+                        return;
+                    }
+                    a.assigned = a.assigned.map(function (x) { return parseInt(x, 10); }).filter(function (n) {
+                        return isFinite(n) && n >= 0 && n < travellers;
+                    });
+                    // New travellers default to enabled.
+                    for (var j = 0; j < travellers; j++) {
+                        if (a.assigned.indexOf(j) === -1) a.assigned.push(j);
+                    }
+                });
+            }
+
+            function renderActivityToggles() {
+                if (!payload || !payload.activities) return;
+                ensureActivityAssignments();
+
+                // principal slot = 0 (client)
+                var principalBox = finalize.querySelector("[data-ajtb-client-activities]");
+                var allRows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
+
+                function rowForSlot(slotIdx) {
+                    if (slotIdx === 0) return principalBox;
+                    return allRows[slotIdx - 1] ? allRows[slotIdx - 1].querySelector("[data-companion-activities]") : null;
+                }
+
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                var travellers = (adultsInput ? (parseInt(adultsInput.value || "1", 10) || 1) : 1) + (childrenInput ? (parseInt(childrenInput.value || "0", 10) || 0) : 0);
+                travellers = Math.max(1, travellers);
+
+                for (var slot = 0; slot < travellers; slot++) {
+                    var host = rowForSlot(slot);
+                    if (!host) continue;
+                    host.innerHTML = payload.activities.map(function (a, aIdx) {
+                        var checked = a && Array.isArray(a.assigned) && a.assigned.indexOf(slot) !== -1;
+                        return '' +
+                            '<label class="ajtb-v1-recap-activity-toggle">' +
+                            '<input type="checkbox" data-ajtb-activity-toggle data-slot="' + slot + '" data-activity-idx="' + aIdx + '"' + (checked ? ' checked' : '') + '>' +
+                            '<span>' + escapeHtml(String((a && a.title) ? a.title : 'Activité')) + '</span>' +
+                            '</label>';
+                    }).join("");
+                }
+            }
+
             function syncCountsFromCompanionRows() {
                 var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
                 var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
@@ -1905,11 +1984,13 @@
             if (addAdultBtn) {
                 addAdultBtn.addEventListener("click", function () {
                     adjustCounts(1, 0);
+                    renderActivityToggles();
                 });
             }
             if (addChildBtn) {
                 addChildBtn.addEventListener("click", function () {
                     adjustCounts(0, 1);
+                    renderActivityToggles();
                 });
             }
 
@@ -1924,14 +2005,33 @@
                     // Keep counts consistent with UI intent: removing a row reduces counts.
                     if (type === "child") adjustCounts(0, -1);
                     else adjustCounts(-1, 0);
+                    renderActivityToggles();
                 }
             });
 
             list.addEventListener("change", function (e) {
                 var typeSel = e.target && e.target.closest ? e.target.closest("[data-companion-type]") : null;
-                if (!typeSel) return;
-                // When user changes a row type (adult/enfant), sync the travellers widget.
-                syncCountsFromCompanionRows();
+                if (typeSel) {
+                    // When user changes a row type (adult/enfant), sync the travellers widget.
+                    syncCountsFromCompanionRows();
+                    renderActivityToggles();
+                    return;
+                }
+
+                var chk = e.target && e.target.closest ? e.target.closest("[data-ajtb-activity-toggle]") : null;
+                if (!chk) return;
+                var slot = parseInt(chk.getAttribute("data-slot") || "-1", 10);
+                var aIdx = parseInt(chk.getAttribute("data-activity-idx") || "-1", 10);
+                if (!payload.activities || slot < 0 || aIdx < 0 || aIdx >= payload.activities.length) return;
+                payload.activities[aIdx].assigned = payload.activities[aIdx].assigned || [];
+                var i = payload.activities[aIdx].assigned.indexOf(slot);
+                if (chk.checked) {
+                    if (i === -1) payload.activities[aIdx].assigned.push(slot);
+                } else {
+                    if (i !== -1) payload.activities[aIdx].assigned.splice(i, 1);
+                }
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
             });
 
             function collectPassengers() {
@@ -1955,6 +2055,12 @@
             // Some themes/plugins update inputs after initial paint; re-sync on next ticks.
             setTimeout(ensureCompanionsMatchCounts, 0);
             setTimeout(ensureCompanionsMatchCounts, 250);
+            // Render activity toggles per traveller
+            renderActivityToggles();
+            document.addEventListener("ajtb:v1:travellers-changed", function () {
+                // Rows may change; rerender toggles
+                renderActivityToggles();
+            });
 
             submitBtn.addEventListener("click", function () {
                 var first = document.getElementById("ajtb-client-first");

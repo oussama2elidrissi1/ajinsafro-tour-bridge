@@ -2267,6 +2267,55 @@ body.ajtb-modal-open {
     white-space: nowrap;
 }
 
+.ajtb-v1-recap-activity-assign {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: #3a5876;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.ajtb-v1-recap-client-activities {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #d6e6f6;
+}
+
+.ajtb-v1-recap-client-activities h3 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 900;
+    color: #17304d;
+}
+
+.ajtb-v1-recap-companion-activities,
+[data-ajtb-client-activities] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.ajtb-v1-recap-activity-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
+    border-radius: 999px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 900;
+    color: #16304d;
+}
+
+.ajtb-v1-recap-activity-toggle input {
+    width: 16px;
+    height: 16px;
+}
+
 .ajtb-v1-recap-companion-row {
     display: grid;
     grid-template-columns: 110px 1fr 1fr auto;
