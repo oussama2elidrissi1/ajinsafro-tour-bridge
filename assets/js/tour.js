@@ -1760,6 +1760,27 @@
                 }
             }
 
+            function syncCountsFromCompanionRows() {
+                var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
+                var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
+                if (!adultsInput || !childrenInput) return;
+
+                var rows = Array.prototype.slice.call(list.querySelectorAll("[data-companion-row]"));
+                var adultCompanions = 0;
+                var childCompanions = 0;
+                rows.forEach(function (row) {
+                    var sel = row.querySelector("[data-companion-type]");
+                    var t = sel ? String(sel.value || "adult") : "adult";
+                    if (t === "child") childCompanions += 1;
+                    else adultCompanions += 1;
+                });
+
+                // Principal client is always 1 adult.
+                adultsInput.value = String(Math.max(1, 1 + adultCompanions));
+                childrenInput.value = String(Math.max(0, childCompanions));
+                document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
+            }
+
             function adjustCounts(deltaAdults, deltaChildren) {
                 var adultsInput = document.getElementById("ajtb-v1-guest-adults-input");
                 var childrenInput = document.getElementById("ajtb-v1-guest-children-input");
@@ -1797,6 +1818,13 @@
                     if (type === "child") adjustCounts(0, -1);
                     else adjustCounts(-1, 0);
                 }
+            });
+
+            list.addEventListener("change", function (e) {
+                var typeSel = e.target && e.target.closest ? e.target.closest("[data-companion-type]") : null;
+                if (!typeSel) return;
+                // When user changes a row type (adult/enfant), sync the travellers widget.
+                syncCountsFromCompanionRows();
             });
 
             function collectPassengers() {
