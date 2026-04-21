@@ -181,6 +181,7 @@ get_header();
                             <div><dt>Activités</dt><dd data-ajtb-recap-field="activities">—</dd></div>
                             <div><dt>Options / suppléments</dt><dd class="ajtb-v1-recap-clamp" data-ajtb-recap-field="options">—</dd></div>
                         </dl>
+                        <div class="ajtb-v1-recap-activities-editor" id="ajtb-v1-recap-activities-editor" hidden></div>
                     </article>
 
                     <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">

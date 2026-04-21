@@ -1316,6 +1316,15 @@
             .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     }
 
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     function collectRecapPayloadFromSingle() {
         var priceCard = document.getElementById("ajtb-v1-summary-card");
         if (!priceCard) {
@@ -1364,6 +1373,7 @@
                     activity_id: parseInt(row.getAttribute("data-activity-id") || "0", 10) || 0,
                     title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activité"),
                     price: row.getAttribute("data-activity-price") || "",
+                    appliesTo: "all",
                 };
             })
             .filter(function (a) { return a.activity_id > 0; });
@@ -1531,6 +1541,15 @@
             };
         }
 
+        // Normalize activities: default pricing mode is "all" (per traveller)
+        if (payload.activities && payload.activities.length) {
+            payload.activities.forEach(function (a) {
+                if (a && !a.appliesTo) {
+                    a.appliesTo = "all";
+                }
+            });
+        }
+
         function setField(name, value) {
             var el = document.querySelector("[data-ajtb-recap-field='" + name + "']");
             if (!el) { return; }
@@ -1567,7 +1586,21 @@
             if (state.activities && state.activities.length) {
                 state.activities.forEach(function (a) {
                     var p = parseFloat(a.price || "0");
-                    if (isFinite(p) && p > 0) { activitiesTotal += p; }
+                    if (!isFinite(p) || p <= 0) { return; }
+                    var mode = String(a.appliesTo || "all");
+                    var qty = 1;
+                    if (mode === "all") {
+                        qty = adults + children;
+                    } else if (mode === "adult") {
+                        qty = adults;
+                    } else if (mode === "child") {
+                        qty = children;
+                    } else if (mode === "one") {
+                        qty = 1;
+                    } else if (mode === "qty" && isFinite(a.qty)) {
+                        qty = Math.max(1, parseInt(a.qty, 10) || 1);
+                    }
+                    activitiesTotal += p * qty;
                 });
             }
 
@@ -1639,6 +1672,46 @@
             }
             setField("activities", activitiesLabel);
 
+            // Activities pricing editor (x1 vs xN)
+            (function renderActivitiesEditor() {
+                var editor = document.getElementById("ajtb-v1-recap-activities-editor");
+                if (!editor) return;
+                if (!state.activities || !state.activities.length) {
+                    editor.hidden = true;
+                    editor.innerHTML = "";
+                    return;
+                }
+
+                var travellers = (state.guests ? (parseInt(state.guests.adults || "1", 10) || 1) + (parseInt(state.guests.children || "0", 10) || 0) : 1);
+                if (!isFinite(travellers) || travellers < 1) travellers = 1;
+
+                // Ensure each activity has appliesTo.
+                state.activities.forEach(function (a) {
+                    if (!a.appliesTo) a.appliesTo = "all";
+                });
+
+                editor.hidden = false;
+                editor.innerHTML = state.activities.map(function (a, idx) {
+                    var p = parseFloat(a.price || "0");
+                    if (!isFinite(p) || p < 0) p = 0;
+                    var mode = String(a.appliesTo || "all");
+                    var qty = mode === "all" ? travellers : 1;
+                    var subtotal = p * qty;
+                    return '' +
+                        '<div class="ajtb-v1-recap-activity-row" data-ajtb-activity-row="' + idx + '">' +
+                        '<div>' +
+                        '<strong>' + escapeHtml(String(a.title || "Activité")) + '</strong>' +
+                        '<small>' + (p > 0 ? (formatMoney(p) + ' ' + (calc.currency || "MAD")) : '—') + '</small>' +
+                        '</div>' +
+                        '<select data-ajtb-activity-mode aria-label="Tarification activité">' +
+                        '<option value="all"' + (mode === "all" ? " selected" : "") + '>Tous les voyageurs (x' + travellers + ')</option>' +
+                        '<option value="one"' + (mode === "one" ? " selected" : "") + '>1 personne (x1)</option>' +
+                        '</select>' +
+                        '<div class="ajtb-v1-recap-activity-subtotal">' + (p > 0 ? (formatMoney(subtotal) + ' ' + (calc.currency || "MAD")) : '—') + '</div>' +
+                        '</div>';
+                }).join("");
+            })();
+
             var optionsLabel = "—";
             if (state.options && state.options.length) {
                 optionsLabel = state.options.join(", ");
@@ -1687,6 +1760,22 @@
             renderRecap(payload);
             try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
         });
+
+        // Activities editor: update pricing mode and rerender totals
+        var activitiesEditor = document.getElementById("ajtb-v1-recap-activities-editor");
+        if (activitiesEditor) {
+            activitiesEditor.addEventListener("change", function (e) {
+                var sel = e.target && e.target.closest ? e.target.closest("[data-ajtb-activity-mode]") : null;
+                if (!sel) return;
+                var row = sel.closest("[data-ajtb-activity-row]");
+                if (!row) return;
+                var idx = parseInt(row.getAttribute("data-ajtb-activity-row") || "-1", 10);
+                if (!payload.activities || idx < 0 || idx >= payload.activities.length) return;
+                payload.activities[idx].appliesTo = String(sel.value || "all");
+                renderRecap(payload);
+                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+            });
+        }
 
         var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
         if (confirmBtn) {
