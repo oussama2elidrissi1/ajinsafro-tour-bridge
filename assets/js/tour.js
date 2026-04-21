@@ -1611,13 +1611,40 @@
 
             var total = adults * adultUnit + children * childUnit + activitiesTotal;
             var roomTotal = 0;
-            if (state.room && isFinite(state.room.supplement)) {
-                var rs = parseFloat(state.room.supplement || "0");
-                if (isFinite(rs) && rs > 0) {
-                    roomTotal = rs * (adults + children);
+            (function computeRoomSupplementTotal() {
+                var rooms = Array.isArray(state.availableRoomsCurrent) ? state.availableRoomsCurrent : [];
+                var alloc = state.roomAllocation && typeof state.roomAllocation === "object" ? state.roomAllocation : {};
+                var travellers = adults + children;
+                if (!isFinite(travellers) || travellers < 1) { travellers = 1; }
+                if (!rooms.length) { return; }
+
+                var remaining = travellers;
+                rooms.forEach(function (r) {
+                    if (remaining <= 0) { return; }
+                    if (!r) { return; }
+                    var id = String(r.id || "");
+                    if (!id) { return; }
+                    var qtyRooms = parseInt(alloc[id] || "0", 10) || 0;
+                    qtyRooms = Math.max(0, qtyRooms);
+                    if (qtyRooms <= 0) { return; }
+
+                    var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
+                    cap = Math.max(1, cap);
+                    var covered = qtyRooms * cap;
+                    if (covered <= 0) { return; }
+
+                    var assigned = Math.min(remaining, covered);
+                    var supp = parseFloat(r.supplement || "0");
+                    if (isFinite(supp) && supp > 0) {
+                        roomTotal += assigned * supp;
+                    }
+                    remaining -= assigned;
+                });
+
+                if (roomTotal > 0) {
                     total += roomTotal;
                 }
-            }
+            })();
             var extrasTotal = 0;
             if (state.extras && state.extras.length) {
                 var travellerTypes = Array.isArray(state.travellerTypes) ? state.travellerTypes : null;
