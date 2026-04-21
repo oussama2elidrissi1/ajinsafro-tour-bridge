@@ -291,6 +291,7 @@ class AJTB_Single_Tour_Page
         $passengers_json = isset($_POST['passengers']) ? (string) wp_unslash($_POST['passengers']) : '[]';
         $extras_json = isset($_POST['extras_json']) ? (string) wp_unslash($_POST['extras_json']) : '[]';
         $room_id = isset($_POST['room_id']) ? (int) $_POST['room_id'] : 0;
+        $room_allocation_json = isset($_POST['room_allocation_json']) ? (string) wp_unslash($_POST['room_allocation_json']) : '';
 
         if ($tour_id <= 0 || $departure_date === '') {
             wp_send_json_error([
@@ -413,7 +414,7 @@ class AJTB_Single_Tour_Page
             'passengers_count' => $passengers_count,
             'wp_tour_post_id' => $tour_id,
             'catalog_source_code' => 'wp_front_v1',
-            'notes' => 'Front booking (WP) - departure_place_id=' . $departure_place_id . ' adults=' . $adults . ' children=' . $children . ($room_id > 0 ? (' room_id=' . $room_id) : ''),
+            'notes' => 'Front booking (WP) - departure_place_id=' . $departure_place_id . ' adults=' . $adults . ' children=' . $children . ($room_id > 0 ? (' room_id=' . $room_id) : '') . ($room_allocation_json !== '' ? (' room_alloc=' . $room_allocation_json) : ''),
             'created_at' => current_time('mysql', true),
             'updated_at' => current_time('mysql', true),
         ]);

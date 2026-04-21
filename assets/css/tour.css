@@ -2358,6 +2358,95 @@ body.ajtb-modal-open {
     white-space: nowrap;
 }
 
+.ajtb-v1-room-alloc {
+    display: grid;
+    gap: 12px;
+}
+
+.ajtb-v1-room-alloc-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #edf3fb;
+    border-radius: 16px;
+    background: #f7fbff;
+}
+
+.ajtb-v1-room-alloc-summary strong {
+    color: #17304d;
+}
+
+.ajtb-v1-room-alloc-summary .ajtb-v1-room-alloc-badge {
+    font-weight: 900;
+    color: #0f4f79;
+}
+
+.ajtb-v1-room-alloc-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #edf3fb;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.ajtb-v1-room-alloc-row strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 900;
+    color: #17304d;
+}
+
+.ajtb-v1-room-alloc-row small {
+    display: block;
+    color: #6b87a4;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.ajtb-v1-room-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    border: 1px solid #dce7f4;
+    border-radius: 999px;
+    background: #ffffff;
+}
+
+.ajtb-v1-room-stepper button {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid #cfe3f7;
+    background: #eef7ff;
+    color: #0f4f79;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.ajtb-v1-room-stepper button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.ajtb-v1-room-stepper span {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 900;
+    color: #17304d;
+}
+
+.ajtb-v1-room-alloc-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 @media (max-width: 767px) {
     .ajtb-v1-choice-item {
         grid-template-columns: 18px 1fr;

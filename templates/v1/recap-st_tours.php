@@ -221,7 +221,7 @@ get_header();
 
                     <article class="ajtb-v1-card ajtb-v1-recap-room">
                         <h2 class="ajtb-v1-recap-section-title">Choisissez votre chambre</h2>
-                        <div id="ajtb-v1-room-picker" class="ajtb-v1-choice-list">
+                        <div id="ajtb-v1-room-picker" class="ajtb-v1-room-alloc">
                             <p class="ajtb-v1-recap-muted">Sélectionnez une date et une ville de départ pour voir les chambres disponibles.</p>
                         </div>
                     </article>

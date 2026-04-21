@@ -1754,20 +1754,122 @@
                 box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce départ.</p>';
                 return;
             }
-            var selectedId = payload.room && payload.room.id ? String(payload.room.id) : "";
-            box.innerHTML = rooms.map(function (r) {
-                var label = (r.room_type || "Chambre");
-                var cap = r.capacity_per_room ? ("Cap./chambre: " + r.capacity_per_room) : "";
-                var dispo = (r.quantity !== null && r.quantity !== undefined) ? ("Quantité: " + r.quantity) : "";
-                var meta = [cap, dispo].filter(Boolean).join(" • ");
-                var price = "Inclus";
-                return '' +
-                    '<label class="ajtb-v1-choice-item">' +
-                    '<input type="radio" name="ajtb_room" value="' + escapeHtml(String(r.id || "")) + '"' + (selectedId === String(r.id) ? ' checked' : '') + '>' +
-                    '<span><strong>' + escapeHtml(label) + '</strong>' + (meta ? ('<small>' + escapeHtml(meta) + '</small>') : '') + '</span>' +
-                    '<span class="ajtb-v1-choice-price">' + escapeHtml(price) + '</span>' +
-                    '</label>';
-            }).join("");
+            payload.roomAllocation = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
+
+            function travellersCount() {
+                var a = payload.guests ? (parseInt(payload.guests.adults || "1", 10) || 1) : 1;
+                var c = payload.guests ? (parseInt(payload.guests.children || "0", 10) || 0) : 0;
+                return Math.max(1, a) + Math.max(0, c);
+            }
+
+            function allocationCapacity() {
+                var total = 0;
+                rooms.forEach(function (r) {
+                    var id = String(r.id || "");
+                    var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
+                    var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
+                    total += Math.max(0, qty) * Math.max(1, cap);
+                });
+                return total;
+            }
+
+            function suggestAllInOneRoom() {
+                var n = travellersCount();
+                var candidate = null;
+                rooms.forEach(function (r) {
+                    var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
+                    var stock = parseInt(r.quantity || "0", 10) || 0;
+                    if (stock <= 0) return;
+                    if (cap >= n) {
+                        if (!candidate || cap < candidate.cap) {
+                            candidate = { id: String(r.id), cap: cap };
+                        }
+                    }
+                });
+                if (candidate) {
+                    payload.roomAllocation = {};
+                    payload.roomAllocation[candidate.id] = 1;
+                    return true;
+                }
+                return false;
+            }
+
+            // If nothing chosen yet, try best default: everyone in one room, else first available 1 room.
+            var hasAny = Object.keys(payload.roomAllocation).some(function (k) { return (parseInt(payload.roomAllocation[k] || "0", 10) || 0) > 0; });
+            if (!hasAny) {
+                if (!suggestAllInOneRoom()) {
+                    var first = rooms.find(function (r) { return (parseInt(r.quantity || "0", 10) || 0) > 0; });
+                    if (first) {
+                        payload.roomAllocation = {};
+                        payload.roomAllocation[String(first.id)] = 1;
+                    }
+                }
+            }
+
+            function render() {
+                var need = travellersCount();
+                var got = allocationCapacity();
+                var ok = got >= need;
+                box.innerHTML =
+                    '<div class="ajtb-v1-room-alloc-summary">' +
+                    '<div><strong>' + escapeHtml(String(need)) + '</strong> voyageurs · Capacité sélectionnée: <strong>' + escapeHtml(String(got)) + '</strong></div>' +
+                    '<div class="ajtb-v1-room-alloc-actions">' +
+                    '<button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-room-suggest="1">Tout le monde ensemble</button>' +
+                    '</div>' +
+                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
+                    '</div>' +
+                    rooms.map(function (r) {
+                        var id = String(r.id || "");
+                        var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
+                        var stock = parseInt(r.quantity || "0", 10) || 0;
+                        var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
+                        qty = Math.max(0, qty);
+                        var canMinus = qty > 0;
+                        var canPlus = qty < stock;
+                        return '' +
+                            '<div class="ajtb-v1-room-alloc-row" data-ajtb-room-id="' + escapeHtml(id) + '">' +
+                            '<div>' +
+                            '<strong>' + escapeHtml(String(r.room_type || "Chambre")) + '</strong>' +
+                            '<small>Cap./chambre: ' + escapeHtml(String(cap)) + ' · Stock: ' + escapeHtml(String(stock)) + '</small>' +
+                            '</div>' +
+                            '<div class="ajtb-v1-room-stepper">' +
+                            '<button type="button" data-ajtb-room-minus ' + (canMinus ? "" : "disabled") + '>-</button>' +
+                            '<span data-ajtb-room-qty>' + escapeHtml(String(qty)) + '</span>' +
+                            '<button type="button" data-ajtb-room-plus ' + (canPlus ? "" : "disabled") + '>+</button>' +
+                            '</div>' +
+                            '</div>';
+                    }).join("");
+            }
+
+            render();
+            renderRecap(payload);
+            try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+
+            box.addEventListener("click", function (e) {
+                var suggest = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-suggest]") : null;
+                if (suggest) {
+                    suggestAllInOneRoom();
+                    render();
+                    return;
+                }
+                var row = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-id]") : null;
+                if (!row) return;
+                var id = String(row.getAttribute("data-ajtb-room-id") || "");
+                if (!id) return;
+                var isPlus = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-plus]") : null;
+                var isMinus = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-minus]") : null;
+                if (!isPlus && !isMinus) return;
+
+                var r = rooms.find(function (x) { return String(x.id) === id; });
+                if (!r) return;
+                var stock = parseInt(r.quantity || "0", 10) || 0;
+                var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
+                qty = Math.max(0, qty);
+                if (isPlus && qty < stock) qty += 1;
+                if (isMinus && qty > 0) qty -= 1;
+                payload.roomAllocation[id] = qty;
+                render();
+            }, { passive: true });
         }
 
         function renderExtras(extras) {
@@ -1973,19 +2075,7 @@
             });
         }
 
-        // Bind room interactions
-        var roomBox = document.getElementById("ajtb-v1-room-picker");
-        if (roomBox) {
-            roomBox.addEventListener("change", function (e) {
-                var radio = e.target && e.target.closest ? e.target.closest("input[type='radio'][name='ajtb_room']") : null;
-                if (!radio) return;
-                var rid = parseInt(radio.value || "0", 10) || 0;
-                var found = (payload.availableRooms || []).find(function (r) { return (parseInt(r.id, 10) || 0) === rid; });
-                payload.room = found || null;
-                renderRecap(payload);
-                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
-            });
-        }
+        // Rooms are managed by allocation stepper in renderRooms()
 
         // (Activities are managed per traveller in "Client & voyageurs")
 
@@ -2296,6 +2386,13 @@
                 formData.append("client_document_number", "");
                 formData.append("passengers", JSON.stringify(collectPassengers()));
                 formData.append("room_id", String(payload.room && payload.room.id ? payload.room.id : 0));
+                // Store room allocation in notes (backend can parse later)
+                try {
+                    var alloc = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
+                    formData.append("room_allocation_json", JSON.stringify(alloc));
+                } catch (eRoom) {
+                    formData.append("room_allocation_json", "{}");
+                }
 
                 var extrasPayload = [];
                 // Per-traveller extras -> one row per assigned slot (passenger_key = slot:N)
