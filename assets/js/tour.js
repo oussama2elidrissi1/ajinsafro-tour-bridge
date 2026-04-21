@@ -1887,6 +1887,7 @@
                 if (suggest) {
                     suggestAllInOneRoom();
                     render();
+                    renderRecap(payload);
                     return;
                 }
                 var row = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-id]") : null;
@@ -1907,6 +1908,7 @@
                 if (isMinus && qty > 0) qty -= 1;
                 payload.roomAllocation[id] = qty;
                 render();
+                renderRecap(payload);
             }, { passive: true });
         }
 
