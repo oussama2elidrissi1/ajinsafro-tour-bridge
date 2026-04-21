@@ -69,6 +69,36 @@ class AJTB_Single_Tour_Page
         return add_query_arg(self::RECAP_QUERY_VAR, '1', $permalink);
     }
 
+    private static function table_exists(string $table): bool
+    {
+        global $wpdb;
+        if (!isset($wpdb) || !is_object($wpdb)) {
+            return false;
+        }
+        $table = trim($table);
+        if ($table === '') {
+            return false;
+        }
+        $found = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table));
+        return (string) $found === $table;
+    }
+
+    /**
+     * Find first existing table name from candidates.
+     *
+     * @param string[] $candidates
+     */
+    private static function first_table(array $candidates): string
+    {
+        $candidates = array_values(array_unique(array_filter(array_map('strval', $candidates))));
+        foreach ($candidates as $t) {
+            if ($t !== '' && self::table_exists($t)) {
+                return $t;
+            }
+        }
+        return '';
+    }
+
     /**
      * Route single st_tours requests to the clean V1 template.
      */
@@ -288,7 +318,16 @@ class AJTB_Single_Tour_Page
             $extras = [];
         }
 
-        $table_travel_dates = ajtb_table('aj_travel_dates');
+        $table_travel_dates = self::first_table([
+            ajtb_table('aj_travel_dates'),
+            'aj_travel_dates',
+            $wpdb->prefix . 'aj_travel_dates',
+        ]);
+        if ($table_travel_dates === '') {
+            wp_send_json_error([
+                'message' => __('Table des dates introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $travel_date_id = (int) $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM {$table_travel_dates} WHERE travel_id = %d AND date = %s ORDER BY id DESC LIMIT 1",
             $tour_id,
@@ -300,8 +339,19 @@ class AJTB_Single_Tour_Page
             ], 404);
         }
 
+        $voyages_table = self::first_table([
+            'voyages',
+            'aj_voyages',
+            $wpdb->prefix . 'voyages',
+            $wpdb->prefix . 'aj_voyages',
+        ]);
+        if ($voyages_table === '') {
+            wp_send_json_error([
+                'message' => __('Table voyages introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $voyage_id = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM voyages WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
+            "SELECT id FROM {$voyages_table} WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
             $tour_id
         ));
         if ($voyage_id <= 0) {
@@ -310,8 +360,17 @@ class AJTB_Single_Tour_Page
             ], 404);
         }
 
+        $departures_table = self::first_table([
+            'departures',
+            $wpdb->prefix . 'departures',
+        ]);
+        if ($departures_table === '') {
+            wp_send_json_error([
+                'message' => __('Table départs introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $departure_id = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM departures WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
+            "SELECT id FROM {$departures_table} WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
             $voyage_id,
             $travel_date_id
         ));
@@ -441,7 +500,16 @@ class AJTB_Single_Tour_Page
             ], 422);
         }
 
-        $table_travel_dates = ajtb_table('aj_travel_dates');
+        $table_travel_dates = self::first_table([
+            ajtb_table('aj_travel_dates'),
+            'aj_travel_dates',
+            $wpdb->prefix . 'aj_travel_dates',
+        ]);
+        if ($table_travel_dates === '') {
+            wp_send_json_error([
+                'message' => __('Table des dates introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $travel_date_id = (int) $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM {$table_travel_dates} WHERE travel_id = %d AND date = %s ORDER BY id DESC LIMIT 1",
             $tour_id,
@@ -453,8 +521,19 @@ class AJTB_Single_Tour_Page
             ], 404);
         }
 
+        $voyages_table = self::first_table([
+            'voyages',
+            'aj_voyages',
+            $wpdb->prefix . 'voyages',
+            $wpdb->prefix . 'aj_voyages',
+        ]);
+        if ($voyages_table === '') {
+            wp_send_json_error([
+                'message' => __('Table voyages introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $voyage_id = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM voyages WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
+            "SELECT id FROM {$voyages_table} WHERE wp_post_id = %d ORDER BY id DESC LIMIT 1",
             $tour_id
         ));
         if ($voyage_id <= 0) {
@@ -463,8 +542,17 @@ class AJTB_Single_Tour_Page
             ], 404);
         }
 
+        $departures_table = self::first_table([
+            'departures',
+            $wpdb->prefix . 'departures',
+        ]);
+        if ($departures_table === '') {
+            wp_send_json_error([
+                'message' => __('Table départs introuvable.', 'ajinsafro-tour-bridge'),
+            ], 500);
+        }
         $departure_id = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM departures WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
+            "SELECT id FROM {$departures_table} WHERE voyage_id = %d AND wp_travel_date_id = %d ORDER BY id DESC LIMIT 1",
             $voyage_id,
             $travel_date_id
         ));
@@ -476,13 +564,21 @@ class AJTB_Single_Tour_Page
 
         // Rooms allocations (CRUD "Repartition des chambres par depart")
         $rooms = [];
-        $room_rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, hotel_id, room_type, quantity, capacity_per_room
-             FROM departure_room_allocations
-             WHERE departure_id = %d
-             ORDER BY sort_order ASC, id ASC",
-            $departure_id
-        ), ARRAY_A);
+        $alloc_table = self::first_table([
+            'departure_room_allocations',
+            $wpdb->prefix . 'departure_room_allocations',
+        ]);
+        if ($alloc_table !== '') {
+            $room_rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, hotel_id, room_type, quantity, capacity_per_room
+                 FROM {$alloc_table}
+                 WHERE departure_id = %d
+                 ORDER BY sort_order ASC, id ASC",
+                $departure_id
+            ), ARRAY_A);
+        } else {
+            $room_rows = [];
+        }
         foreach ($room_rows ?: [] as $row) {
             $qty = isset($row['quantity']) ? (int) $row['quantity'] : 0;
             $cap = isset($row['capacity_per_room']) ? (int) $row['capacity_per_room'] : 1;
@@ -500,13 +596,22 @@ class AJTB_Single_Tour_Page
 
         // Extras (voyage-level)
         $extras = [];
-        $extra_rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, name, description, price_adult, price_child, extra_type, icon
-             FROM voyage_extras
-             WHERE voyage_id = %d AND is_active = 1
-             ORDER BY sort_order ASC, id ASC",
-            $voyage_id
-        ), ARRAY_A);
+        $extras_table = self::first_table([
+            'voyage_extras',
+            'aj_voyage_extras',
+            $wpdb->prefix . 'voyage_extras',
+            $wpdb->prefix . 'aj_voyage_extras',
+        ]);
+        $extra_rows = [];
+        if ($extras_table !== '') {
+            $extra_rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name, description, price_adult, price_child, extra_type, icon
+                 FROM {$extras_table}
+                 WHERE voyage_id = %d AND is_active = 1
+                 ORDER BY sort_order ASC, id ASC",
+                $voyage_id
+            ), ARRAY_A);
+        }
         foreach ($extra_rows ?: [] as $row) {
             $extras[] = [
                 'id' => (int) ($row['id'] ?? 0),
