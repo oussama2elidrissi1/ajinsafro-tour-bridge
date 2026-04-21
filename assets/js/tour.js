@@ -277,6 +277,24 @@
             );
         }
 
+        // Allow other components (recap finalize) to update the travellers widget
+        // by changing hidden inputs + dispatching ajtb:v1:travellers-changed.
+        function syncFromInputs() {
+            var a = Math.max(1, parseInt(adultsInput.value || "1", 10) || 1);
+            var c = Math.max(0, parseInt(childrenInput.value || "0", 10) || 0);
+            if (a === state.adults && c === state.children) {
+                return;
+            }
+            state.adults = a;
+            state.children = c;
+            clampTotals();
+            adultsValue.textContent = String(state.adults);
+            childrenValue.textContent = String(state.children);
+            summary.textContent = formatSummary();
+        }
+
+        document.addEventListener("ajtb:v1:travellers-changed", syncFromInputs);
+
         function clampTotals() {
             if (state.adults > maxAdults) {
                 state.adults = maxAdults;
