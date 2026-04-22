@@ -1515,23 +1515,51 @@
             return;
         }
         var stepLinks = Array.prototype.slice.call(document.querySelectorAll(".ajtb-v1-recap-step"));
-        var stepTargets = stepLinks.map(function (link) {
-            var href = link.getAttribute("href") || "";
-            if (!href || href.charAt(0) !== "#") {
-                return null;
-            }
-            var target = document.querySelector(href);
-            if (!target) {
-                return null;
-            }
-            return { link: link, target: target };
-        }).filter(Boolean);
+        var stepPanels = Array.prototype.slice.call(document.querySelectorAll("[data-ajtb-step-panel]"));
+        var currentStepIndex = 0;
 
-        function setActiveStep(targetId) {
+        function getStepIndexById(stepId) {
+            var idx = stepPanels.findIndex(function (panel) {
+                return panel && panel.id === stepId;
+            });
+            return idx >= 0 ? idx : 0;
+        }
+
+        function setActiveStepByIndex(nextIndex) {
+            if (!stepPanels.length) {
+                return;
+            }
+            var max = stepPanels.length - 1;
+            if (nextIndex < 0) {
+                nextIndex = 0;
+            }
+            if (nextIndex > max) {
+                nextIndex = max;
+            }
+            currentStepIndex = nextIndex;
+
+            stepPanels.forEach(function (panel, idx) {
+                var active = idx === currentStepIndex;
+                panel.classList.toggle("is-active", active);
+                if (active) {
+                    panel.removeAttribute("hidden");
+                } else {
+                    panel.setAttribute("hidden", "");
+                }
+            });
+
+            var activeId = stepPanels[currentStepIndex] && stepPanels[currentStepIndex].id
+                ? String(stepPanels[currentStepIndex].id)
+                : "";
             stepLinks.forEach(function (link) {
                 var href = link.getAttribute("href") || "";
-                link.classList.toggle("is-active", href === ("#" + targetId));
+                link.classList.toggle("is-active", href === ("#" + activeId));
             });
+
+            var activePanel = stepPanels[currentStepIndex];
+            if (activePanel) {
+                activePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
         }
 
         stepLinks.forEach(function (link) {
@@ -1540,34 +1568,27 @@
                 if (!href || href.charAt(0) !== "#") {
                     return;
                 }
-                var target = document.querySelector(href);
-                if (!target) {
-                    return;
-                }
+                var targetId = href.slice(1);
+                var idx = getStepIndexById(targetId);
                 event.preventDefault();
-                setActiveStep(String(target.id || ""));
-                target.scrollIntoView({ behavior: "smooth", block: "start" });
+                setActiveStepByIndex(idx);
             });
         });
 
-        if (stepTargets.length) {
-            var onScroll = function () {
-                var viewportOffset = 170;
-                var current = stepTargets[0];
-                stepTargets.forEach(function (entry) {
-                    var top = entry.target.getBoundingClientRect().top;
-                    if (top <= viewportOffset) {
-                        current = entry;
-                    }
-                });
-                if (current && current.target && current.target.id) {
-                    setActiveStep(String(current.target.id));
-                }
-            };
-            window.addEventListener("scroll", onScroll, { passive: true });
-            window.addEventListener("resize", onScroll, { passive: true });
-            onScroll();
-        }
+        var nextButtons = Array.prototype.slice.call(document.querySelectorAll("[data-ajtb-step-next]"));
+        var prevButtons = Array.prototype.slice.call(document.querySelectorAll("[data-ajtb-step-prev]"));
+        nextButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActiveStepByIndex(currentStepIndex + 1);
+            });
+        });
+        prevButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                setActiveStepByIndex(currentStepIndex - 1);
+            });
+        });
+
+        setActiveStepByIndex(0);
 
         var tourId = parseInt(root.getAttribute("data-tour-id") || "0", 10) || 0;
         var hint = document.querySelector("[data-ajtb-recap-hint]");
@@ -2216,19 +2237,6 @@
         // Rooms are managed by allocation stepper in renderRooms()
 
         // (Activities are managed per traveller in "Client & voyageurs")
-
-        var confirmBtn = document.querySelector("[data-ajtb-recap-action='confirm']");
-        if (confirmBtn) {
-            confirmBtn.addEventListener("click", function () {
-                try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
-                var finalize = document.getElementById("ajtb-v1-recap-finalize");
-                if (finalize) {
-                    finalize.scrollIntoView({ behavior: "smooth", block: "start" });
-                    var first = document.getElementById("ajtb-client-first");
-                    if (first) { first.focus(); }
-                }
-            });
-        }
 
         (function bindFinalize() {
             var finalize = document.getElementById("ajtb-v1-recap-finalize");

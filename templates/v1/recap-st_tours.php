@@ -81,9 +81,9 @@ get_header();
                 </a>
             </nav>
 
-            <section class="ajtb-v1-recap-grid">
-                <div class="ajtb-v1-recap-main">
-                    <article class="ajtb-v1-card ajtb-v1-recap-tour" id="ajtb-v1-step-tour">
+            <section class="ajtb-v1-recap-wizard" aria-live="polite">
+                <section class="ajtb-v1-recap-panel is-active" id="ajtb-v1-step-tour" data-ajtb-step-panel="1">
+                    <article class="ajtb-v1-card ajtb-v1-recap-tour">
                         <div class="ajtb-v1-recap-tour-media">
                             <img src="<?php echo esc_url($hero_main); ?>" alt="<?php echo esc_attr($tour_title); ?>" loading="eager">
                         </div>
@@ -100,8 +100,13 @@ get_header();
                             </ul>
                         </div>
                     </article>
+                    <div class="ajtb-v1-recap-step-actions">
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-step-next>Suivant</button>
+                    </div>
+                </section>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-selection" id="ajtb-v1-step-selection">
+                <section class="ajtb-v1-recap-panel" id="ajtb-v1-step-selection" data-ajtb-step-panel="2" hidden>
+                    <article class="ajtb-v1-card ajtb-v1-recap-selection">
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 2</span>Votre sélection</h2>
                         <div class="ajtb-v1-recap-edit-grid" id="ajtb-v1-recap-edit-grid">
                             <div class="ajtb-v1-recap-edit-card">
@@ -202,42 +207,6 @@ get_header();
                         </dl>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
-                        <h2 class="ajtb-v1-recap-section-title" id="ajtb-v1-step-confirmation"><span class="ajtb-v1-recap-step-kicker">Étape 4</span>Confirmation</h2>
-                        <div class="ajtb-v1-recap-form">
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Prénom *</label>
-                                <input type="text" id="ajtb-client-first" autocomplete="given-name" placeholder="Prénom">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Nom *</label>
-                                <input type="text" id="ajtb-client-last" autocomplete="family-name" placeholder="Nom">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Téléphone</label>
-                                <input type="tel" id="ajtb-client-phone" autocomplete="tel" placeholder="+212 ...">
-                            </div>
-                            <div class="ajtb-v1-recap-form-row">
-                                <label>Email</label>
-                                <input type="email" id="ajtb-client-email" autocomplete="email" placeholder="email@exemple.com">
-                            </div>
-                        </div>
-
-                        <div class="ajtb-v1-recap-companions">
-                            <div class="ajtb-v1-recap-companions-head">
-                                <h3>Accompagnants</h3>
-                                <div class="ajtb-v1-recap-companion-actions">
-                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-adult">+ Adulte</button>
-                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-child">+ Enfant</button>
-                                </div>
-                            </div>
-                            <div id="ajtb-recap-companions-list" data-ajtb-companions></div>
-                        </div>
-
-                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>
-                        <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
-                    </article>
-
                     <article class="ajtb-v1-card ajtb-v1-recap-room">
                         <h2 class="ajtb-v1-recap-section-title">Choisissez votre chambre</h2>
                         <div id="ajtb-v1-room-picker" class="ajtb-v1-room-alloc">
@@ -253,37 +222,14 @@ get_header();
                         <div class="ajtb-v1-extras-assign" id="ajtb-v1-extras-assign"></div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-details">
-                        <h2 class="ajtb-v1-recap-section-title">Détails du voyage</h2>
-                        <?php if (!empty($days)): ?>
-                            <div class="ajtb-v1-recap-days">
-                                <?php foreach (array_slice($days, 0, 12) as $day): ?>
-                                    <?php
-                                    $day_num = (int) ($day['day'] ?? 0);
-                                    $day_title = (string) ($day['title'] ?? ('Jour ' . $day_num));
-                                    $day_desc = trim((string) ($day['description'] ?? ''));
-                                    ?>
-                                    <details class="ajtb-v1-recap-day" <?php echo $day_num === 1 ? 'open' : ''; ?>>
-                                        <summary>
-                                            <strong>J<?php echo esc_html((string) $day_num); ?></strong>
-                                            <span><?php echo esc_html($day_title); ?></span>
-                                        </summary>
-                                        <?php if ($day_desc !== ''): ?>
-                                            <div class="ajtb-v1-recap-day-body">
-                                                <p><?php echo esc_html($day_desc); ?></p>
-                                            </div>
-                                        <?php endif; ?>
-                                    </details>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php else: ?>
-                            <p class="ajtb-v1-recap-muted">Le programme détaillé sera affiché dès que les données sont disponibles.</p>
-                        <?php endif; ?>
-                    </article>
-                </div>
+                    <div class="ajtb-v1-recap-step-actions">
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" data-ajtb-step-prev>Précédent</button>
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-step-next>Suivant</button>
+                    </div>
+                </section>
 
-                <aside class="ajtb-v1-recap-sidebar">
-                    <article class="ajtb-v1-side-card ajtb-v1-recap-price" id="ajtb-v1-step-price">
+                <section class="ajtb-v1-recap-panel" id="ajtb-v1-step-price" data-ajtb-step-panel="3" hidden>
+                    <article class="ajtb-v1-side-card ajtb-v1-recap-price">
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 3</span>Récapitulatif du prix</h2>
                         <div class="ajtb-v1-recap-total" aria-live="polite">
                             <span>Total de votre réservation</span>
@@ -317,13 +263,54 @@ get_header();
                             </div>
                         </div>
 
-                        <div class="ajtb-v1-recap-actions">
-                            <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($recap_back_url); ?>">Retour</a>
-                            <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Confirmer la réservation</button>
-                        </div>
-                        <p class="ajtb-v1-recap-note">Vous êtes à l’étape finale avant validation.</p>
+                        <p class="ajtb-v1-recap-note">Vérifiez le total avant de passer à la confirmation.</p>
                     </article>
-                </aside>
+                    <div class="ajtb-v1-recap-step-actions">
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" data-ajtb-step-prev>Précédent</button>
+                        <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-step-next>Suivant</button>
+                    </div>
+                </section>
+
+                <section class="ajtb-v1-recap-panel" id="ajtb-v1-step-confirmation" data-ajtb-step-panel="4" hidden>
+                    <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 4</span>Confirmation</h2>
+                        <div class="ajtb-v1-recap-form">
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Prénom *</label>
+                                <input type="text" id="ajtb-client-first" autocomplete="given-name" placeholder="Prénom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Nom *</label>
+                                <input type="text" id="ajtb-client-last" autocomplete="family-name" placeholder="Nom">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Téléphone</label>
+                                <input type="tel" id="ajtb-client-phone" autocomplete="tel" placeholder="+212 ...">
+                            </div>
+                            <div class="ajtb-v1-recap-form-row">
+                                <label>Email</label>
+                                <input type="email" id="ajtb-client-email" autocomplete="email" placeholder="email@exemple.com">
+                            </div>
+                        </div>
+
+                        <div class="ajtb-v1-recap-companions">
+                            <div class="ajtb-v1-recap-companions-head">
+                                <h3>Accompagnants</h3>
+                                <div class="ajtb-v1-recap-companion-actions">
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-adult">+ Adulte</button>
+                                    <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-recap-action="add-child">+ Enfant</button>
+                                </div>
+                            </div>
+                            <div id="ajtb-recap-companions-list" data-ajtb-companions></div>
+                        </div>
+
+                        <div class="ajtb-v1-recap-step-actions ajtb-v1-recap-step-actions--final">
+                            <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" data-ajtb-step-prev>Précédent</button>
+                            <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="final-submit">Confirmer la réservation</button>
+                        </div>
+                        <p class="ajtb-v1-recap-note">La réservation sera créée en statut “pending” dans Laravel.</p>
+                    </article>
+                </section>
             </section>
         </div>
     </main>
