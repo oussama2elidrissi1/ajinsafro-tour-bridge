@@ -62,9 +62,28 @@ get_header();
                 </div>
             </section>
 
+            <nav class="ajtb-v1-recap-steps" aria-label="Progression de la réservation">
+                <a class="ajtb-v1-recap-step is-active" href="#ajtb-v1-step-tour">
+                    <span class="ajtb-v1-recap-step-index">1</span>
+                    <span class="ajtb-v1-recap-step-label">Résumé du voyage</span>
+                </a>
+                <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-selection">
+                    <span class="ajtb-v1-recap-step-index">2</span>
+                    <span class="ajtb-v1-recap-step-label">Votre sélection</span>
+                </a>
+                <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-price">
+                    <span class="ajtb-v1-recap-step-index">3</span>
+                    <span class="ajtb-v1-recap-step-label">Récapitulatif du prix</span>
+                </a>
+                <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-confirmation">
+                    <span class="ajtb-v1-recap-step-index">4</span>
+                    <span class="ajtb-v1-recap-step-label">Confirmation</span>
+                </a>
+            </nav>
+
             <section class="ajtb-v1-recap-grid">
                 <div class="ajtb-v1-recap-main">
-                    <article class="ajtb-v1-card ajtb-v1-recap-tour">
+                    <article class="ajtb-v1-card ajtb-v1-recap-tour" id="ajtb-v1-step-tour">
                         <div class="ajtb-v1-recap-tour-media">
                             <img src="<?php echo esc_url($hero_main); ?>" alt="<?php echo esc_attr($tour_title); ?>" loading="eager">
                         </div>
@@ -74,7 +93,7 @@ get_header();
                                 <span class="ajtb-v1-pill"><?php echo esc_html($destination); ?></span>
                                 <span class="ajtb-v1-pill ajtb-v1-pill--id">ID #<?php echo esc_html((string) $tour_id); ?></span>
                             </div>
-                            <h2 class="ajtb-v1-recap-section-title">Résumé du voyage</h2>
+                            <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 1</span>Résumé du voyage</h2>
                             <ul class="ajtb-v1-recap-tour-points">
                                 <li>Destination : <strong><?php echo esc_html($destination); ?></strong></li>
                                 <li>Durée : <strong><?php echo esc_html($duration_label !== '' ? $duration_label : '—'); ?></strong></li>
@@ -82,8 +101,8 @@ get_header();
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-selection">
-                        <h2 class="ajtb-v1-recap-section-title">Votre sélection</h2>
+                    <article class="ajtb-v1-card ajtb-v1-recap-selection" id="ajtb-v1-step-selection">
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 2</span>Votre sélection</h2>
                         <div class="ajtb-v1-recap-edit-grid" id="ajtb-v1-recap-edit-grid">
                             <div class="ajtb-v1-recap-edit-card">
                                 <span class="ajtb-v1-search-label">Ville de départ</span>
@@ -184,7 +203,7 @@ get_header();
                     </article>
 
                     <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-recap-finalize">
-                        <h2 class="ajtb-v1-recap-section-title">Client & voyageurs</h2>
+                        <h2 class="ajtb-v1-recap-section-title" id="ajtb-v1-step-confirmation"><span class="ajtb-v1-recap-step-kicker">Étape 4</span>Confirmation</h2>
                         <div class="ajtb-v1-recap-form">
                             <div class="ajtb-v1-recap-form-row">
                                 <label>Prénom *</label>
@@ -264,18 +283,45 @@ get_header();
                 </div>
 
                 <aside class="ajtb-v1-recap-sidebar">
-                    <article class="ajtb-v1-side-card ajtb-v1-recap-price">
-                        <h2 class="ajtb-v1-recap-section-title">Prix</h2>
-                        <div class="ajtb-v1-recap-total">
-                            <span>Total</span>
+                    <article class="ajtb-v1-side-card ajtb-v1-recap-price" id="ajtb-v1-step-price">
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 3</span>Récapitulatif du prix</h2>
+                        <div class="ajtb-v1-recap-total" aria-live="polite">
+                            <span>Total de votre réservation</span>
                             <strong><span data-ajtb-recap-field="total">—</span> <small data-ajtb-recap-field="currency">MAD</small></strong>
                         </div>
-                        <div class="ajtb-v1-recap-price-detail" data-ajtb-recap-field="priceDetail">—</div>
+
+                        <div class="ajtb-v1-recap-price-detail" data-ajtb-recap-field="priceDetail">
+                            <div class="ajtb-v1-recap-price-line">
+                                <span>Adulte</span>
+                                <strong data-ajtb-recap-field="priceAdults">—</strong>
+                            </div>
+                            <div class="ajtb-v1-recap-price-line" data-ajtb-recap-row="children" hidden>
+                                <span>Enfant</span>
+                                <strong data-ajtb-recap-field="priceChildren">—</strong>
+                            </div>
+                            <div class="ajtb-v1-recap-price-line" data-ajtb-recap-row="activities">
+                                <span>Activités</span>
+                                <strong data-ajtb-recap-field="priceActivities">—</strong>
+                            </div>
+                            <div class="ajtb-v1-recap-price-line" data-ajtb-recap-row="extras">
+                                <span>Extras</span>
+                                <strong data-ajtb-recap-field="priceExtras">—</strong>
+                            </div>
+                            <div class="ajtb-v1-recap-price-line" data-ajtb-recap-row="room" hidden>
+                                <span>Suppléments chambre</span>
+                                <strong data-ajtb-recap-field="priceRoom">—</strong>
+                            </div>
+                            <div class="ajtb-v1-recap-price-line ajtb-v1-recap-price-line--total">
+                                <span>Total</span>
+                                <strong><span data-ajtb-recap-field="totalLine">—</span> <small data-ajtb-recap-field="currencyLine">MAD</small></strong>
+                            </div>
+                        </div>
+
                         <div class="ajtb-v1-recap-actions">
                             <a class="ajtb-v1-recap-btn ajtb-v1-recap-btn--ghost" href="<?php echo esc_url($recap_back_url); ?>">Retour</a>
-                            <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Réserver maintenant</button>
+                            <button type="button" class="ajtb-v1-recap-btn ajtb-v1-recap-btn--primary" data-ajtb-recap-action="confirm">Confirmer la réservation</button>
                         </div>
-                        <p class="ajtb-v1-recap-note">Vous pourrez finaliser la réservation à l’étape suivante.</p>
+                        <p class="ajtb-v1-recap-note">Vous êtes à l’étape finale avant validation.</p>
                     </article>
                 </aside>
             </section>
