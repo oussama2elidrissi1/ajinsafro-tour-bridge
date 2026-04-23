@@ -1926,6 +1926,37 @@ body.ajtb-modal-open {
     background: linear-gradient(180deg, #1285f4, #0061e4);
 }
 
+.ajtb-v1-recap-wizard {
+    display: grid;
+    gap: 16px;
+}
+
+.ajtb-v1-recap-panel {
+    display: grid;
+    gap: 14px;
+}
+
+.ajtb-v1-recap-panel[hidden] {
+    display: none !important;
+}
+
+.ajtb-v1-recap-step-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.ajtb-v1-recap-step-actions--final {
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.ajtb-v1-recap-wizard .ajtb-v1-recap-price {
+    position: static;
+    top: auto;
+}
+
 .ajtb-v1-recap-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 380px;
@@ -2665,6 +2696,15 @@ body.ajtb-modal-open {
 @media (max-width: 767px) {
     .ajtb-v1-recap-steps {
         grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-step-actions {
+        flex-direction: column;
+    }
+    .ajtb-v1-recap-step-actions .ajtb-v1-recap-btn {
+        width: 100%;
+    }
+    .ajtb-v1-recap-step-actions--final {
+        justify-content: flex-start;
     }
     .ajtb-v1-recap-tour {
         grid-template-columns: 1fr;
