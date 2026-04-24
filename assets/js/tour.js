@@ -502,7 +502,7 @@
                     html += "<li>" + escapeHtml(label + price) + "</li>";
                 });
                 if (activityTotal > 0) {
-                    html += '<li class="ajtb-v1-summary-chip-total">Activites ajoutees: +' + escapeHtml(formatAmount(activityTotal) + " " + currency) + "</li>";
+                    html += '<li class="ajtb-v1-summary-chip-total">Activités ajoutées : +' + escapeHtml(formatAmount(activityTotal) + " " + currency) + "</li>";
                 }
             }
             if (!html) {
@@ -663,7 +663,7 @@
                     : baseActivityLabel;
             }
             if (flightEl) {
-                flightEl.textContent = priceCard.getAttribute("data-has-flight") === "1" ? "Inclus" : "Non indique";
+                flightEl.textContent = priceCard.getAttribute("data-has-flight") === "1" ? "Inclus" : "Non indiqué";
             }
             if (availabilityEl) {
                 availabilityEl.textContent = availabilityLabel;
@@ -673,8 +673,8 @@
             }
             if (noteEl) {
                 noteEl.textContent = activityTotal > 0
-                    ? "Prix total mis a jour avec les activites ajoutees."
-                    : (priceCard.getAttribute("data-default-date") ? "Prix adapte selon la selection" : noteEl.textContent);
+                    ? "Prix total mis à jour avec les activités ajoutées."
+                    : (priceCard.getAttribute("data-default-date") ? "Prix adapté selon la sélection" : noteEl.textContent);
             }
             if (actionEl) {
                 actionEl.textContent = "Continuer";
@@ -996,7 +996,7 @@
             });
 
             if (cards.length === 0) {
-                modalBody.innerHTML = '<p class="ajtb-act-modal-empty">Aucune activite optionnelle disponible pour ce jour.</p>';
+                modalBody.innerHTML = '<p class="ajtb-act-modal-empty">Aucune activité optionnelle disponible pour ce jour.</p>';
             } else {
                 modalBody.innerHTML = '<div class="ajtb-act-modal-grid">' + cards.join("") + '</div>';
             }
@@ -2042,7 +2042,7 @@
             var calc = computeTotalFromState(state);
 
             setField("hotel", state.hotel && state.hotel.label ? state.hotel.label : "-");
-            setField("flight", state.flight && state.flight.label ? state.flight.label : "Non indique");
+            setField("flight", state.flight && state.flight.label ? state.flight.label : "Non indiqué");
             setField("transfers", state.transfers && state.transfers.label ? state.transfers.label : "-");
 
             var activitiesLabel = "-";
@@ -2078,8 +2078,8 @@
             setField(
                 "pendingNote",
                 calc.halfDoublePending
-                    ? "Demi-double active: la reservation sera creee en attente de jumelage."
-                    : "Reservation creee en statut pending jusqu'a validation finale.",
+                    ? "Demi-double active : la réservation sera créée en attente de jumelage."
+                    : "Réservation créée en statut pending jusqu'à validation finale.",
             );
             setRowVisibility("children", calc.children > 0);
             setRowVisibility("room", calc.roomTotal > 0);
@@ -2095,7 +2095,7 @@
             var box = document.getElementById("ajtb-v1-room-picker");
             if (!box) return;
             if (!rooms || !rooms.length) {
-                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce depart.</p>';
+                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce départ.</p>';
                 return;
             }
             payload.roomAllocation = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
@@ -2170,10 +2170,10 @@
                 var peopleLabel = formatPeopleBreakdown(adults, children);
                 box.innerHTML =
                     '<div class="ajtb-v1-room-alloc-summary">' +
-                    '<div><strong>Voyageurs a repartir :</strong> ' + escapeHtml(peopleLabel) +
-                    '<br><strong>Voyageurs affectes :</strong> ' + escapeHtml(String(got)) + ' / ' + escapeHtml(String(need)) +
-                    '<br><strong>Reste a affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
-                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'A completer') + '</div>' +
+                    '<div><strong>Voyageurs à répartir :</strong> ' + escapeHtml(peopleLabel) +
+                    '<br><strong>Voyageurs affectés :</strong> ' + escapeHtml(String(got)) + ' / ' + escapeHtml(String(need)) +
+                    '<br><strong>Reste à affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
+                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
                     '</div>' +
                     (payload.availableRoomsCurrent || []).map(function (r) {
                         var id = String(r.alloc_key || r.id || "");
@@ -2203,10 +2203,10 @@
                             '<div>' +
                             '<strong>' + escapeHtml(String(r.room_label || r.room_type || "Chambre")) + '</strong>' +
                             '<small>Pour ' + escapeHtml(String(unit)) + ' personne(s) · Stock disponible : ' + escapeHtml(displayStock) + '</small>' +
-                            (half ? '<small>Chambre double a partager</small>' : '') +
-                            '<small>' + (supp > 0 ? ('Supplement : +' + escapeHtml(formatMoney(supp)) + ' ' + escapeHtml(String(payload.currency || "MAD")) + '/personne') : 'Prix : inclus') + '</small>' +
+                            (half ? '<small>Chambre double à partager</small>' : '') +
+                            '<small>' + (supp > 0 ? ('Supplément : +' + escapeHtml(formatMoney(supp)) + ' ' + escapeHtml(String(payload.currency || "MAD")) + '/personne') : 'Prix : inclus') + '</small>' +
                             (half ? '<small class="ajtb-v1-room-pending">Demi-double - en attente de jumelage</small>' : '') +
-                            '<small>Voyageurs affectes via cette chambre : ' + escapeHtml(String(lineAssigned)) + '</small>' +
+                            '<small>Voyageurs affectés via cette chambre : ' + escapeHtml(String(lineAssigned)) + '</small>' +
                             '</div>' +
                             '<div class="ajtb-v1-room-stepper">' +
                             '<button type="button" data-ajtb-room-minus ' + (canMinus ? "" : "disabled") + '>-</button>' +
@@ -2486,7 +2486,7 @@
                     return { ok: false, message: "Veuillez saisir le prenom et le nom du client." };
                 }
                 if (!depOk) {
-                    return { ok: false, message: "Veuillez choisir la ville de depart." };
+                    return { ok: false, message: "Veuillez choisir la ville de départ." };
                 }
                 if (!dateOk) {
                     return { ok: false, message: "Veuillez choisir la date de voyage." };
@@ -2511,7 +2511,7 @@
                     '<option value="adult"' + (type === "adult" ? " selected" : "") + '>Adulte</option>' +
                     '<option value="child"' + (type === "child" ? " selected" : "") + '>Enfant</option>' +
                     '</select>' +
-                    '<input type="text" placeholder="Prenom" data-companion-first>' +
+                    '<input type="text" placeholder="Prénom" data-companion-first>' +
                     '<input type="text" placeholder="Nom" data-companion-last>' +
                     '<button type="button" data-companion-remove>×</button>' +
                     '<div class="ajtb-v1-recap-companion-activities" data-companion-activities></div>' +
@@ -2872,7 +2872,7 @@
                         return;
                     }
                     extrasPayload.push({
-                        name: "Supplement chambre (" + (line.room.room_type || "chambre") + ")",
+                        name: "Supplément chambre (" + (line.room.room_type || "chambre") + ")",
                         price: supp * line.assigned,
                     });
                 });
@@ -2889,7 +2889,7 @@
                     .then(function (r) { return r.json(); })
                     .then(function (json) {
                         if (!json || !json.success) {
-                            throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la reservation.");
+                            throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la réservation.");
                         }
                         var rid = json.data && json.data.reservation_id ? json.data.reservation_id : null;
                         var created = !!(json.data && json.data.account_created);
@@ -2903,8 +2903,8 @@
                             var passEl = document.getElementById("ajtb-account-password");
                             if (msgEl) {
                                 msgEl.textContent = created
-                                    ? ("Votre compte client a ete cree. Reservation #" + String(rid) + ".")
-                                    : ("Reservation #" + String(rid) + " creee. Utilisez votre email pour vous connecter.");
+                                    ? ("Votre compte client a été créé. Réservation #" + String(rid) + ".")
+                                    : ("Réservation #" + String(rid) + " créée. Utilisez votre email pour vous connecter.");
                             }
                             if (loginEl) loginEl.textContent = login || "-";
                             if (passEl) passEl.textContent = password || "-";
@@ -2912,17 +2912,17 @@
                                 var m = window.bootstrap.Modal.getOrCreateInstance(modalEl);
                                 m.show();
                             } catch (eModal) {
-                                alert("Reservation creee (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                                alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
                             }
                         } else {
-                            alert("Reservation creee (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                            alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
                         }
                     })
                     .catch(function (e) {
-                        alert(e && e.message ? e.message : "Erreur lors de la reservation.");
+                        alert(e && e.message ? e.message : "Erreur lors de la réservation.");
                     })
                     .finally(function () {
-                        submitBtn.textContent = "Confirmer la reservation";
+                        submitBtn.textContent = "Confirmer la réservation";
                         refreshSubmitButtonState();
                     });
             });

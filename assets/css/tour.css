@@ -2251,9 +2251,8 @@ body.ajtb-modal-open {
     border: 1px solid #e5eef9;
     padding: 10px 11px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 4px;
 }
 
 .ajtb-v1-selection-group dt {
@@ -2271,7 +2270,9 @@ body.ajtb-modal-open {
     font-size: 13px;
     font-weight: 800;
     line-height: 1.35;
-    text-align: right;
+    text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .ajtb-v1-recap-dl--readonly {
