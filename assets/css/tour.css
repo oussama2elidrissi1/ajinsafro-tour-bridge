@@ -1884,6 +1884,7 @@ body.ajtb-modal-open {
     align-items: center;
     gap: 10px;
     transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    opacity: 0.72;
 }
 
 .ajtb-v1-recap-step:hover {
@@ -1917,7 +1918,8 @@ body.ajtb-modal-open {
 .ajtb-v1-recap-step.is-active {
     border-color: #94c6ef;
     background: linear-gradient(180deg, #f7fbff, #edf6ff);
-    box-shadow: 0 10px 18px rgba(15, 79, 121, 0.12);
+    box-shadow: 0 12px 20px rgba(15, 79, 121, 0.16);
+    opacity: 1;
 }
 
 .ajtb-v1-recap-step.is-active .ajtb-v1-recap-step-index {
@@ -1943,8 +1945,12 @@ body.ajtb-modal-open {
 .ajtb-v1-recap-step-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid #dbe8f6;
+    background: #ffffff;
 }
 
 .ajtb-v1-recap-step-actions--final {
@@ -1970,6 +1976,16 @@ body.ajtb-modal-open {
     gap: 16px;
 }
 
+.ajtb-v1-recap-main [data-ajtb-step-panel] {
+    display: grid;
+    gap: 16px;
+    animation: ajtbV1StepReveal 0.22s ease;
+}
+
+.ajtb-v1-recap-main [data-ajtb-step-panel][hidden] {
+    display: none !important;
+}
+
 .ajtb-v1-recap-sidebar {
     position: sticky;
     top: var(--ajtb-v1-rail-top);
@@ -1978,12 +1994,21 @@ body.ajtb-modal-open {
     align-self: start;
 }
 
+.ajtb-v1-page[data-ajtb-active-step="ajtb-v1-step-price"] .ajtb-v1-recap-sidebar .ajtb-v1-recap-price {
+    border-color: #8abeea;
+    box-shadow: 0 20px 32px rgba(15, 79, 121, 0.2);
+}
+
 .ajtb-v1-recap-tour {
     display: grid;
     grid-template-columns: 240px minmax(0, 1fr);
     gap: 16px;
     padding: 0;
     overflow: hidden;
+}
+
+.ajtb-v1-recap-checkout {
+    padding: 18px;
 }
 
 .ajtb-v1-recap-tour-media img {
@@ -2482,6 +2507,16 @@ body.ajtb-modal-open {
     letter-spacing: 0.04em;
 }
 
+.ajtb-v1-recap-mini-btn:hover {
+    border-color: #a6cdee;
+    background: #e6f3ff;
+}
+
+.ajtb-v1-recap-mini-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .ajtb-v1-recap-companions-head h3 {
     letter-spacing: 0.01em;
 }
@@ -2723,6 +2758,17 @@ body.ajtb-modal-open {
     flex-wrap: wrap;
 }
 
+@keyframes ajtbV1StepReveal {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 767px) {
     .ajtb-v1-choice-item {
         grid-template-columns: 18px 1fr;
@@ -2820,7 +2866,7 @@ body.ajtb-modal-open {
     .ajtb-v1-recap-step-actions {
         flex-direction: column;
     }
-    .ajtb-v1-recap-step-actions .ajtb-v1-recap-btn {
+.ajtb-v1-recap-step-actions .ajtb-v1-recap-btn {
         width: 100%;
     }
     .ajtb-v1-recap-step-actions--final {

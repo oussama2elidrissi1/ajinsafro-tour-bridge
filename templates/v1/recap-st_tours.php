@@ -95,7 +95,7 @@ get_header();
 
             <section class="ajtb-v1-recap-grid">
                 <div class="ajtb-v1-recap-main">
-                    <article class="ajtb-v1-card ajtb-v1-recap-tour ajtb-v1-recap-hero" id="ajtb-v1-step-tour">
+                    <article class="ajtb-v1-card ajtb-v1-recap-tour ajtb-v1-recap-hero" id="ajtb-v1-step-tour" data-ajtb-step-panel="ajtb-v1-step-tour">
                         <div class="ajtb-v1-recap-tour-media">
                             <img src="<?php echo esc_url($hero_main); ?>" alt="<?php echo esc_attr($tour_title); ?>" loading="eager">
                         </div>
@@ -119,7 +119,7 @@ get_header();
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-selection" id="ajtb-v1-step-selection">
+                    <article class="ajtb-v1-card ajtb-v1-recap-selection" id="ajtb-v1-step-selection" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Etape 2</span>Votre selection</h2>
                         <div class="ajtb-v1-recap-edit-grid" id="ajtb-v1-recap-edit-grid">
                             <div class="ajtb-v1-recap-edit-card">
@@ -224,14 +224,14 @@ get_header();
                         </dl>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-room">
+                    <article class="ajtb-v1-card ajtb-v1-recap-room" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title">Repartition des chambres</h2>
                         <div id="ajtb-v1-room-picker" class="ajtb-v1-room-alloc">
                             <p class="ajtb-v1-recap-muted">Selectionnez une date et une ville de depart pour voir les chambres disponibles.</p>
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-extras">
+                    <article class="ajtb-v1-card ajtb-v1-recap-extras" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title">Extras et supplements</h2>
                         <div id="ajtb-v1-extras-picker" class="ajtb-v1-choice-list">
                             <p class="ajtb-v1-recap-muted">Les extras disponibles s'affichent selon le voyage.</p>
@@ -239,7 +239,7 @@ get_header();
                         <div class="ajtb-v1-extras-assign" id="ajtb-v1-extras-assign"></div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-step-confirmation">
+                    <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-step-confirmation" data-ajtb-step-panel="ajtb-v1-step-confirmation" hidden>
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Etape 3</span>Details des voyageurs</h2>
                         <div class="ajtb-v1-recap-form">
                             <div class="ajtb-v1-recap-form-row">
@@ -272,7 +272,7 @@ get_header();
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-details">
+                    <article class="ajtb-v1-card ajtb-v1-recap-details" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title">Programme / Itineraire</h2>
                         <?php if (!empty($days)): ?>
                             <div class="ajtb-v1-recap-days">
@@ -300,7 +300,7 @@ get_header();
                         <?php endif; ?>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-features">
+                    <article class="ajtb-v1-card ajtb-v1-recap-features" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title">Prestations incluses / exclusions</h2>
                         <div class="ajtb-v1-recap-features-grid">
                             <div>
@@ -334,7 +334,7 @@ get_header();
                         </div>
                     </article>
 
-                    <article class="ajtb-v1-card ajtb-v1-recap-policy">
+                    <article class="ajtb-v1-card ajtb-v1-recap-policy" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title">Conditions d'annulation / modification</h2>
                         <?php if (!empty($policy_items)): ?>
                             <ul class="ajtb-v1-recap-list">
@@ -350,9 +350,19 @@ get_header();
                             </div>
                         <?php endif; ?>
                     </article>
+
+                    <article class="ajtb-v1-card ajtb-v1-recap-checkout" id="ajtb-v1-step-price" data-ajtb-step-panel="ajtb-v1-step-price" hidden>
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Etape 4</span>Prix et confirmation</h2>
+                        <p class="ajtb-v1-recap-muted">Verifiez le detail du prix dans la colonne de droite puis confirmez votre reservation.</p>
+                        <ul class="ajtb-v1-recap-list">
+                            <li>Le total est mis a jour en temps reel selon vos selections.</li>
+                            <li>La reservation reste en attente si une demi-double est choisie.</li>
+                            <li>Le bouton de confirmation est actif uniquement quand tous les champs obligatoires sont valides.</li>
+                        </ul>
+                    </article>
                 </div>
 
-                <aside class="ajtb-v1-recap-sidebar" id="ajtb-v1-step-price">
+                <aside class="ajtb-v1-recap-sidebar" id="ajtb-v1-price-sidebar">
                     <article class="ajtb-v1-side-card ajtb-v1-recap-price">
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Etape 4</span>Recapitulatif du prix</h2>
                         <div class="ajtb-v1-recap-total" aria-live="polite">

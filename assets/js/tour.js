@@ -1517,6 +1517,7 @@
         var stepLinks = Array.prototype.slice.call(document.querySelectorAll(".ajtb-v1-recap-step"));
         var stepPrevBtn = document.querySelector("[data-ajtb-step-action='prev']");
         var stepNextBtn = document.querySelector("[data-ajtb-step-action='next']");
+        var stepPanels = Array.prototype.slice.call(document.querySelectorAll("[data-ajtb-step-panel]"));
         var stepOrder = [
             "ajtb-v1-step-tour",
             "ajtb-v1-step-selection",
@@ -1529,6 +1530,13 @@
             stepLinks.forEach(function (link) {
                 var href = link.getAttribute("href") || "";
                 link.classList.toggle("is-active", href === ("#" + targetId));
+            });
+            stepPanels.forEach(function (panel) {
+                var panelStep = panel.getAttribute("data-ajtb-step-panel") || "";
+                var isActive = panelStep === targetId;
+                panel.hidden = !isActive;
+                panel.classList.toggle("is-active", isActive);
+                panel.setAttribute("aria-hidden", isActive ? "false" : "true");
             });
             root.setAttribute("data-ajtb-active-step", String(targetId || ""));
             if (stepPrevBtn) {
