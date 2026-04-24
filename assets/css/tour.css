@@ -2078,6 +2078,12 @@ body.ajtb-modal-open {
     font-weight: 900;
 }
 
+.ajtb-v1-step1-selection-preview {
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed #dbe8f6;
+}
+
 .ajtb-v1-recap-section-title {
     margin: 0 0 10px;
     color: #17304d;

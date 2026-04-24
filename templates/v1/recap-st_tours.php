@@ -124,6 +124,41 @@ get_header();
                                 <div><span>Voyageurs</span><strong data-ajtb-recap-field="people">2 adultes</strong></div>
                                 <div><span>Type</span><strong><?php echo esc_html($product_type); ?></strong></div>
                             </div>
+
+                            <div class="ajtb-v1-step1-selection-preview">
+                                <p class="ajtb-v1-recap-section-note">Verifiez vos choix de voyage, prestations et options dans des cadres clairs.</p>
+                                <div class="ajtb-v1-selection-groups">
+                                    <section class="ajtb-v1-selection-group">
+                                        <h3><span>Voyage</span></h3>
+                                        <dl>
+                                            <div><dt>Depart</dt><dd data-ajtb-recap-field="departure">-</dd></div>
+                                            <div><dt>Date de voyage</dt><dd data-ajtb-recap-field="date">-</dd></div>
+                                            <div><dt>Voyageurs</dt><dd data-ajtb-recap-field="people">2 adultes</dd></div>
+                                            <div><dt>Adultes / enfants</dt><dd data-ajtb-recap-field="guests">2 adulte(s)</dd></div>
+                                        </dl>
+                                    </section>
+
+                                    <section class="ajtb-v1-selection-group">
+                                        <h3><span>Prestations</span></h3>
+                                        <dl>
+                                            <div><dt>Hebergement</dt><dd data-ajtb-recap-field="hotel">-</dd></div>
+                                            <div><dt>Vol</dt><dd data-ajtb-recap-field="flight">-</dd></div>
+                                            <div><dt>Transferts</dt><dd data-ajtb-recap-field="transfers">-</dd></div>
+                                            <div><dt>Activites</dt><dd class="ajtb-v1-recap-clamp" data-ajtb-recap-field="activities">-</dd></div>
+                                        </dl>
+                                    </section>
+
+                                    <section class="ajtb-v1-selection-group">
+                                        <h3><span>Options selectionnees</span></h3>
+                                        <dl>
+                                            <div><dt>Options / supplements</dt><dd class="ajtb-v1-recap-clamp" data-ajtb-recap-field="options">-</dd></div>
+                                            <div><dt>Extras</dt><dd data-ajtb-recap-field="priceExtras">-</dd></div>
+                                            <div><dt>Supplements chambre</dt><dd data-ajtb-recap-field="priceRoom">-</dd></div>
+                                            <div><dt>Activites ajoutees</dt><dd data-ajtb-recap-field="priceActivities">-</dd></div>
+                                        </dl>
+                                    </section>
+                                </div>
+                            </div>
                         </div>
                     </article>
 
