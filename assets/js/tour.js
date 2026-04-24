@@ -1628,15 +1628,73 @@
             return out;
         }
 
+        function detectSourceRoomType(roomType) {
+            var norm = normalizeRoomType(roomType);
+            if (norm.indexOf("double") !== -1) {
+                return "double";
+            }
+            if (norm.indexOf("single") !== -1 || norm.indexOf("solo") !== -1) {
+                return "single";
+            }
+            if (norm.indexOf("triple") !== -1) {
+                return "triple";
+            }
+            return "other";
+        }
+
+        function isSharedDoubleMode(room) {
+            return !!(room && String(room.room_mode || "") === "shared_double");
+        }
+
         function isHalfDoubleRoom(room) {
             if (!room) {
                 return false;
+            }
+            if (isSharedDoubleMode(room)) {
+                return true;
             }
             var norm = normalizeRoomType(room.room_type || "");
             if (norm.indexOf("demi") !== -1 || norm.indexOf("half") !== -1) {
                 return true;
             }
             return room.is_half_double === true || room.is_half_double === 1 || room.is_half_double === "1";
+        }
+
+        function expandRoomModes(rooms) {
+            var out = [];
+            (rooms || []).forEach(function (room) {
+                if (!room) {
+                    return;
+                }
+                var sourceRoomId = parseInt(room.id || "0", 10) || 0;
+                if (sourceRoomId <= 0) {
+                    return;
+                }
+                var sourceType = String(room.source_room_type || "") || detectSourceRoomType(room.room_type || "");
+
+                out.push(Object.assign({}, room, {
+                    alloc_key: "full:" + String(sourceRoomId),
+                    source_room_id: sourceRoomId,
+                    source_room_type: sourceType,
+                    room_mode: "full_room",
+                    room_label: String(room.room_type || "Chambre"),
+                }));
+
+                if (sourceType === "double") {
+                    out.push(Object.assign({}, room, {
+                        alloc_key: "shared:" + String(sourceRoomId),
+                        source_room_id: sourceRoomId,
+                        source_room_type: "double",
+                        room_mode: "shared_double",
+                        room_type: "Demi-double",
+                        room_label: "Demi-double",
+                        capacity_per_room: 1,
+                        is_half_double: true,
+                        shared_room_status: "pending",
+                    }));
+                }
+            });
+            return out;
         }
 
         function roomAssignmentUnit(room) {
@@ -1666,7 +1724,7 @@
                 if (!r) {
                     return;
                 }
-                var id = String(r.id || "");
+                var id = String(r.alloc_key || r.id || "");
                 if (!id) {
                     return;
                 }
@@ -1685,6 +1743,9 @@
                 assigned += assignedPax;
                 lines.push({
                     id: id,
+                    sourceRoomId: parseInt(r.source_room_id || r.id || "0", 10) || 0,
+                    sourceRoomType: String(r.source_room_type || detectSourceRoomType(r.room_type || "")),
+                    roomMode: String(r.room_mode || "full_room"),
                     room: r,
                     qty: qty,
                     assigned: assignedPax,
@@ -1702,6 +1763,44 @@
                 hasHalfDouble: hasHalfDouble,
                 halfDoubleSeats: halfDoubleSeats,
                 lines: lines,
+            };
+        }
+
+        function getSourcePoolUsage(state) {
+            var summary = getRoomAllocationSummary(state);
+            var metaBySource = {};
+            var usedSeatsBySource = {};
+
+            (state && Array.isArray(state.availableRoomsCurrent) ? state.availableRoomsCurrent : []).forEach(function (r) {
+                if (!r) {
+                    return;
+                }
+                var sourceId = parseInt(r.source_room_id || r.id || "0", 10) || 0;
+                if (sourceId <= 0 || metaBySource[sourceId]) {
+                    return;
+                }
+                var roomCount = parseInt(r.quantity || "0", 10) || 0;
+                var capacityPerRoom = parseInt(r.source_capacity_per_room || r.capacity_per_room || "1", 10) || 1;
+                metaBySource[sourceId] = {
+                    roomCount: Math.max(0, roomCount),
+                    capacityPerRoom: Math.max(1, capacityPerRoom),
+                    maxSeats: Math.max(0, roomCount) * Math.max(1, capacityPerRoom),
+                    sourceRoomType: String(r.source_room_type || detectSourceRoomType(r.room_type || "")),
+                };
+            });
+
+            summary.lines.forEach(function (line) {
+                var sourceId = parseInt(line.sourceRoomId || "0", 10) || 0;
+                if (sourceId <= 0) {
+                    return;
+                }
+                usedSeatsBySource[sourceId] = (usedSeatsBySource[sourceId] || 0) + (parseInt(line.assigned || "0", 10) || 0);
+            });
+
+            return {
+                metaBySource: metaBySource,
+                usedSeatsBySource: usedSeatsBySource,
+                summary: summary,
             };
         }
 
@@ -1938,12 +2037,12 @@
                 return;
             }
             payload.roomAllocation = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
-            payload.availableRoomsCurrent = rooms;
+            payload.availableRoomsCurrent = expandRoomModes(rooms);
 
             // Keep only currently available room ids.
             var normalized = {};
-            (payload.availableRoomsCurrent || rooms).forEach(function (r) {
-                var id = String(r.id || "");
+            (payload.availableRoomsCurrent || []).forEach(function (r) {
+                var id = String(r.alloc_key || r.id || "");
                 if (!id) return;
                 var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
                 normalized[id] = Math.max(0, qty);
@@ -1956,7 +2055,7 @@
                     return;
                 }
                 var best = null;
-                (payload.availableRoomsCurrent || rooms).forEach(function (r) {
+                (payload.availableRoomsCurrent || []).forEach(function (r) {
                     var stock = parseInt(r.quantity || "0", 10) || 0;
                     if (stock <= 0) {
                         return;
@@ -1966,7 +2065,7 @@
                         return;
                     }
                     if (!best || unit > best.unit) {
-                        best = { id: String(r.id || ""), unit: unit };
+                        best = { id: String(r.alloc_key || r.id || ""), unit: unit };
                     }
                 });
                 if (best && best.id) {
@@ -1976,13 +2075,25 @@
             trySmartSuggestion();
 
             function canIncrease(room, qty) {
-                var stock = parseInt(room.quantity || "0", 10) || 0;
-                if (qty >= stock) {
-                    return false;
-                }
                 var summary = getRoomAllocationSummary(payload);
                 var assignUnit = roomAssignmentUnit(room);
-                return (summary.assigned + assignUnit) <= summary.need;
+                if ((summary.assigned + assignUnit) > summary.need) {
+                    return false;
+                }
+
+                var pool = getSourcePoolUsage(payload);
+                var sourceId = parseInt(room.source_room_id || room.id || "0", 10) || 0;
+                if (sourceId <= 0) {
+                    return false;
+                }
+                var meta = pool.metaBySource[sourceId];
+                if (!meta) {
+                    return false;
+                }
+                var usedSeats = pool.usedSeatsBySource[sourceId] || 0;
+                var currentSeats = Math.max(0, qty) * assignUnit;
+                var nextUsedSeats = (usedSeats - currentSeats) + ((Math.max(0, qty) + 1) * assignUnit);
+                return nextUsedSeats <= meta.maxSeats;
             }
 
             function render() {
@@ -1997,10 +2108,11 @@
                     '<br><strong>Reste à affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
                     '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
                     '</div>' +
-                    (payload.availableRoomsCurrent || rooms).map(function (r) {
-                        var id = String(r.id || "");
+                    (payload.availableRoomsCurrent || []).map(function (r) {
+                        var id = String(r.alloc_key || r.id || "");
                         var cap = parseInt(r.capacity_per_room || "1", 10) || 1;
                         var stock = parseInt(r.quantity || "0", 10) || 0;
+                        var sourceId = parseInt(r.source_room_id || r.id || "0", 10) || 0;
                         var supp = parseFloat(r.supplement || "0");
                         if (!isFinite(supp) || supp < 0) { supp = 0; }
                         var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
@@ -2010,11 +2122,21 @@
                         var half = isHalfDoubleRoom(r);
                         var canMinus = qty > 0;
                         var canPlus = canIncrease(r, qty);
+                        var pool = getSourcePoolUsage(payload);
+                        var poolMeta = pool.metaBySource[sourceId] || null;
+                        var poolUsed = pool.usedSeatsBySource[sourceId] || 0;
+                        var poolSeatsLeft = poolMeta ? Math.max(0, poolMeta.maxSeats - poolUsed) : 0;
+                        var displayStock = half
+                            ? (poolMeta ? (poolSeatsLeft + " place(s)") : (stock + " place(s)"))
+                            : (poolMeta && poolMeta.sourceRoomType === "double"
+                                ? (Math.floor(poolSeatsLeft / 2) + " chambre(s)")
+                                : (stock + " chambre(s)"));
                         return '' +
                             '<div class="ajtb-v1-room-alloc-row ajtb-v1-room-card" data-ajtb-room-id="' + escapeHtml(id) + '">' +
                             '<div>' +
-                            '<strong>' + escapeHtml(String(r.room_type || "Chambre")) + '</strong>' +
-                            '<small>Pour ' + escapeHtml(String(unit)) + ' personne(s) · Stock disponible : ' + escapeHtml(String(stock)) + '</small>' +
+                            '<strong>' + escapeHtml(String(r.room_label || r.room_type || "Chambre")) + '</strong>' +
+                            '<small>Pour ' + escapeHtml(String(unit)) + ' personne(s) · Stock disponible : ' + escapeHtml(displayStock) + '</small>' +
+                            (half ? '<small>Chambre double à partager</small>' : '') +
                             '<small>' + (supp > 0 ? ('Supplément : +' + escapeHtml(formatMoney(supp)) + ' ' + escapeHtml(String(payload.currency || "MAD")) + '/personne') : 'Prix : inclus') + '</small>' +
                             (half ? '<small class="ajtb-v1-room-pending">Demi-double - en attente de jumelage</small>' : '') +
                             '<small>Voyageurs affectés via cette chambre : ' + escapeHtml(String(lineAssigned)) + '</small>' +
@@ -2047,13 +2169,15 @@
                 var isMinus = e.target && e.target.closest ? e.target.closest("[data-ajtb-room-minus]") : null;
                 if (!isPlus && !isMinus) return;
 
-                var curRooms = payload.availableRoomsCurrent || rooms;
+                var curRooms = payload.availableRoomsCurrent || [];
                 var r = curRooms.find(function (x) { return String(x.id) === id; });
+                if (!r) {
+                    r = curRooms.find(function (x) { return String(x.alloc_key || "") === id; });
+                }
                 if (!r) return;
-                var stock = parseInt(r.quantity || "0", 10) || 0;
                 var qty = parseInt(payload.roomAllocation[id] || "0", 10) || 0;
                 qty = Math.max(0, qty);
-                if (isPlus && qty < stock && canIncrease(r, qty)) qty += 1;
+                if (isPlus && canIncrease(r, qty)) qty += 1;
                 if (isMinus && qty > 0) qty -= 1;
                 payload.roomAllocation[id] = qty;
                 render();
@@ -2573,7 +2697,10 @@
                 try {
                     formData.append("room_allocation_json", JSON.stringify(roomSummary.lines.map(function (line) {
                         return {
-                            room_id: parseInt(line.id, 10) || 0,
+                            room_id: parseInt(line.sourceRoomId || line.id, 10) || 0,
+                            room_mode: String(line.roomMode || "full_room"),
+                            shared_room_status: line.isHalfDouble ? "pending" : null,
+                            source_room_type: String(line.sourceRoomType || "other"),
                             room_count: line.qty,
                             assigned_travellers: line.assigned,
                             assignment_unit: line.assignUnit,

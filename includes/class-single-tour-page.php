@@ -677,6 +677,10 @@ class AJTB_Single_Tour_Page
         $extras_table = 'reservation_extras';
         $reservation_rooms_table = 'reservation_rooms';
         $roomsHasDepartureHotelId = self::table_has_column($reservation_rooms_table, 'departure_hotel_id');
+        $roomsHasRoomMode = self::table_has_column($reservation_rooms_table, 'room_mode');
+        $roomsHasSharedRoomStatus = self::table_has_column($reservation_rooms_table, 'shared_room_status');
+        $roomsHasSourceRoomType = self::table_has_column($reservation_rooms_table, 'source_room_type');
+        $roomsHasSourceRoomId = self::table_has_column($reservation_rooms_table, 'source_room_id');
 
         $passengers_count = 1;
         foreach ($passengers as $p) {
@@ -723,6 +727,9 @@ class AJTB_Single_Tour_Page
                     'room_count' => $cnt,
                     'assigned_travellers' => $assigned,
                     'is_half_double' => !empty($line['is_half_double']),
+                    'room_mode' => isset($line['room_mode']) ? sanitize_key((string) $line['room_mode']) : 'full_room',
+                    'shared_room_status' => isset($line['shared_room_status']) ? sanitize_key((string) $line['shared_room_status']) : '',
+                    'source_room_type' => isset($line['source_room_type']) ? sanitize_key((string) $line['source_room_type']) : '',
                 ];
             }
         }
@@ -766,7 +773,15 @@ class AJTB_Single_Tour_Page
             }
 
             $roomTypeNorm = strtolower(str_replace(['é', 'è', 'ê'], 'e', (string) ($def['room_type'] ?? '')));
-            $halfDouble = !empty($line['is_half_double'])
+            $lineRoomMode = isset($line['room_mode']) && (string) $line['room_mode'] === 'shared_double'
+                ? 'shared_double'
+                : 'full_room';
+            $sourceRoomType = isset($line['source_room_type']) && (string) $line['source_room_type'] !== ''
+                ? sanitize_key((string) $line['source_room_type'])
+                : (strpos($roomTypeNorm, 'double') !== false ? 'double' : 'other');
+
+            $halfDouble = $lineRoomMode === 'shared_double'
+                || !empty($line['is_half_double'])
                 || strpos($roomTypeNorm, 'demi') !== false
                 || strpos($roomTypeNorm, 'half') !== false;
             $assignmentUnit = $halfDouble ? 1 : max(1, (int) ($def['capacity_per_room'] ?? 1));
@@ -781,34 +796,72 @@ class AJTB_Single_Tour_Page
                 ], 422);
             }
 
-            $whereSql = "SELECT COALESCE(SUM(rr.room_count),0)
-                FROM reservation_rooms rr
-                INNER JOIN reservations r ON r.id = rr.reservation_id
-                WHERE r.departure_id = %d
-                  AND rr.room_type_snapshot = %s
-                AND " . ($roomsHasDepartureHotelId ? 'COALESCE(rr.departure_hotel_id, 0) = %d' : '%d = %d') . "
-                  AND r.status IN ({$statusPlaceholders})";
             $hotelMatchValue = isset($def['hotel_id']) && $def['hotel_id'] !== null ? (int) $def['hotel_id'] : 0;
-            $params = [
-                $departure_id,
-                (string) ($def['room_type'] ?? ''),
-                $hotelMatchValue,
-            ];
-            if (! $roomsHasDepartureHotelId) {
-                $params[] = $hotelMatchValue;
-            }
-            $params = array_merge($params, $reservedStatuses);
-            $bookedRooms = (int) $wpdb->get_var($wpdb->prepare($whereSql, $params));
-            $freeRooms = max(0, (int) ($def['quantity'] ?? 0) - $bookedRooms);
-            if ($cnt > $freeRooms) {
-                wp_send_json_error([
-                    'message' => sprintf(
-                        'Stock insuffisant pour %s : %d demandée(s), %d disponible(s).',
-                        (string) ($def['room_type'] ?: 'cette chambre'),
-                        $cnt,
-                        $freeRooms
-                    ),
-                ], 422);
+            $sourceIsDoublePool = $sourceRoomType === 'double';
+            if ($sourceIsDoublePool || $halfDouble) {
+                $maxSeats = max(0, (int) ($def['quantity'] ?? 0)) * max(1, (int) ($def['capacity_per_room'] ?? 1));
+                $seatSql = "SELECT COALESCE(SUM(CASE WHEN COALESCE(rr.passenger_count, 0) > 0 THEN rr.passenger_count ELSE rr.room_count * %d END),0)
+                    FROM reservation_rooms rr
+                    INNER JOIN reservations r ON r.id = rr.reservation_id
+                    WHERE r.departure_id = %d";
+                $seatParams = [max(1, (int) ($def['capacity_per_room'] ?? 1)), $departure_id];
+
+                if ($roomsHasSourceRoomId) {
+                    $seatSql .= " AND rr.source_room_id = %d";
+                    $seatParams[] = $rid;
+                } else {
+                    $seatSql .= " AND rr.room_type_snapshot = %s";
+                    $seatParams[] = (string) ($def['room_type'] ?? '');
+                    $seatSql .= " AND " . ($roomsHasDepartureHotelId ? 'COALESCE(rr.departure_hotel_id, 0) = %d' : '%d = %d');
+                    $seatParams[] = $hotelMatchValue;
+                    if (! $roomsHasDepartureHotelId) {
+                        $seatParams[] = $hotelMatchValue;
+                    }
+                }
+
+                $seatSql .= " AND r.status IN ({$statusPlaceholders})";
+                $seatParams = array_merge($seatParams, $reservedStatuses);
+                $bookedSeats = (int) $wpdb->get_var($wpdb->prepare($seatSql, $seatParams));
+                $freeSeats = max(0, $maxSeats - $bookedSeats);
+                if ($assigned > $freeSeats) {
+                    wp_send_json_error([
+                        'message' => sprintf(
+                            'Stock insuffisant pour %s : %d place(s) demandée(s), %d disponible(s).',
+                            (string) ($def['room_type'] ?: 'cette chambre'),
+                            $assigned,
+                            $freeSeats
+                        ),
+                    ], 422);
+                }
+            } else {
+                $whereSql = "SELECT COALESCE(SUM(rr.room_count),0)
+                    FROM reservation_rooms rr
+                    INNER JOIN reservations r ON r.id = rr.reservation_id
+                    WHERE r.departure_id = %d
+                      AND rr.room_type_snapshot = %s
+                    AND " . ($roomsHasDepartureHotelId ? 'COALESCE(rr.departure_hotel_id, 0) = %d' : '%d = %d') . "
+                      AND r.status IN ({$statusPlaceholders})";
+                $params = [
+                    $departure_id,
+                    (string) ($def['room_type'] ?? ''),
+                    $hotelMatchValue,
+                ];
+                if (! $roomsHasDepartureHotelId) {
+                    $params[] = $hotelMatchValue;
+                }
+                $params = array_merge($params, $reservedStatuses);
+                $bookedRooms = (int) $wpdb->get_var($wpdb->prepare($whereSql, $params));
+                $freeRooms = max(0, (int) ($def['quantity'] ?? 0) - $bookedRooms);
+                if ($cnt > $freeRooms) {
+                    wp_send_json_error([
+                        'message' => sprintf(
+                            'Stock insuffisant pour %s : %d demandée(s), %d disponible(s).',
+                            (string) ($def['room_type'] ?: 'cette chambre'),
+                            $cnt,
+                            $freeRooms
+                        ),
+                    ], 422);
+                }
             }
 
             $assignedTotal += $assigned;
@@ -817,6 +870,8 @@ class AJTB_Single_Tour_Page
                 $hasHalfDouble = true;
                 $halfDoublePendingKeys[] = [
                     'hotel_id' => isset($def['hotel_id']) && $def['hotel_id'] !== null ? (int) $def['hotel_id'] : null,
+                    'source_room_id' => $rid,
+                    'source_room_type' => $sourceRoomType,
                     'room_type' => (string) ($def['room_type'] ?? ''),
                     'seats' => $assigned,
                 ];
@@ -825,6 +880,10 @@ class AJTB_Single_Tour_Page
             $normalizedLines[] = [
                 'room_type_snapshot' => (string) ($def['room_type'] ?? ''),
                 'departure_hotel_id' => isset($def['hotel_id']) && $def['hotel_id'] !== null ? (int) $def['hotel_id'] : null,
+                'source_room_id' => $rid,
+                'source_room_type' => $sourceRoomType,
+                'room_mode' => $lineRoomMode,
+                'shared_room_status' => $halfDouble ? 'pending' : null,
                 'room_count' => $cnt,
                 'passenger_count' => $assigned,
                 'supplement_unit' => (float) ($def['supplement'] ?? 0),
@@ -965,6 +1024,18 @@ class AJTB_Single_Tour_Page
             if (self::table_has_column($reservation_rooms_table, 'departure_hotel_room_id')) {
                 $roomPayload['departure_hotel_room_id'] = null;
             }
+            if ($roomsHasSourceRoomId) {
+                $roomPayload['source_room_id'] = isset($line['source_room_id']) ? (int) $line['source_room_id'] : null;
+            }
+            if ($roomsHasSourceRoomType) {
+                $roomPayload['source_room_type'] = isset($line['source_room_type']) ? (string) $line['source_room_type'] : null;
+            }
+            if ($roomsHasRoomMode) {
+                $roomPayload['room_mode'] = isset($line['room_mode']) ? (string) $line['room_mode'] : 'full_room';
+            }
+            if ($roomsHasSharedRoomStatus) {
+                $roomPayload['shared_room_status'] = isset($line['shared_room_status']) ? $line['shared_room_status'] : null;
+            }
             $wpdb->insert($reservation_rooms_table, $roomPayload);
         }
 
@@ -977,15 +1048,17 @@ class AJTB_Single_Tour_Page
                      WHERE r.id != %d
                        AND r.departure_id = %d
                        AND r.status = %s
-                       AND rr.room_type_snapshot = %s
+                       AND " . ($roomsHasSourceRoomId ? 'rr.source_room_id = %d' : 'rr.room_type_snapshot = %s') . "
                        AND " . ($roomsHasDepartureHotelId ? 'COALESCE(rr.departure_hotel_id, 0) = %d' : '%d = %d') . "
+                       AND " . ($roomsHasRoomMode ? "rr.room_mode = 'shared_double'" : '1=1') . "
+                       AND " . ($roomsHasSharedRoomStatus ? "COALESCE(rr.shared_room_status, 'pending') = 'pending'" : '1=1') . "
                      ORDER BY r.created_at ASC
                      LIMIT 1";
                 $pairParams = [
                     $reservation_id,
                     $departure_id,
                     'shared_room_pending',
-                    (string) ($k['room_type'] ?? ''),
+                    $roomsHasSourceRoomId ? (int) ($k['source_room_id'] ?? 0) : (string) ($k['room_type'] ?? ''),
                     $pairHotel,
                 ];
                 if (! $roomsHasDepartureHotelId) {
@@ -1003,6 +1076,26 @@ class AJTB_Single_Tour_Page
                         $reservation_id,
                         $candidate
                     ));
+                    if ($roomsHasSharedRoomStatus) {
+                        $sharedUpdateSql = "UPDATE {$reservation_rooms_table}
+                            SET shared_room_status = %s, updated_at = %s
+                            WHERE reservation_id IN (%d, %d)
+                              AND " . ($roomsHasSourceRoomId ? 'source_room_id = %d' : 'room_type_snapshot = %s') . "
+                              AND " . ($roomsHasDepartureHotelId ? 'COALESCE(departure_hotel_id, 0) = %d' : '%d = %d') . "
+                              AND " . ($roomsHasRoomMode ? "room_mode = 'shared_double'" : '1=1');
+                        $sharedUpdateParams = [
+                            'paired',
+                            current_time('mysql', true),
+                            $reservation_id,
+                            $candidate,
+                            $roomsHasSourceRoomId ? (int) ($k['source_room_id'] ?? 0) : (string) ($k['room_type'] ?? ''),
+                            $pairHotel,
+                        ];
+                        if (! $roomsHasDepartureHotelId) {
+                            $sharedUpdateParams[] = $pairHotel;
+                        }
+                        $wpdb->query($wpdb->prepare($sharedUpdateSql, $sharedUpdateParams));
+                    }
                     $status = 'shared_room_paired';
                     break;
                 }
