@@ -1943,11 +1943,10 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-recap-step-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-radius: 14px;
     border: 1px solid #dbe8f6;
     background: #ffffff;
@@ -1965,6 +1964,7 @@ body.ajtb-modal-open {
     display: inline-flex;
     gap: 10px;
     align-items: center;
+    justify-content: flex-end;
 }
 
 .ajtb-v1-recap-step-actions--final {
@@ -2022,6 +2022,7 @@ body.ajtb-modal-open {
     border: 1px solid #dbe8f6;
     background: linear-gradient(165deg, #ffffff 0%, #f6fbff 100%);
     box-shadow: 0 16px 28px rgba(15, 79, 121, 0.1);
+    align-items: stretch;
 }
 
 .ajtb-v1-recap-checkout {
@@ -2031,8 +2032,9 @@ body.ajtb-modal-open {
 .ajtb-v1-recap-tour-media {
     border-radius: 18px;
     overflow: hidden;
-    aspect-ratio: 16 / 10;
-    min-height: 220px;
+    min-height: 100%;
+    height: 100%;
+    display: grid;
 }
 
 .ajtb-v1-recap-tour-media img {
@@ -2040,6 +2042,7 @@ body.ajtb-modal-open {
     height: 100%;
     object-fit: cover;
     display: block;
+    min-height: 100%;
 }
 
 .ajtb-v1-recap-tour-body {
@@ -2663,7 +2666,8 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-recap-mini-btn--next {
-    min-width: 136px;
+    min-width: 160px;
+    min-height: 42px;
     color: #ffffff;
     border-color: #0d68db;
     background: linear-gradient(180deg, #2f8fff, #0d68db);
@@ -3032,7 +3036,6 @@ body.ajtb-modal-open {
         grid-template-columns: 1fr;
     }
     .ajtb-v1-recap-step-actions {
-        flex-direction: column;
         align-items: stretch;
     }
     .ajtb-v1-step-actions-buttons {
@@ -3058,6 +3061,7 @@ body.ajtb-modal-open {
     .ajtb-v1-recap-tour-media {
         min-height: 0;
         aspect-ratio: 16 / 9;
+        height: auto;
     }
     .ajtb-v1-recap-hero-title {
         font-size: 24px;
