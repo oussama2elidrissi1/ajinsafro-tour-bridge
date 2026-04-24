@@ -2001,33 +2001,64 @@ body.ajtb-modal-open {
 
 .ajtb-v1-recap-tour {
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 16px;
-    padding: 0;
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    gap: 18px;
+    padding: 16px;
     overflow: hidden;
+    border: 1px solid #dbe8f6;
+    background: linear-gradient(165deg, #ffffff 0%, #f6fbff 100%);
+    box-shadow: 0 16px 28px rgba(15, 79, 121, 0.1);
 }
 
 .ajtb-v1-recap-checkout {
     padding: 18px;
 }
 
+.ajtb-v1-recap-tour-media {
+    border-radius: 18px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    min-height: 220px;
+}
+
 .ajtb-v1-recap-tour-media img {
     width: 100%;
     height: 100%;
-    min-height: 180px;
     object-fit: cover;
     display: block;
 }
 
 .ajtb-v1-recap-tour-body {
-    padding: 18px 18px 20px;
+    padding: 8px 4px 6px;
+    display: grid;
+    gap: 12px;
 }
 
 .ajtb-v1-recap-tour-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 12px;
+}
+
+.ajtb-v1-recap-hero-title {
+    margin: 0;
+    color: #112f4b;
+    font-size: clamp(24px, 2.3vw, 32px);
+    font-weight: 900;
+    line-height: 1.15;
+}
+
+.ajtb-v1-recap-hero-price {
+    margin: 0;
+    color: #56708f;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ajtb-v1-recap-hero-price strong {
+    color: #0f4f79;
+    font-size: 19px;
+    font-weight: 900;
 }
 
 .ajtb-v1-recap-section-title {
@@ -2063,10 +2094,10 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-recap-hero-grid div {
-    padding: 10px 12px;
+    padding: 12px 13px;
     border-radius: 12px;
-    border: 1px solid #dce7f4;
-    background: #ffffff;
+    border: 1px solid #d8e7f6;
+    background: linear-gradient(180deg, #ffffff, #f9fcff);
     display: grid;
     gap: 4px;
 }
@@ -2090,11 +2121,11 @@ body.ajtb-modal-open {
     margin-top: 0;
 }
 
-.ajtb-v1-recap-edit-grid {
+.ajtb-v1-recap-selection-head {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .ajtb-v1-recap-edit-card--full {
@@ -2104,7 +2135,7 @@ body.ajtb-modal-open {
 .ajtb-v1-recap-edit-card {
     background: #fff;
     border-radius: 16px;
-    border: 1px solid rgba(0, 131, 196, 0.16);
+    border: 1px solid #d8e7f6;
     padding: 14px 16px;
     min-height: 88px;
     display: flex;
@@ -2112,6 +2143,84 @@ body.ajtb-modal-open {
     justify-content: center;
     gap: 9px;
     box-shadow: 0 6px 16px rgba(15, 79, 121, 0.08);
+}
+
+.ajtb-v1-recap-people-banner {
+    grid-column: 1 / -1;
+    border: 1px solid #b7d6f1;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #eef7ff, #e4f3ff);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ajtb-v1-recap-people-banner span {
+    color: #0f4f79;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ajtb-v1-recap-people-banner strong {
+    color: #0d2f4d;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.ajtb-v1-selection-groups {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ajtb-v1-selection-group {
+    border: 1px solid #dbe8f6;
+    border-radius: 15px;
+    background: #ffffff;
+    padding: 14px;
+    box-shadow: 0 8px 18px rgba(15, 79, 121, 0.07);
+}
+
+.ajtb-v1-selection-group h3 {
+    margin: 0 0 10px;
+    color: #123150;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.ajtb-v1-selection-group dl {
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.ajtb-v1-selection-group dl > div {
+    border-radius: 10px;
+    background: #f8fbff;
+    border: 1px solid #e5eef9;
+    padding: 9px 10px;
+}
+
+.ajtb-v1-selection-group dt {
+    margin: 0 0 4px;
+    color: #6a7f9a;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ajtb-v1-selection-group dd {
+    margin: 0;
+    color: #153554;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
 }
 
 .ajtb-v1-recap-dl--readonly {
@@ -2874,12 +2983,27 @@ body.ajtb-modal-open {
     }
     .ajtb-v1-recap-tour {
         grid-template-columns: 1fr;
+        padding: 12px;
+    }
+    .ajtb-v1-recap-tour-media {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+    }
+    .ajtb-v1-recap-hero-title {
+        font-size: 24px;
     }
     .ajtb-v1-recap-dl {
         grid-template-columns: 1fr;
     }
-    .ajtb-v1-recap-edit-grid {
+    .ajtb-v1-recap-selection-head {
         grid-template-columns: 1fr;
+    }
+    .ajtb-v1-selection-groups {
+        grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-people-banner {
+        flex-direction: column;
+        align-items: flex-start;
     }
     .ajtb-v1-recap-hero-grid {
         grid-template-columns: 1fr;
