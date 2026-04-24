@@ -1515,23 +1515,52 @@
             return;
         }
         var stepLinks = Array.prototype.slice.call(document.querySelectorAll(".ajtb-v1-recap-step"));
-        var stepTargets = stepLinks.map(function (link) {
-            var href = link.getAttribute("href") || "";
-            if (!href || href.charAt(0) !== "#") {
-                return null;
-            }
-            var target = document.querySelector(href);
-            if (!target) {
-                return null;
-            }
-            return { link: link, target: target };
-        }).filter(Boolean);
+        var stepPrevBtn = document.querySelector("[data-ajtb-step-action='prev']");
+        var stepNextBtn = document.querySelector("[data-ajtb-step-action='next']");
+        var stepOrder = [
+            "ajtb-v1-step-tour",
+            "ajtb-v1-step-selection",
+            "ajtb-v1-step-confirmation",
+            "ajtb-v1-step-price",
+        ];
+        var currentStepIndex = 0;
 
         function setActiveStep(targetId) {
             stepLinks.forEach(function (link) {
                 var href = link.getAttribute("href") || "";
                 link.classList.toggle("is-active", href === ("#" + targetId));
             });
+            root.setAttribute("data-ajtb-active-step", String(targetId || ""));
+            if (stepPrevBtn) {
+                stepPrevBtn.disabled = currentStepIndex <= 0;
+            }
+            if (stepNextBtn) {
+                stepNextBtn.disabled = currentStepIndex >= (stepOrder.length - 1);
+            }
+        }
+
+        function goToStepById(targetId, scroll) {
+            var idx = stepOrder.indexOf(String(targetId || ""));
+            if (idx >= 0) {
+                currentStepIndex = idx;
+            }
+            setActiveStep(String(targetId || stepOrder[0]));
+            if (scroll !== false) {
+                var target = document.getElementById(String(targetId || ""));
+                if (target) {
+                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }
+        }
+
+        function goToStepByIndex(nextIndex, scroll) {
+            var idx = parseInt(nextIndex, 10);
+            if (!isFinite(idx)) {
+                idx = 0;
+            }
+            idx = Math.max(0, Math.min(stepOrder.length - 1, idx));
+            currentStepIndex = idx;
+            goToStepById(stepOrder[idx], scroll);
         }
 
         stepLinks.forEach(function (link) {
@@ -1545,28 +1574,28 @@
                     return;
                 }
                 event.preventDefault();
-                setActiveStep(String(target.id || ""));
-                target.scrollIntoView({ behavior: "smooth", block: "start" });
+                goToStepById(String(target.id || ""), true);
             });
         });
 
-        if (stepTargets.length) {
-            var onScroll = function () {
-                var viewportOffset = 170;
-                var current = stepTargets[0];
-                stepTargets.forEach(function (entry) {
-                    var top = entry.target.getBoundingClientRect().top;
-                    if (top <= viewportOffset) {
-                        current = entry;
-                    }
-                });
-                if (current && current.target && current.target.id) {
-                    setActiveStep(String(current.target.id));
-                }
-            };
-            window.addEventListener("scroll", onScroll, { passive: true });
-            window.addEventListener("resize", onScroll, { passive: true });
-            onScroll();
+        if (stepPrevBtn) {
+            stepPrevBtn.addEventListener("click", function () {
+                goToStepByIndex(currentStepIndex - 1, true);
+            });
+        }
+        if (stepNextBtn) {
+            stepNextBtn.addEventListener("click", function () {
+                goToStepByIndex(currentStepIndex + 1, true);
+            });
+        }
+
+        // Always force start on step 1 at initial load.
+        if (window.location && window.location.hash && window.history && window.history.replaceState) {
+            window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
+        goToStepByIndex(0, false);
+        if (window.scrollY > 0) {
+            window.scrollTo({ top: 0, behavior: "auto" });
         }
 
         var tourId = parseInt(root.getAttribute("data-tour-id") || "0", 10) || 0;
@@ -1608,6 +1637,18 @@
             var el = document.querySelector("[data-ajtb-recap-field='" + name + "']");
             if (!el) { return; }
             el.textContent = (value === null || value === undefined || String(value).trim() === "") ? "—" : String(value);
+        }
+
+        function formatPeopleBreakdown(adults, children) {
+            var a = parseInt(adults || "1", 10) || 1;
+            var c = parseInt(children || "0", 10) || 0;
+            if (a < 1) { a = 1; }
+            if (c < 0) { c = 0; }
+            var label = a + (a > 1 ? " adultes" : " adulte");
+            if (c > 0) {
+                label += " · " + c + (c > 1 ? " enfants" : " enfant");
+            }
+            return label;
         }
 
         function setRowVisibility(name, visible) {
@@ -2004,7 +2045,9 @@
             setField("options", optionsLabel);
 
             var guestsLabel = (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (", " + state.guests.children + " enfant(s)") : "")) : "—");
+            var peopleLabel = state.guests ? formatPeopleBreakdown(state.guests.adults, state.guests.children) : "—";
             setField("guests", guestsLabel);
+            setField("people", peopleLabel);
             setField("guestBreakdown", (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (" • " + state.guests.children + " enfant(s)") : "")) : "—"));
             setField("departure", state.departure && state.departure.label ? state.departure.label : "—");
             setField("date", state.date && state.date.label ? state.date.label : "—");
@@ -2393,14 +2436,48 @@
         // (Activities are managed per traveller in "Client & voyageurs")
 
         (function bindFinalize() {
-            var finalize = document.getElementById("ajtb-v1-recap-finalize");
+            var finalize = document.getElementById("ajtb-v1-recap-finalize") || document.getElementById("ajtb-v1-step-confirmation");
             if (!finalize) return;
 
             var list = document.getElementById("ajtb-recap-companions-list");
             var addAdultBtn = document.querySelector("[data-ajtb-recap-action='add-adult']");
             var addChildBtn = document.querySelector("[data-ajtb-recap-action='add-child']");
             var submitBtn = document.querySelector("[data-ajtb-recap-action='final-submit']");
+            var firstInput = document.getElementById("ajtb-client-first");
+            var lastInput = document.getElementById("ajtb-client-last");
+            var fromInput = document.getElementById("ajtb-v1-search-from");
+            var dateInput = document.getElementById("ajtb-v1-search-date");
             if (!list || !submitBtn) return;
+
+            function getSubmitValidationState() {
+                payload = readPayloadFromForm(payload);
+                var fn = firstInput ? String(firstInput.value || "").trim() : "";
+                var ln = lastInput ? String(lastInput.value || "").trim() : "";
+                var depOk = payload && payload.departure && parseInt(payload.departure.id || "0", 10) > 0;
+                var dateOk = payload && payload.date && String(payload.date.value || "").trim() !== "";
+                var roomSummary = getRoomAllocationSummary(payload);
+                var roomsOk = roomSummary.isComplete && !roomSummary.isOverAssigned;
+
+                if (!fn || !ln) {
+                    return { ok: false, message: "Veuillez saisir le prénom et le nom du client." };
+                }
+                if (!depOk) {
+                    return { ok: false, message: "Veuillez choisir la ville de départ." };
+                }
+                if (!dateOk) {
+                    return { ok: false, message: "Veuillez choisir la date de voyage." };
+                }
+                if (!roomsOk) {
+                    return { ok: false, message: "Veuillez affecter exactement tous les voyageurs aux chambres avant confirmation." };
+                }
+                return { ok: true, message: "" };
+            }
+
+            function refreshSubmitButtonState() {
+                var state = getSubmitValidationState();
+                submitBtn.disabled = !state.ok;
+                submitBtn.title = state.ok ? "" : state.message;
+            }
 
             function companionRowHtml(idx, type) {
                 type = type === "child" ? "child" : "adult";
@@ -2574,12 +2651,14 @@
                 addAdultBtn.addEventListener("click", function () {
                     adjustCounts(1, 0);
                     renderActivityToggles();
+                    refreshSubmitButtonState();
                 });
             }
             if (addChildBtn) {
                 addChildBtn.addEventListener("click", function () {
                     adjustCounts(0, 1);
                     renderActivityToggles();
+                    refreshSubmitButtonState();
                 });
             }
 
@@ -2595,6 +2674,7 @@
                     if (type === "child") adjustCounts(0, -1);
                     else adjustCounts(-1, 0);
                     renderActivityToggles();
+                    refreshSubmitButtonState();
                 }
             });
 
@@ -2604,6 +2684,7 @@
                     // When user changes a row type (adult/enfant), sync the travellers widget.
                     syncCountsFromCompanionRows();
                     renderActivityToggles();
+                    refreshSubmitButtonState();
                     return;
                 }
 
@@ -2621,6 +2702,7 @@
                 }
                 renderRecap(payload);
                 try { localStorage.setItem("ajtb:v1:recap:" + String(tourId), JSON.stringify(payload)); } catch (e) {}
+                refreshSubmitButtonState();
             });
 
 
@@ -2650,14 +2732,37 @@
             document.addEventListener("ajtb:v1:travellers-changed", function () {
                 // Rows may change; rerender toggles
                 renderActivityToggles();
+                refreshSubmitButtonState();
             });
 
+            if (firstInput) {
+                firstInput.addEventListener("input", refreshSubmitButtonState);
+            }
+            if (lastInput) {
+                lastInput.addEventListener("input", refreshSubmitButtonState);
+            }
+            if (fromInput) {
+                fromInput.addEventListener("change", refreshSubmitButtonState);
+            }
+            if (dateInput) {
+                dateInput.addEventListener("change", refreshSubmitButtonState);
+            }
+
+            var roomPickerBox = document.getElementById("ajtb-v1-room-picker");
+            if (roomPickerBox) {
+                roomPickerBox.addEventListener("click", function () {
+                    setTimeout(refreshSubmitButtonState, 0);
+                });
+            }
+
             submitBtn.addEventListener("click", function () {
-                var first = document.getElementById("ajtb-client-first");
-                var last = document.getElementById("ajtb-client-last");
-                if (!first || !last) return;
-                var fn = String(first.value || "").trim();
-                var ln = String(last.value || "").trim();
+                var validationState = getSubmitValidationState();
+                if (!validationState.ok) {
+                    alert(validationState.message);
+                    return;
+                }
+                var fn = firstInput ? String(firstInput.value || "").trim() : "";
+                var ln = lastInput ? String(lastInput.value || "").trim() : "";
                 if (!fn || !ln) {
                     alert("Veuillez saisir le prénom et le nom du client.");
                     return;
@@ -2797,6 +2902,8 @@
                         submitBtn.textContent = "Confirmer la réservation";
                     });
             });
+
+            refreshSubmitButtonState();
 
             // Copy helpers for modal credentials
             document.addEventListener("click", function (e) {

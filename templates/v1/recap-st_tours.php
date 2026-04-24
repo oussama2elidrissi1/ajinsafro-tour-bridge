@@ -71,15 +71,20 @@ get_header();
                     <span class="ajtb-v1-recap-step-index">2</span>
                     <span class="ajtb-v1-recap-step-label">Votre sélection</span>
                 </a>
-                <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-price">
-                    <span class="ajtb-v1-recap-step-index">3</span>
-                    <span class="ajtb-v1-recap-step-label">Récapitulatif du prix</span>
-                </a>
                 <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-confirmation">
+                    <span class="ajtb-v1-recap-step-index">3</span>
+                    <span class="ajtb-v1-recap-step-label">Informations client</span>
+                </a>
+                <a class="ajtb-v1-recap-step" href="#ajtb-v1-step-price">
                     <span class="ajtb-v1-recap-step-index">4</span>
-                    <span class="ajtb-v1-recap-step-label">Confirmation</span>
+                    <span class="ajtb-v1-recap-step-label">Récapitulatif & confirmation</span>
                 </a>
             </nav>
+
+            <div class="ajtb-v1-recap-step-actions" aria-label="Navigation des étapes">
+                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-step-action="prev">Précédent</button>
+                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-step-action="next">Suivant</button>
+            </div>
 
             <section class="ajtb-v1-recap-grid">
                 <div class="ajtb-v1-recap-main">
@@ -194,6 +199,7 @@ get_header();
                         </div>
 
                         <dl class="ajtb-v1-recap-dl ajtb-v1-recap-dl--readonly" id="ajtb-v1-recap-selection">
+                            <div><dt>Nombre de personnes</dt><dd data-ajtb-recap-field="people">2 adultes</dd></div>
                             <div><dt>Hébergement</dt><dd data-ajtb-recap-field="hotel">—</dd></div>
                             <div><dt>Vol</dt><dd data-ajtb-recap-field="flight">—</dd></div>
                             <div><dt>Transferts</dt><dd data-ajtb-recap-field="transfers">—</dd></div>
@@ -218,7 +224,7 @@ get_header();
                     </article>
 
                     <article class="ajtb-v1-card ajtb-v1-recap-finalize" id="ajtb-v1-step-confirmation">
-                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 4</span>Confirmation</h2>
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 3</span>Informations client / Confirmation</h2>
                         <div class="ajtb-v1-recap-form">
                             <div class="ajtb-v1-recap-form-row">
                                 <label>Prénom *</label>
@@ -281,7 +287,7 @@ get_header();
 
                 <aside class="ajtb-v1-recap-sidebar" id="ajtb-v1-step-price">
                     <article class="ajtb-v1-side-card ajtb-v1-recap-price">
-                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 3</span>Récapitulatif du prix</h2>
+                        <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Étape 4</span>Récapitulatif du prix</h2>
                         <div class="ajtb-v1-recap-total" aria-live="polite">
                             <span>Total de votre réservation</span>
                             <strong><span data-ajtb-recap-field="total">—</span> <small data-ajtb-recap-field="currency">MAD</small></strong>
