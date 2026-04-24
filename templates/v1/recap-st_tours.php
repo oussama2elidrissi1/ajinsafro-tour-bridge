@@ -89,8 +89,11 @@ get_header();
             </nav>
 
             <div class="ajtb-v1-recap-step-actions" aria-label="Navigation des etapes">
-                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-step-action="prev">Precedent</button>
-                <button type="button" class="ajtb-v1-recap-mini-btn" data-ajtb-step-action="next">Suivant</button>
+                <span class="ajtb-v1-step-actions-label">Navigation des etapes</span>
+                <div class="ajtb-v1-step-actions-buttons">
+                    <button type="button" class="ajtb-v1-recap-mini-btn ajtb-v1-recap-mini-btn--prev" data-ajtb-step-action="prev">Precedent</button>
+                    <button type="button" class="ajtb-v1-recap-mini-btn ajtb-v1-recap-mini-btn--next" data-ajtb-step-action="next">Suivant</button>
+                </div>
             </div>
 
             <section class="ajtb-v1-recap-grid">
@@ -126,6 +129,7 @@ get_header();
 
                     <article class="ajtb-v1-card ajtb-v1-recap-selection" id="ajtb-v1-step-selection" data-ajtb-step-panel="ajtb-v1-step-selection" hidden>
                         <h2 class="ajtb-v1-recap-section-title"><span class="ajtb-v1-recap-step-kicker">Etape 2</span>Votre selection</h2>
+                        <p class="ajtb-v1-recap-section-note">Verifiez vos choix de voyage, prestations et options dans des cadres clairs.</p>
                         <div class="ajtb-v1-recap-selection-head" id="ajtb-v1-recap-edit-grid">
                             <div class="ajtb-v1-recap-edit-card">
                                 <span class="ajtb-v1-search-label">Ville de depart</span>
@@ -223,7 +227,7 @@ get_header();
 
                         <div class="ajtb-v1-selection-groups" id="ajtb-v1-recap-selection">
                             <section class="ajtb-v1-selection-group">
-                                <h3>Voyage</h3>
+                                <h3><span>Voyage</span></h3>
                                 <dl>
                                     <div><dt>Depart</dt><dd data-ajtb-recap-field="departure">-</dd></div>
                                     <div><dt>Date de voyage</dt><dd data-ajtb-recap-field="date">-</dd></div>
@@ -233,7 +237,7 @@ get_header();
                             </section>
 
                             <section class="ajtb-v1-selection-group">
-                                <h3>Prestations</h3>
+                                <h3><span>Prestations</span></h3>
                                 <dl>
                                     <div><dt>Hebergement</dt><dd data-ajtb-recap-field="hotel">-</dd></div>
                                     <div><dt>Vol</dt><dd data-ajtb-recap-field="flight">-</dd></div>
@@ -243,7 +247,7 @@ get_header();
                             </section>
 
                             <section class="ajtb-v1-selection-group">
-                                <h3>Options selectionnees</h3>
+                                <h3><span>Options selectionnees</span></h3>
                                 <dl>
                                     <div><dt>Options / supplements</dt><dd class="ajtb-v1-recap-clamp" data-ajtb-recap-field="options">-</dd></div>
                                     <div><dt>Extras</dt><dd data-ajtb-recap-field="priceExtras">-</dd></div>
