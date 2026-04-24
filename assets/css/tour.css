@@ -2030,6 +2030,36 @@ body.ajtb-modal-open {
     line-height: 1.7;
 }
 
+.ajtb-v1-recap-hero-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.ajtb-v1-recap-hero-grid div {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
+    display: grid;
+    gap: 4px;
+}
+
+.ajtb-v1-recap-hero-grid span {
+    color: #6d7f99;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ajtb-v1-recap-hero-grid strong {
+    color: #16304d;
+    font-size: 13px;
+    font-weight: 800;
+}
+
 .ajtb-v1-recap-selection {
     padding: 18px;
     margin-top: 0;
@@ -2153,6 +2183,74 @@ body.ajtb-modal-open {
     color: #60718b;
     font-size: 13px;
     line-height: 1.65;
+}
+
+.ajtb-v1-recap-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ajtb-v1-recap-features-grid > div {
+    border: 1px solid #dce7f4;
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 14px;
+}
+
+.ajtb-v1-recap-features-grid h3 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 900;
+    color: #17304d;
+}
+
+.ajtb-v1-recap-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 8px;
+    color: #60718b;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.ajtb-v1-recap-policy-timeline {
+    display: grid;
+    gap: 10px;
+}
+
+.ajtb-v1-recap-policy-timeline div {
+    position: relative;
+    padding: 10px 12px 10px 22px;
+    border-radius: 12px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
+    display: grid;
+    gap: 4px;
+}
+
+.ajtb-v1-recap-policy-timeline div::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #0f79bf;
+}
+
+.ajtb-v1-recap-policy-timeline strong {
+    color: #17304d;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.ajtb-v1-recap-policy-timeline span {
+    color: #60718b;
+    font-size: 12px;
+    line-height: 1.55;
 }
 
 .ajtb-v1-recap-muted {
@@ -2735,6 +2833,12 @@ body.ajtb-modal-open {
         grid-template-columns: 1fr;
     }
     .ajtb-v1-recap-edit-grid {
+        grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-hero-grid {
+        grid-template-columns: 1fr;
+    }
+    .ajtb-v1-recap-features-grid {
         grid-template-columns: 1fr;
     }
     .ajtb-v1-recap-companion-row {

@@ -442,23 +442,23 @@
 
         function getSelectedDepartureLabel() {
             if (!fromSelect) {
-                return priceCard.getAttribute("data-default-departure") || "—";
+                return priceCard.getAttribute("data-default-departure") || "-";
             }
             var selectedOption = fromSelect.options[fromSelect.selectedIndex];
             if (!selectedOption) {
-                return priceCard.getAttribute("data-default-departure") || "—";
+                return priceCard.getAttribute("data-default-departure") || "-";
             }
             var label = (selectedOption.getAttribute("data-place-name") || selectedOption.textContent || "").trim();
-            return label || priceCard.getAttribute("data-default-departure") || "—";
+            return label || priceCard.getAttribute("data-default-departure") || "-";
         }
 
         function getSelectedDateLabel() {
             if (!dateSelect) {
-                return priceCard.getAttribute("data-default-date") || "—";
+                return priceCard.getAttribute("data-default-date") || "-";
             }
             var selectedOption = dateSelect.options[dateSelect.selectedIndex];
             var selectedLabel = selectedOption ? (selectedOption.textContent || "") : "";
-            return dateDisplayMap[dateSelect.value] || selectedLabel || priceCard.getAttribute("data-default-date") || "—";
+            return dateDisplayMap[dateSelect.value] || selectedLabel || priceCard.getAttribute("data-default-date") || "-";
         }
 
         function getGuestsLabel(adults, children) {
@@ -470,7 +470,7 @@
         }
 
         function getAvailabilityLabel(total, dateAdultPrice) {
-            var baseLabel = priceCard.getAttribute("data-availability-label") || "Sous réserve de disponibilité";
+            var baseLabel = priceCard.getAttribute("data-availability-label") || "Sous reserve de disponibilite";
             if (dateAdultPrice !== null && total > 0) {
                 return "Disponible";
             }
@@ -663,13 +663,13 @@
                     : baseActivityLabel;
             }
             if (flightEl) {
-                flightEl.textContent = priceCard.getAttribute("data-has-flight") === "1" ? "Inclus" : "Non indiqué";
+                flightEl.textContent = priceCard.getAttribute("data-has-flight") === "1" ? "Inclus" : "Non indique";
             }
             if (availabilityEl) {
                 availabilityEl.textContent = availabilityLabel;
             }
             if (availabilityBadgeEl) {
-                availabilityBadgeEl.textContent = availabilityLabel === "Disponible" ? "Disponible" : "À confirmer";
+                availabilityBadgeEl.textContent = availabilityLabel === "Disponible" ? "Disponible" : "A confirmer";
             }
             if (noteEl) {
                 noteEl.textContent = activityTotal > 0
@@ -1345,7 +1345,7 @@
         if (!isFinite(adults) || adults < 1) { adults = 1; }
         if (!isFinite(children) || children < 0) { children = 0; }
 
-        var departureLabel = priceCard.getAttribute("data-default-departure") || "—";
+        var departureLabel = priceCard.getAttribute("data-default-departure") || "-";
         var departurePlaceId = 0;
         if (fromSelect && fromSelect.options && fromSelect.selectedIndex >= 0) {
             var opt = fromSelect.options[fromSelect.selectedIndex];
@@ -1354,7 +1354,7 @@
         }
 
         var dateValue = "";
-        var dateLabel = priceCard.getAttribute("data-default-date") || "—";
+        var dateLabel = priceCard.getAttribute("data-default-date") || "-";
         if (dateSelect && dateSelect.options && dateSelect.selectedIndex >= 0) {
             var dateOpt = dateSelect.options[dateSelect.selectedIndex];
             dateValue = String(dateSelect.value || "");
@@ -1371,7 +1371,7 @@
             .map(function (row) {
                 return {
                     activity_id: parseInt(row.getAttribute("data-activity-id") || "0", 10) || 0,
-                    title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activité"),
+                    title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activite"),
                     price: row.getAttribute("data-activity-price") || "",
                     assigned: [],
                 };
@@ -1395,11 +1395,11 @@
             tourId: tourId,
             departure: {
                 id: departurePlaceId,
-                label: departureLabel || "—",
+                label: departureLabel || "-",
             },
             date: {
                 value: dateValue,
-                label: dateLabel || "—",
+                label: dateLabel || "-",
             },
             guests: {
                 adults: adults,
@@ -1413,7 +1413,7 @@
                 label: (document.getElementById("ajtb-v1-summary-flight") ? document.getElementById("ajtb-v1-summary-flight").textContent : "") || "",
             },
             transfers: {
-                label: "—",
+                label: "-",
             },
             activities: activities,
             options: options,
@@ -1613,12 +1613,12 @@
                 version: 1,
                 capturedAt: Date.now(),
                 tourId: tourId,
-                departure: { id: 0, label: "—" },
-                date: { value: "", label: "—" },
+                departure: { id: 0, label: "-" },
+                date: { value: "", label: "-" },
                 guests: { adults: 2, children: 0, label: "" },
                 hotel: { label: "" },
                 flight: { label: "" },
-                transfers: { label: "—" },
+                transfers: { label: "-" },
                 activities: [],
                 options: [],
                 price: { total: 0, currency: "MAD" },
@@ -1634,9 +1634,14 @@
         }
 
         function setField(name, value) {
-            var el = document.querySelector("[data-ajtb-recap-field='" + name + "']");
-            if (!el) { return; }
-            el.textContent = (value === null || value === undefined || String(value).trim() === "") ? "—" : String(value);
+            var nodes = Array.prototype.slice.call(
+                document.querySelectorAll("[data-ajtb-recap-field='" + name + "']"),
+            );
+            if (!nodes.length) { return; }
+            var text = (value === null || value === undefined || String(value).trim() === "") ? "-" : String(value);
+            nodes.forEach(function (el) {
+                el.textContent = text;
+            });
         }
 
         function formatPeopleBreakdown(adults, children) {
@@ -2008,14 +2013,14 @@
                 var opt = fromSelect.options[fromSelect.selectedIndex];
                 next.departure = {
                     id: parseInt(fromSelect.value || "0", 10) || 0,
-                    label: (opt.getAttribute("data-place-name") || opt.textContent || "—").trim(),
+                    label: (opt.getAttribute("data-place-name") || opt.textContent || "-").trim(),
                 };
             }
             if (dateSelect && dateSelect.options && dateSelect.selectedIndex >= 0) {
                 var dopt = dateSelect.options[dateSelect.selectedIndex];
                 next.date = {
                     value: String(dateSelect.value || ""),
-                    label: String(dopt.textContent || dateSelect.value || "—").trim(),
+                    label: String(dopt.textContent || dateSelect.value || "-").trim(),
                 };
             }
             next.guests = next.guests || { adults: 2, children: 0, label: "" };
@@ -2028,29 +2033,29 @@
             state = state || payload;
             var calc = computeTotalFromState(state);
 
-            setField("hotel", state.hotel && state.hotel.label ? state.hotel.label : "—");
-            setField("flight", state.flight && state.flight.label ? state.flight.label : "Non indiqué");
-            setField("transfers", state.transfers && state.transfers.label ? state.transfers.label : "—");
+            setField("hotel", state.hotel && state.hotel.label ? state.hotel.label : "-");
+            setField("flight", state.flight && state.flight.label ? state.flight.label : "Non indique");
+            setField("transfers", state.transfers && state.transfers.label ? state.transfers.label : "-");
 
-            var activitiesLabel = "—";
+            var activitiesLabel = "-";
             if (state.activities && state.activities.length) {
                 activitiesLabel = state.activities.map(function (a) { return a.title; }).filter(Boolean).join(", ");
             }
             setField("activities", activitiesLabel);
 
-            var optionsLabel = "—";
+            var optionsLabel = "-";
             if (state.options && state.options.length) {
                 optionsLabel = state.options.join(", ");
             }
             setField("options", optionsLabel);
 
-            var guestsLabel = (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (", " + state.guests.children + " enfant(s)") : "")) : "—");
-            var peopleLabel = state.guests ? formatPeopleBreakdown(state.guests.adults, state.guests.children) : "—";
+            var guestsLabel = (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (", " + state.guests.children + " enfant(s)") : "")) : "-");
+            var peopleLabel = state.guests ? formatPeopleBreakdown(state.guests.adults, state.guests.children) : "-";
             setField("guests", guestsLabel);
             setField("people", peopleLabel);
-            setField("guestBreakdown", (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (" • " + state.guests.children + " enfant(s)") : "")) : "—"));
-            setField("departure", state.departure && state.departure.label ? state.departure.label : "—");
-            setField("date", state.date && state.date.label ? state.date.label : "—");
+            setField("guestBreakdown", (state.guests ? (state.guests.adults + " adulte(s)" + (state.guests.children > 0 ? (" · " + state.guests.children + " enfant(s)") : "")) : "-"));
+            setField("departure", state.departure && state.departure.label ? state.departure.label : "-");
+            setField("date", state.date && state.date.label ? state.date.label : "-");
 
             setField("total", formatMoney(calc.total));
             setField("totalLine", formatMoney(calc.total));
@@ -2061,7 +2066,13 @@
             setField("priceActivities", formatMoney(calc.activitiesTotal) + " " + calc.currency);
             setField("priceExtras", formatMoney(calc.extrasTotal) + " " + calc.currency);
             setField("priceRoom", formatMoney(calc.roomTotal) + " " + calc.currency);
-            setField("demiDoubleStatus", calc.halfDoublePending ? "En attente de jumelage" : "—");
+            setField("demiDoubleStatus", calc.halfDoublePending ? "En attente de jumelage" : "-");
+            setField(
+                "pendingNote",
+                calc.halfDoublePending
+                    ? "Demi-double active: la reservation sera creee en attente de jumelage."
+                    : "Reservation creee en statut pending jusqu'a validation finale.",
+            );
             setRowVisibility("children", calc.children > 0);
             setRowVisibility("room", calc.roomTotal > 0);
             setRowVisibility("demiDouble", calc.halfDoublePending);
@@ -2076,7 +2087,7 @@
             var box = document.getElementById("ajtb-v1-room-picker");
             if (!box) return;
             if (!rooms || !rooms.length) {
-                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce départ.</p>';
+                box.innerHTML = '<p class="ajtb-v1-recap-muted">Aucune chambre disponible pour ce depart.</p>';
                 return;
             }
             payload.roomAllocation = payload.roomAllocation && typeof payload.roomAllocation === "object" ? payload.roomAllocation : {};
@@ -2144,12 +2155,17 @@
                 var need = summary.need;
                 var got = summary.assigned;
                 var ok = summary.isComplete;
+                var adults = payload && payload.guests ? parseInt(payload.guests.adults || "1", 10) : 1;
+                var children = payload && payload.guests ? parseInt(payload.guests.children || "0", 10) : 0;
+                if (!isFinite(adults) || adults < 1) { adults = 1; }
+                if (!isFinite(children) || children < 0) { children = 0; }
+                var peopleLabel = formatPeopleBreakdown(adults, children);
                 box.innerHTML =
                     '<div class="ajtb-v1-room-alloc-summary">' +
-                    '<div><strong>Voyageurs à répartir :</strong> ' + escapeHtml(String(need)) + ' adulte(s)' +
-                    '<br><strong>Voyageurs affectés :</strong> ' + escapeHtml(String(got)) + ' / ' + escapeHtml(String(need)) +
-                    '<br><strong>Reste à affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
-                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
+                    '<div><strong>Voyageurs a repartir :</strong> ' + escapeHtml(peopleLabel) +
+                    '<br><strong>Voyageurs affectes :</strong> ' + escapeHtml(String(got)) + ' / ' + escapeHtml(String(need)) +
+                    '<br><strong>Reste a affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
+                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'A completer') + '</div>' +
                     '</div>' +
                     (payload.availableRoomsCurrent || []).map(function (r) {
                         var id = String(r.alloc_key || r.id || "");
@@ -2179,10 +2195,10 @@
                             '<div>' +
                             '<strong>' + escapeHtml(String(r.room_label || r.room_type || "Chambre")) + '</strong>' +
                             '<small>Pour ' + escapeHtml(String(unit)) + ' personne(s) · Stock disponible : ' + escapeHtml(displayStock) + '</small>' +
-                            (half ? '<small>Chambre double à partager</small>' : '') +
-                            '<small>' + (supp > 0 ? ('Supplément : +' + escapeHtml(formatMoney(supp)) + ' ' + escapeHtml(String(payload.currency || "MAD")) + '/personne') : 'Prix : inclus') + '</small>' +
+                            (half ? '<small>Chambre double a partager</small>' : '') +
+                            '<small>' + (supp > 0 ? ('Supplement : +' + escapeHtml(formatMoney(supp)) + ' ' + escapeHtml(String(payload.currency || "MAD")) + '/personne') : 'Prix : inclus') + '</small>' +
                             (half ? '<small class="ajtb-v1-room-pending">Demi-double - en attente de jumelage</small>' : '') +
-                            '<small>Voyageurs affectés via cette chambre : ' + escapeHtml(String(lineAssigned)) + '</small>' +
+                            '<small>Voyageurs affectes via cette chambre : ' + escapeHtml(String(lineAssigned)) + '</small>' +
                             '</div>' +
                             '<div class="ajtb-v1-room-stepper">' +
                             '<button type="button" data-ajtb-room-minus ' + (canMinus ? "" : "disabled") + '>-</button>' +
@@ -2239,7 +2255,7 @@
                 var priceParts = [];
                 if (ex.price_adult && parseFloat(ex.price_adult) > 0) priceParts.push("Adulte " + formatMoney(ex.price_adult));
                 if (ex.price_child && parseFloat(ex.price_child) > 0) priceParts.push("Enfant " + formatMoney(ex.price_child));
-                var price = priceParts.length ? (priceParts.join(" / ") + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD")) : "—";
+                var price = priceParts.length ? (priceParts.join(" / ") + " " + (window.ajtbRecapBase && window.ajtbRecapBase.pricing ? window.ajtbRecapBase.pricing.currency : "MAD")) : "-";
                 return '' +
                     '<div class="ajtb-v1-choice-item">' +
                     '<span></span>' +
@@ -2459,10 +2475,10 @@
                 var roomsOk = roomSummary.isComplete && !roomSummary.isOverAssigned;
 
                 if (!fn || !ln) {
-                    return { ok: false, message: "Veuillez saisir le prénom et le nom du client." };
+                    return { ok: false, message: "Veuillez saisir le prenom et le nom du client." };
                 }
                 if (!depOk) {
-                    return { ok: false, message: "Veuillez choisir la ville de départ." };
+                    return { ok: false, message: "Veuillez choisir la ville de depart." };
                 }
                 if (!dateOk) {
                     return { ok: false, message: "Veuillez choisir la date de voyage." };
@@ -2487,9 +2503,9 @@
                     '<option value="adult"' + (type === "adult" ? " selected" : "") + '>Adulte</option>' +
                     '<option value="child"' + (type === "child" ? " selected" : "") + '>Enfant</option>' +
                     '</select>' +
-                    '<input type="text" placeholder="Prénom" data-companion-first>' +
+                    '<input type="text" placeholder="Prenom" data-companion-first>' +
                     '<input type="text" placeholder="Nom" data-companion-last>' +
-                    '<button type="button" data-companion-remove>✕</button>' +
+                    '<button type="button" data-companion-remove>×</button>' +
                     '<div class="ajtb-v1-recap-companion-activities" data-companion-activities></div>' +
                     '</div>';
             }
@@ -2605,7 +2621,7 @@
                         return '' +
                             '<label class="ajtb-v1-recap-activity-toggle">' +
                             '<input type="checkbox" data-ajtb-activity-toggle data-slot="' + slot + '" data-activity-idx="' + aIdx + '"' + (checked ? ' checked' : '') + '>' +
-                            '<span>' + escapeHtml(String((a && a.title) ? a.title : 'Activité')) + '</span>' +
+                            '<span>' + escapeHtml(String((a && a.title) ? a.title : 'Activite')) + '</span>' +
                             '</label>';
                     }).join("");
                 }
@@ -2764,7 +2780,7 @@
                 var fn = firstInput ? String(firstInput.value || "").trim() : "";
                 var ln = lastInput ? String(lastInput.value || "").trim() : "";
                 if (!fn || !ln) {
-                    alert("Veuillez saisir le prénom et le nom du client.");
+                    alert("Veuillez saisir le prenom et le nom du client.");
                     return;
                 }
 
@@ -2848,14 +2864,14 @@
                         return;
                     }
                     extrasPayload.push({
-                        name: "Supplément chambre (" + (line.room.room_type || "chambre") + ")",
+                        name: "Supplement chambre (" + (line.room.room_type || "chambre") + ")",
                         price: supp * line.assigned,
                     });
                 });
                 formData.append("extras_json", JSON.stringify(extrasPayload));
 
                 submitBtn.disabled = true;
-                submitBtn.textContent = "En cours…";
+                submitBtn.textContent = "En cours...";
 
                 fetch((window.ajtbData && window.ajtbData.ajaxUrl) ? window.ajtbData.ajaxUrl : "/wp-admin/admin-ajax.php", {
                     method: "POST",
@@ -2865,7 +2881,7 @@
                     .then(function (r) { return r.json(); })
                     .then(function (json) {
                         if (!json || !json.success) {
-                            throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la réservation.");
+                            throw new Error((json && json.data && json.data.message) ? json.data.message : "Erreur lors de la reservation.");
                         }
                         var rid = json.data && json.data.reservation_id ? json.data.reservation_id : null;
                         var created = !!(json.data && json.data.account_created);
@@ -2879,27 +2895,27 @@
                             var passEl = document.getElementById("ajtb-account-password");
                             if (msgEl) {
                                 msgEl.textContent = created
-                                    ? ("Votre compte client a été créé. Réservation #" + String(rid) + ".")
-                                    : ("Réservation #" + String(rid) + " créée. Utilisez votre email pour vous connecter.");
+                                    ? ("Votre compte client a ete cree. Reservation #" + String(rid) + ".")
+                                    : ("Reservation #" + String(rid) + " creee. Utilisez votre email pour vous connecter.");
                             }
-                            if (loginEl) loginEl.textContent = login || "—";
-                            if (passEl) passEl.textContent = password || "—";
+                            if (loginEl) loginEl.textContent = login || "-";
+                            if (passEl) passEl.textContent = password || "-";
                             try {
                                 var m = window.bootstrap.Modal.getOrCreateInstance(modalEl);
                                 m.show();
                             } catch (eModal) {
-                                alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                                alert("Reservation creee (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
                             }
                         } else {
-                            alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                            alert("Reservation creee (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
                         }
                     })
                     .catch(function (e) {
-                        alert(e && e.message ? e.message : "Erreur lors de la réservation.");
+                        alert(e && e.message ? e.message : "Erreur lors de la reservation.");
                     })
                     .finally(function () {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = "Confirmer la réservation";
+                        submitBtn.textContent = "Confirmer la reservation";
+                        refreshSubmitButtonState();
                     });
             });
 
@@ -2912,7 +2928,7 @@
                 var sel = btn.getAttribute("data-ajtb-copy") || "";
                 var el = sel ? document.querySelector(sel) : null;
                 var text = el ? String(el.textContent || "").trim() : "";
-                if (!text || text === "—") return;
+                if (!text || text === "-") return;
                 if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(text).catch(function () {});
                     return;
@@ -2948,3 +2964,7 @@
         initRecapPage();
     });
 })();
+
+
+
+
