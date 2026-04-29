@@ -14,6 +14,37 @@
             .replace(/"/g, "&quot;");
     }
 
+    function initExpandableText(root) {
+        var scope = root && root.querySelectorAll ? root : document;
+        Array.prototype.slice.call(
+            scope.querySelectorAll("[data-ajtb-expandable-text]"),
+        ).forEach(function (textEl) {
+            var toggle = textEl.parentElement
+                ? textEl.parentElement.querySelector("[data-ajtb-expand-toggle]")
+                : null;
+            if (!toggle || textEl.getAttribute("data-ajtb-expand-ready") === "1") {
+                return;
+            }
+
+            textEl.classList.add("is-collapsed");
+            requestAnimationFrame(function () {
+                var needsToggle = textEl.scrollHeight > textEl.clientHeight + 8;
+                textEl.setAttribute("data-ajtb-expand-ready", "1");
+                if (!needsToggle) {
+                    textEl.classList.remove("is-collapsed");
+                    toggle.hidden = true;
+                    return;
+                }
+
+                toggle.hidden = false;
+                toggle.addEventListener("click", function () {
+                    var expanded = textEl.classList.toggle("is-collapsed") === false;
+                    toggle.textContent = expanded ? "Voir moins" : "Voir plus";
+                });
+            });
+        });
+    }
+
     function initTabs() {
         var tabButtons = Array.prototype.slice.call(
             document.querySelectorAll(".ajtb-v1-tab-btn"),
@@ -639,7 +670,7 @@
                 suffixEl.textContent = "/ total";
             }
             if (perPersonEl) {
-                perPersonEl.textContent = formatAmount(pricePerPerson) + " " + currency + " / pers.";
+                perPersonEl.textContent = formatAmount(pricePerPerson) + " " + currency;
             }
             if (departureEl) {
                 departureEl.textContent = departureLabel;
@@ -659,7 +690,7 @@
             if (activitiesEl) {
                 var baseActivityLabel = priceCard.getAttribute("data-activity-label") || activitiesEl.textContent;
                 activitiesEl.textContent = selectedActivities.length
-                    ? baseActivityLabel + " + " + selectedActivities.length + " option" + (selectedActivities.length > 1 ? "s" : "") + " (+" + formatAmount(activityTotal) + " " + currency + ")"
+                    ? "A confirmer +" + " " + selectedActivities.length + " option" + (selectedActivities.length > 1 ? "s" : "") + " (+" + formatAmount(activityTotal) + " " + currency + ")"
                     : baseActivityLabel;
             }
             if (flightEl) {
@@ -933,8 +964,8 @@
         function buildProgramActivityCard(activity) {
             var act = normalizeActivityForProgram(activity);
             var img = act.image_url
-                ? '<img src="' + escHtml(act.image_url) + '" alt="Visuel de l\'activité" loading="lazy">'
-                : '<div class="ajtb-act-card-img-placeholder"></div>';
+                ? '<span class="ajtb-v1-media-thumb"><img src="' + escHtml(act.image_url) + '" alt="Visuel de l\'activite" loading="lazy"></span>'
+                : '<span class="ajtb-v1-media-thumb"><div class="ajtb-act-card-img-placeholder"></div></span>';
             var price = act.price === null || Number.isNaN(act.price)
                 ? ""
                 : '<span>' + escHtml(formatPrice(act.price)) + '</span>';
@@ -946,7 +977,8 @@
                 img +
                 '<div>' +
                 '<h4>' + escHtml(act.title) + '</h4>' +
-                '<p>' + escHtml(act.description) + '</p>' +
+                '<p data-ajtb-expandable-text>' + escHtml(act.description) + '</p>' +
+                '<button type="button" class="ajtb-v1-expand-toggle" data-ajtb-expand-toggle hidden>Voir plus</button>' +
                 '<div class="ajtb-v1-meta-line">' + price + '</div>' +
                 '</div></div>' +
                 '<div class="ajtb-v1-service-progress">' +
@@ -976,6 +1008,7 @@
                 removeBtn.setAttribute("data-day-id", String(dayId || ""));
                 removeBtn.setAttribute("data-day-number", String(dayNumber || ""));
             }
+            initExpandableText(list);
             document.dispatchEvent(new CustomEvent("ajtb:v1:activities-changed"));
         }
 
@@ -2960,20 +2993,18 @@
 
     function initRequestType() {
         var typeSelect = document.getElementById("ajtb-v1-request-type");
-        var customDate = document.getElementById("ajtb-v1-custom-date");
         var customMsg = document.getElementById("ajtb-v1-custom-message");
         if (!typeSelect) {
             return;
         }
-        typeSelect.addEventListener("change", function () {
+        function renderRequestType() {
             var isCustom = typeSelect.value === "custom";
-            if (customDate) {
-                customDate.hidden = !isCustom;
-            }
             if (customMsg) {
                 customMsg.hidden = !isCustom;
             }
-        });
+        }
+        typeSelect.addEventListener("change", renderRequestType);
+        renderRequestType();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -2989,9 +3020,7 @@
         initRestoreSelectionFromRecap();
         initRecapPage();
         initRequestType();
+        initExpandableText(document);
     });
 })();
-
-
-
 
