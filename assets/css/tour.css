@@ -411,11 +411,11 @@ body.single-st_tours .footer-bottom {
 .ajtb-v1-title {
     margin: 0;
     color: #15253f;
-    font-size: clamp(27px, 2.35vw, 35px);
-    line-height: 1.22;
+    font-size: clamp(24px, 2.2vw, 32px);
+    line-height: 1.18;
     font-weight: 800;
     letter-spacing: -0.012em;
-    max-width: 20ch;
+    max-width: 28ch;
 }
 
 .ajtb-v1-meta-pills {
@@ -454,6 +454,8 @@ body.single-st_tours .footer-bottom {
     border: 1px solid #d7e6f4;
     background: linear-gradient(180deg, #f9fcff, #f2f8ff);
     box-shadow: 0 14px 30px rgba(14, 58, 90, 0.08);
+    max-height: 420px;
+    overflow: hidden;
 }
 
 .ajtb-v1-gallery-item {
@@ -793,13 +795,13 @@ body.single-st_tours .footer-bottom {
 }
 
 .ajtb-v1-day-badge {
-    min-height: 30px;
+    min-height: 26px;
     padding: 0 10px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
     color: #fff;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     background: linear-gradient(180deg, #ff9c61, #f06c41);
 }
@@ -1506,8 +1508,28 @@ body.ajtb-modal-open {
 .ajtb-v1-summary-list {
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.ajtb-v1-summary-list div {
+    padding: 8px 10px;
+    border: 0;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #edf3fb;
+}
+
+.ajtb-v1-summary-list dt {
+    margin: 0;
+    font-size: 11px;
+}
+
+.ajtb-v1-summary-list dd {
+    font-size: 13px;
+    text-align: right;
 }
 
 .ajtb-v1-summary-list div {
@@ -1567,10 +1589,13 @@ body.ajtb-modal-open {
     border-color: #bfe1f7;
 }
 
+.ajtb-v1-summary-block,
 .ajtb-v1-summary-footnote {
-    color: #6c7d95;
-    font-size: 12px;
-    line-height: 1.55;
+    display: none;
+}
+
+.ajtb-v1-summary-price span {
+    font-size: 28px;
 }
 
 .ajtb-v1-summary-action {
@@ -3279,6 +3304,7 @@ body.ajtb-modal-open {
         margin-top: 14px;
         padding: 8px;
         border-radius: 16px;
+        max-height: 300px;
     }
 
     .ajtb-v1-gallery-item,

@@ -470,7 +470,7 @@
         }
 
         function getAvailabilityLabel(total, dateAdultPrice) {
-            var baseLabel = priceCard.getAttribute("data-availability-label") || "Sous reserve de disponibilite";
+            var baseLabel = priceCard.getAttribute("data-availability-label") || "Sous réserve de disponibilité";
             if (dateAdultPrice !== null && total > 0) {
                 return "Disponible";
             }
@@ -506,7 +506,7 @@
                 }
             }
             if (!html) {
-                html = "<li>Aucune option supplementaire renseignee</li>";
+                html = "<li>Aucune option supplémentaire renseignée</li>";
             }
             optionsEl.innerHTML = html;
         }
@@ -669,7 +669,7 @@
                 availabilityEl.textContent = availabilityLabel;
             }
             if (availabilityBadgeEl) {
-                availabilityBadgeEl.textContent = availabilityLabel === "Disponible" ? "Disponible" : "A confirmer";
+                availabilityBadgeEl.textContent = availabilityLabel === "Disponible" ? "Disponible" : "À confirmer";
             }
             if (noteEl) {
                 noteEl.textContent = activityTotal > 0
@@ -940,7 +940,7 @@
                 : '<span>' + escHtml(formatPrice(act.price)) + '</span>';
 
             return '<div class="activity-card ajtb-v1-service-card" data-activity-id="' + act.activity_id + '" data-activity-title="' + escHtml(act.title) + '" data-activity-price="' + escHtml(act.price === null || Number.isNaN(act.price) ? "" : String(act.price)) + '" data-client-added="1">' +
-                '<div class="ajtb-v1-service-head"><span>Activity - Program</span>' +
+                '<div class="ajtb-v1-service-head"><span>Activité du programme</span>' +
                 '<button type="button" class="ajtb-v1-service-remove" data-ajtb-v1-action="remove-program-activity" data-day-id="" data-day-number="" data-activity-id="' + act.activity_id + '">Retirer</button></div>' +
                 '<div class="ajtb-v1-service-body ajtb-v1-media-row">' +
                 img +
@@ -1031,7 +1031,7 @@
 
             function stateFor(nextValue) {
                 if (nextValue >= 92) { return "Confirmation"; }
-                if (nextValue >= 64) { return "Mise a jour du programme"; }
+                if (nextValue >= 64) { return "Mise à jour du programme"; }
                 if (nextValue >= 35) { return "Enregistrement"; }
                 return "Preparation";
             }
@@ -2958,6 +2958,24 @@
         document.dispatchEvent(new CustomEvent("ajtb:v1:travellers-changed"));
     }
 
+    function initRequestType() {
+        var typeSelect = document.getElementById("ajtb-v1-request-type");
+        var customDate = document.getElementById("ajtb-v1-custom-date");
+        var customMsg = document.getElementById("ajtb-v1-custom-message");
+        if (!typeSelect) {
+            return;
+        }
+        typeSelect.addEventListener("change", function () {
+            var isCustom = typeSelect.value === "custom";
+            if (customDate) {
+                customDate.hidden = !isCustom;
+            }
+            if (customMsg) {
+                customMsg.hidden = !isCustom;
+            }
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initTabs();
         initProgramFilters();
@@ -2970,6 +2988,7 @@
         initContinueToRecap();
         initRestoreSelectionFromRecap();
         initRecapPage();
+        initRequestType();
     });
 })();
 
