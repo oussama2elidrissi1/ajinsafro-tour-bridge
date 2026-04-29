@@ -169,13 +169,11 @@ body.single-st_tours .footer-bottom {
     display: grid;
     grid-template-columns: 1.15fr 1fr 1fr;
     gap: 14px;
-    padding: 16px;
-    border-radius: 22px;
-    background: linear-gradient(145deg, #0b3250, #0f4f79);
-    box-shadow:
-        0 14px 34px rgba(10, 40, 64, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 14px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(14, 58, 90, 0.1);
+    border: 1px solid #d4e3f4;
     position: sticky;
     top: var(--ajtb-v1-sticky-top);
     z-index: 160;
@@ -193,15 +191,15 @@ body.single-st_tours .footer-bottom {
 
 .ajtb-v1-search-card {
     background: #fff;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 131, 196, 0.16);
-    padding: 14px 18px;
-    min-height: 88px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 131, 196, 0.14);
+    padding: 12px 16px;
+    min-height: 72px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 9px;
-    box-shadow: 0 6px 16px rgba(15, 79, 121, 0.1);
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(15, 79, 121, 0.08);
 }
 
 .ajtb-v1-search-label {
@@ -411,8 +409,8 @@ body.single-st_tours .footer-bottom {
 .ajtb-v1-title {
     margin: 0;
     color: #15253f;
-    font-size: clamp(24px, 2.2vw, 32px);
-    line-height: 1.18;
+    font-size: clamp(22px, 2vw, 28px);
+    line-height: 1.15;
     font-weight: 800;
     letter-spacing: -0.012em;
     max-width: 28ch;
@@ -454,7 +452,7 @@ body.single-st_tours .footer-bottom {
     border: 1px solid #d7e6f4;
     background: linear-gradient(180deg, #f9fcff, #f2f8ff);
     box-shadow: 0 14px 30px rgba(14, 58, 90, 0.08);
-    max-height: 420px;
+    max-height: 340px;
     overflow: hidden;
 }
 
@@ -494,7 +492,7 @@ body.single-st_tours .footer-bottom {
 }
 
 .ajtb-v1-gallery--count-1 .ajtb-v1-gallery-item img {
-    aspect-ratio: 16 / 8;
+    aspect-ratio: 16 / 9;
 }
 
 .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item {
@@ -502,7 +500,7 @@ body.single-st_tours .footer-bottom {
 }
 
 .ajtb-v1-gallery--count-2 .ajtb-v1-gallery-item img {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 9;
 }
 
 .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item.is-featured,
@@ -521,7 +519,7 @@ body.single-st_tours .footer-bottom {
 .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item.is-featured img,
 .ajtb-v1-gallery--count-4 .ajtb-v1-gallery-item.is-featured img,
 .ajtb-v1-gallery--count-many .ajtb-v1-gallery-item.is-featured img {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 9;
 }
 
 .ajtb-v1-gallery--count-3 .ajtb-v1-gallery-item:not(.is-featured) img,
@@ -1513,34 +1511,17 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-summary-list div {
-    padding: 8px 10px;
-    border: 0;
-    background: transparent;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #dce7f4;
+    background: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #edf3fb;
 }
 
 .ajtb-v1-summary-list dt {
     margin: 0;
-    font-size: 11px;
-}
-
-.ajtb-v1-summary-list dd {
-    font-size: 13px;
-    text-align: right;
-}
-
-.ajtb-v1-summary-list div {
-    padding: 11px 12px;
-    border-radius: 14px;
-    border: 1px solid #dce7f4;
-    background: #ffffff;
-}
-
-.ajtb-v1-summary-list dt {
-    margin: 0 0 3px;
     color: #6d7f99;
     font-size: 10px;
     font-weight: 800;
@@ -1554,6 +1535,7 @@ body.ajtb-modal-open {
     font-size: 13px;
     font-weight: 700;
     line-height: 1.45;
+    text-align: right;
 }
 
 .ajtb-v1-summary-block {
@@ -1740,7 +1722,7 @@ body.ajtb-modal-open {
 .ajtb-v1-best-deals {
     color: #fff;
     border-color: transparent;
-    background: linear-gradient(155deg, #0f9f8b, #0b6f62);
+    background: linear-gradient(155deg, #0e3a5a, #0083c4);
 }
 
 .ajtb-v1-best-deals h3 {
@@ -1833,6 +1815,7 @@ body.ajtb-modal-open {
 }
 
 .ajtb-v1-floating-btn {
+    display: none;
     position: fixed;
     right: 24px;
     bottom: 24px;
@@ -3280,6 +3263,10 @@ body.ajtb-modal-open {
         min-height: 30px;
         font-size: 10px;
         padding: 0 10px;
+    }
+
+    .ajtb-v1-gallery {
+        max-height: 260px;
     }
 
     .ajtb-v1-tabs {

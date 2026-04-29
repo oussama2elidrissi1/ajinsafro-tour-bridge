@@ -84,7 +84,7 @@ $search_departure_id = isset($tour_data['search']['departure_place_id']) ? (int)
 $search_place_options = !empty($tour_data['search']['place_options']) && is_array($tour_data['search']['place_options'])
     ? $tour_data['search']['place_options']
     : [];
-$search_date = isset($tour_data['search']['departure_date']) ? (string) $tour_data['search']['departure_date'] : 'Date a confirmer';
+$search_date = isset($tour_data['search']['departure_date']) ? (string) $tour_data['search']['departure_date'] : 'Date à confirmer';
 $search_guests = isset($tour_data['search']['guests']) ? (string) $tour_data['search']['guests'] : '2 Adultes';
 $guest_config = isset($tour_data['search']['guest_config']) && is_array($tour_data['search']['guest_config'])
     ? $tour_data['search']['guest_config']
@@ -238,12 +238,12 @@ get_header();
 
     <main class="ajtb-v1-main">
         <div class="ajtb-v1-container">
-            <section class="ajtb-v1-search-box" id="ajtb-v1-search-box" aria-label="Search box premium">
+            <section class="ajtb-v1-search-box" id="ajtb-v1-search-box" aria-label="Recherche premium">
                 <div class="ajtb-v1-search-card">
-                    <span class="ajtb-v1-search-label">Ville de depart</span>
+                    <span class="ajtb-v1-search-label">Ville de départ</span>
                     <?php if (!empty($search_place_options)): ?>
                         <span class="ajtb-v1-search-value ajtb-v1-search-value--select">
-                            <select class="ajtb-v1-search-select" id="ajtb-v1-search-from" aria-label="Lieux de depart disponibles">
+                            <select class="ajtb-v1-search-select" id="ajtb-v1-search-from" aria-label="Lieux de départ disponibles">
                                 <?php foreach ($search_place_options as $place_option): ?>
                                     <?php
                                     $place_id = isset($place_option['id']) ? (int) $place_option['id'] : 0;
@@ -263,14 +263,14 @@ get_header();
                             <strong aria-hidden="true">▾</strong>
                         </span>
                     <?php else: ?>
-                        <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_departure !== '' ? $search_departure : 'Aucun lieu de depart configure'); ?></span><strong aria-hidden="true">▾</strong></span>
+                        <span class="ajtb-v1-search-value"><span class="ajtb-v1-search-text"><?php echo esc_html($search_departure !== '' ? $search_departure : 'Aucun lieu de départ configuré'); ?></span><strong aria-hidden="true">▾</strong></span>
                     <?php endif; ?>
                 </div>
                 <div class="ajtb-v1-search-card">
-                    <span class="ajtb-v1-search-label">Date de voyage</span>
+                    <span class="ajtb-v1-search-label">Date de départ</span>
                     <?php if (!empty($search_date_options)): ?>
                         <span class="ajtb-v1-search-value ajtb-v1-search-value--select">
-                            <select class="ajtb-v1-search-select" id="ajtb-v1-search-date" aria-label="Dates de depart disponibles">
+                            <select class="ajtb-v1-search-select" id="ajtb-v1-search-date" aria-label="Dates de départ disponibles">
                                 <?php foreach ($search_date_options as $date_option): ?>
                                     <option value="<?php echo esc_attr((string) $date_option['value']); ?>"<?php selected((string) $date_option['value'], $selected_search_date); ?>>
                                         <?php echo esc_html((string) $date_option['display']); ?>
@@ -292,7 +292,7 @@ get_header();
                     </div>
                 </div>
                 <div class="ajtb-v1-search-card">
-                    <span class="ajtb-v1-search-label">Chambres et voyageurs</span>
+                    <span class="ajtb-v1-search-label">Voyageurs</span>
                     <div
                         class="ajtb-v1-guests-picker"
                         data-max-adults="<?php echo esc_attr((string) $guest_max_adults); ?>"
@@ -308,7 +308,7 @@ get_header();
                             <div class="ajtb-v1-guest-row">
                                 <div>
                                     <strong>Adultes</strong>
-                                    <span>Age 12+</span>
+                                    <span>Âge 12+</span>
                                 </div>
                                 <div class="ajtb-v1-guest-stepper">
                                     <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="adults">-</button>
@@ -319,7 +319,7 @@ get_header();
                             <div class="ajtb-v1-guest-row">
                                 <div>
                                     <strong>Enfants</strong>
-                                    <span>Age 2-11</span>
+                                    <span>Âge 2-11</span>
                                 </div>
                                 <div class="ajtb-v1-guest-stepper">
                                     <button type="button" data-ajtb-guest-action="minus" data-ajtb-guest-target="children">-</button>
@@ -335,7 +335,7 @@ get_header();
                 </div>
             </section>
 
-            <section class="ajtb-v1-hero" aria-label="Hero tour">
+            <section class="ajtb-v1-hero" aria-label="En-tête du voyage">
                 <h1 class="ajtb-v1-title"><?php echo esc_html($tour_title); ?></h1>
 
                 <div class="ajtb-v1-meta-pills">
@@ -359,7 +359,7 @@ get_header();
                 <div class="ajtb-v1-main-column">
                     <section class="ajtb-v1-tab-panel is-active" id="ajtb-v1-panel-itinerary" role="tabpanel">
                         <article class="ajtb-v1-card ajtb-v1-overview-card">
-                            <p class="ajtb-v1-kicker">Apercu du voyage</p>
+                            <p class="ajtb-v1-kicker">Aperçu du voyage</p>
                             <ul class="ajtb-v1-overview-list">
                                 <?php foreach ($overview_points as $point): ?>
                                     <li><?php echo esc_html((string) $point); ?></li>
@@ -493,8 +493,8 @@ get_header();
 
                                                 <?php foreach ($transfers_in as $transfer): ?>
                                                     <?php
-                                                    $from = $pick($transfer, ['from_label', 'pickup_location', 'from_city'], 'Arrival point');
-                                                    $to = $pick($transfer, ['to_label', 'dropoff_location', 'to_city'], 'Hotel');
+                                                    $from = $pick($transfer, ['from_label', 'pickup_location', 'from_city'], 'Point d\'arrivée');
+                                                    $to = $pick($transfer, ['to_label', 'dropoff_location', 'to_city'], 'Hôtel');
                                                     $transfer_img = $pick($transfer, ['image_url'], '');
                                                     ?>
                                                     <div class="ajtb-v1-service-card program-item" data-program-type="transfer">
@@ -502,9 +502,9 @@ get_header();
                                                         <div class="ajtb-v1-service-body ajtb-v1-media-row">
                                                             <img src="<?php echo $safe_image($transfer_img, $default_transfer_image); ?>" alt="Visuel transfert" loading="lazy">
                                                             <div>
-                                                                <h4><?php echo esc_html($pick($transfer, ['transfer_type', 'service_name', 'name'], 'Transfer service')); ?></h4>
-                                                                <p><?php echo esc_html($pick($transfer, ['notes'], 'Transfert organise avec assistance locale.')); ?></p>
-                                                                <div class="ajtb-v1-meta-line"><span><?php echo esc_html($pick($transfer, ['vehicle_type'], 'Comfort vehicle')); ?></span><span><?php echo esc_html($pick($transfer, ['pickup_time'], 'On time')); ?></span></div>
+                                                                <h4><?php echo esc_html($pick($transfer, ['transfer_type', 'service_name', 'name'], 'Service de transfert')); ?></h4>
+                                                                <p><?php echo esc_html($pick($transfer, ['notes'], 'Transfert organisé avec assistance locale.')); ?></p>
+                                                                <div class="ajtb-v1-meta-line"><span><?php echo esc_html($pick($transfer, ['vehicle_type'], 'Véhicule confortable')); ?></span><span><?php echo esc_html($pick($transfer, ['pickup_time'], 'À l\'heure')); ?></span></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -551,8 +551,8 @@ get_header();
                                                     <?php foreach ($included_activities as $activity): ?>
                                                         <?php
                                                         $act_img = $pick($activity, ['image_url'], '');
-                                                        $act_title = $pick($activity, ['title'], 'Activity');
-                                                        $act_desc = $pick($activity, ['description'], 'Activite incluse selon le programme du jour.');
+                                                        $act_title = $pick($activity, ['title'], 'Activité');
+                                                        $act_desc = $pick($activity, ['description'], 'Activité incluse selon le programme du jour.');
                                                         $act_price = isset($activity['custom_price']) && $activity['custom_price'] !== null
                                                             ? (float) $activity['custom_price']
                                                             : (isset($activity['base_price']) && $activity['base_price'] !== null ? (float) $activity['base_price'] : null);
@@ -734,7 +734,6 @@ get_header();
                             <div>
                                 <h3>Récapitulatif de votre réservation</h3>
                             </div>
-                            <span class="ajtb-v1-summary-badge" id="ajtb-v1-availability-badge"><?php echo esc_html(!empty($search_date_options) ? 'Disponible' : 'À confirmer'); ?></span>
                         </div>
 
                         <div class="ajtb-v1-summary-price-row">
@@ -819,10 +818,10 @@ get_header();
     <?php else: ?>
         <footer class="ajtb-v1-fallback-footer">
             <div class="ajtb-v1-container ajtb-v1-fallback-footer__grid">
-                <div><h4>En savoir plus</h4><ul><li><a href="#">A propos</a></li><li><a href="#">FAQ</a></li><li><a href="#">Conditions</a></li></ul></div>
-                <div><h4>Societe</h4><ul><li><a href="#">Carriere</a></li><li><a href="#">Partenaires</a></li><li><a href="#">Contact</a></li></ul></div>
-                <div><h4>Mentions legales</h4><p>Ajinsafro Recreation SARL AU</p><p>Licence N 489117 | RC 18989</p></div>
-                <div><h4>Newsletter</h4><form action="#" method="post"><input type="email" name="email" placeholder="Saisissez votre email" required><button type="submit">S inscrire</button></form></div>
+                <div><h4>En savoir plus</h4><ul><li><a href="#">À propos</a></li><li><a href="#">FAQ</a></li><li><a href="#">Conditions</a></li></ul></div>
+                <div><h4>Société</h4><ul><li><a href="#">Carrière</a></li><li><a href="#">Partenaires</a></li><li><a href="#">Contact</a></li></ul></div>
+                <div><h4>Mentions légales</h4><p>Ajinsafro Recreation SARL AU</p><p>Licence N 489117 | RC 18989</p></div>
+                <div><h4>Newsletter</h4><form action="#" method="post"><input type="email" name="email" placeholder="Saisissez votre email" required><button type="submit">S'inscrire</button></form></div>
             </div>
         </footer>
     <?php endif; ?>

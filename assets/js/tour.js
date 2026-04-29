@@ -495,7 +495,7 @@
             }
             if (selectedActivities.length) {
                 selectedActivities.forEach(function (activity) {
-                    var label = activity.title || "Activite";
+                    var label = activity.title || "Activité";
                     var price = isFinite(activity.price) && activity.price > 0
                         ? " +" + formatAmount(activity.price) + " " + currency
                         : "";
@@ -520,7 +520,7 @@
 
             return {
                 activity_id: parseInt(String(activity.activity_id || activity.id || "0"), 10) || 0,
-                title: String(activity.title || "Activite"),
+                title: String(activity.title || "Activité"),
                 price: price,
             };
         }
@@ -531,7 +531,7 @@
                     var titleEl = row.querySelector("h4");
                     return normalizeSelectedActivity({
                         activity_id: row.getAttribute("data-activity-id") || "0",
-                        title: row.getAttribute("data-activity-title") || (titleEl ? titleEl.textContent : "Activite"),
+                        title: row.getAttribute("data-activity-title") || (titleEl ? titleEl.textContent : "Activité"),
                         price: row.getAttribute("data-activity-price") || "0",
                     });
                 })
@@ -897,7 +897,7 @@
                 '<p class="ajtb-act-card-desc">' + escHtml(act.description) + '</p>' +
                 '<div class="ajtb-act-card-footer">' +
                 '<div class="ajtb-act-progress" data-ajtb-add-progress hidden>' +
-                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Preparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
+                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Préparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
                 '<div class="ajtb-act-progress-track"><span data-ajtb-progress-fill style="width: 0%"></span></div>' +
                 '</div>' +
                 '</div></div></article>';
@@ -923,8 +923,8 @@
 
             return {
                 activity_id: parseInt(String(activity.activity_id || activity.id || "0"), 10) || 0,
-                title: String(activity.title || "Activity"),
-                description: String(activity.description || "Activite ajoutee au programme."),
+                title: String(activity.title || "Activité"),
+                description: String(activity.description || "Activité ajoutée au programme."),
                 image_url: activity.image_url || "",
                 price: price === null || price === undefined || price === "" ? null : Number(price),
             };
@@ -933,7 +933,7 @@
         function buildProgramActivityCard(activity) {
             var act = normalizeActivityForProgram(activity);
             var img = act.image_url
-                ? '<img src="' + escHtml(act.image_url) + '" alt="Activity visual" loading="lazy">'
+                ? '<img src="' + escHtml(act.image_url) + '" alt="Visuel de l\'activité" loading="lazy">'
                 : '<div class="ajtb-act-card-img-placeholder"></div>';
             var price = act.price === null || Number.isNaN(act.price)
                 ? ""
@@ -951,7 +951,7 @@
                 '</div></div>' +
                 '<div class="ajtb-v1-service-progress">' +
                 '<div class="ajtb-act-progress" data-ajtb-remove-progress hidden>' +
-                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Preparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
+                '<div class="ajtb-act-progress-top"><span data-ajtb-progress-state>Préparation</span><strong data-ajtb-progress-percent>0%</strong></div>' +
                 '<div class="ajtb-act-progress-track"><span data-ajtb-progress-fill style="width: 0%"></span></div>' +
                 '</div>' +
                 '</div></div>';
@@ -1033,7 +1033,7 @@
                 if (nextValue >= 92) { return "Confirmation"; }
                 if (nextValue >= 64) { return "Mise à jour du programme"; }
                 if (nextValue >= 35) { return "Enregistrement"; }
-                return "Preparation";
+                return "Préparation";
             }
 
             function apply(nextValue, label) {
@@ -1060,7 +1060,7 @@
                 card.classList.add(busyClass);
             }
 
-            apply(8, "Preparation");
+            apply(8, "Préparation");
             timer = window.setInterval(function () {
                 if (value >= 88) {
                     return;
@@ -1371,7 +1371,7 @@
             .map(function (row) {
                 return {
                     activity_id: parseInt(row.getAttribute("data-activity-id") || "0", 10) || 0,
-                    title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activite"),
+                    title: String(row.getAttribute("data-activity-title") || "").trim() || (row.querySelector("h4") ? row.querySelector("h4").textContent.trim() : "Activité"),
                     price: row.getAttribute("data-activity-price") || "",
                     assigned: [],
                 };
@@ -2079,7 +2079,7 @@
                 "pendingNote",
                 calc.halfDoublePending
                     ? "Demi-double active : la réservation sera créée en attente de jumelage."
-                    : "Réservation créée en statut pending jusqu'à validation finale.",
+                    : "Réservation créée en statut en attente jusqu'à validation finale.",
             );
             setRowVisibility("children", calc.children > 0);
             setRowVisibility("room", calc.roomTotal > 0);
@@ -2173,7 +2173,7 @@
                     '<div><strong>Voyageurs à répartir :</strong> ' + escapeHtml(peopleLabel) +
                     '<br><strong>Voyageurs affectés :</strong> ' + escapeHtml(String(got)) + ' / ' + escapeHtml(String(need)) +
                     '<br><strong>Reste à affecter :</strong> ' + escapeHtml(String(summary.remaining)) + '</div>' +
-                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'OK' : 'À compléter') + '</div>' +
+                    '<div class="ajtb-v1-room-alloc-badge">' + (ok ? 'Valide' : 'À compléter') + '</div>' +
                     '</div>' +
                     (payload.availableRoomsCurrent || []).map(function (r) {
                         var id = String(r.alloc_key || r.id || "");
@@ -2267,7 +2267,7 @@
                 return '' +
                     '<div class="ajtb-v1-choice-item">' +
                     '<span></span>' +
-                    '<span><strong>' + escapeHtml(String(ex.name || "Extra")) + '</strong>' + (ex.description ? ('<small>' + escapeHtml(String(ex.description)) + '</small>') : '') + '</span>' +
+                    '<span><strong>' + escapeHtml(String(ex.name || "Supplément")) + '</strong>' + (ex.description ? ('<small>' + escapeHtml(String(ex.description)) + '</small>') : '') + '</span>' +
                     '<span class="ajtb-v1-choice-price">' + escapeHtml(price) + '</span>' +
                     '</div>';
             }).join("");
@@ -2342,7 +2342,7 @@
                         var t = types[slot] === "child" ? "child" : "adult";
                         var p = t === "child" ? parseFloat(ex.price_child || "0") : parseFloat(ex.price_adult || "0");
                         if (!isFinite(p) || p < 0) p = 0;
-                        var label = String(ex.name || "Extra") + (p > 0 ? (" · " + formatMoney(p) + " " + ((window.ajtbRecapBase && window.ajtbRecapBase.pricing) ? window.ajtbRecapBase.pricing.currency : "MAD")) : "");
+                        var label = String(ex.name || "Supplément") + (p > 0 ? (" · " + formatMoney(p) + " " + ((window.ajtbRecapBase && window.ajtbRecapBase.pricing) ? window.ajtbRecapBase.pricing.currency : "MAD")) : "");
                         return '' +
                             '<label class="ajtb-v1-recap-activity-toggle">' +
                             '<input type="checkbox" data-ajtb-extra-toggle data-slot="' + slot + '" data-extra-idx="' + exIdx + '"' + (checked ? ' checked' : '') + '>' +
@@ -2629,7 +2629,7 @@
                         return '' +
                             '<label class="ajtb-v1-recap-activity-toggle">' +
                             '<input type="checkbox" data-ajtb-activity-toggle data-slot="' + slot + '" data-activity-idx="' + aIdx + '"' + (checked ? ' checked' : '') + '>' +
-                            '<span>' + escapeHtml(String((a && a.title) ? a.title : 'Activite')) + '</span>' +
+                            '<span>' + escapeHtml(String((a && a.title) ? a.title : 'Activité')) + '</span>' +
                             '</label>';
                     }).join("");
                 }
@@ -2912,7 +2912,7 @@
                                 var m = window.bootstrap.Modal.getOrCreateInstance(modalEl);
                                 m.show();
                             } catch (eModal) {
-                                alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
+                                alert("Réservation créée (ID " + rid + "). Identifiant: " + login + (password ? (" / MDP: " + password) : ""));
                             }
                         } else {
                             alert("Réservation créée (ID " + rid + "). Login: " + login + (password ? (" / MDP: " + password) : ""));
