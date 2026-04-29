@@ -404,14 +404,6 @@ get_header();
             <section class="ajtb-v1-hero" aria-label="En-tête du voyage">
                 <h1 class="ajtb-v1-title"><?php echo esc_html($tour_title); ?></h1>
 
-                <div class="ajtb-v1-meta-pills">
-                    <span class="ajtb-v1-pill"><?php echo esc_html($translate_ui($duration_label)); ?></span>
-                    <span class="ajtb-v1-pill"><?php echo esc_html($destination); ?></span>
-                    <span class="ajtb-v1-pill">Groupe max <?php echo esc_html((string) $group_size); ?> pers</span>
-                    <span class="ajtb-v1-pill"><?php echo esc_html($translate_ui($rating_label)); ?></span>
-                    <span class="ajtb-v1-pill ajtb-v1-pill--id">ID #<?php echo esc_html((string) $tour_id); ?></span>
-                </div>
-
                 <div class="ajtb-v1-gallery <?php echo esc_attr($hero_gallery_class); ?>" data-image-count="<?php echo esc_attr((string) $hero_count); ?>">
                     <?php foreach ($hero_images as $index => $gallery_img): ?>
                         <figure class="ajtb-v1-gallery-item<?php echo $index === 0 ? ' is-featured' : ''; ?>">
