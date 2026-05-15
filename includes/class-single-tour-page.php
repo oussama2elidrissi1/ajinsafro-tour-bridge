@@ -402,21 +402,41 @@ class AJTB_Single_Tour_Page
         }
 
         // New V2 recap design assets (ajinsafro-traveler-home)
-        if (self::is_recap_request() && defined('AJTH_URL') && defined('AJTH_DIR')) {
-            $new_css = AJTH_DIR . 'assets/css/reservation-recap.css';
-            $new_js = AJTH_DIR . 'assets/js/reservation-recap.js';
+        if (self::is_recap_request()) {
+            $ajth_dir = defined('AJTH_DIR')
+                ? AJTH_DIR
+                : WP_PLUGIN_DIR . '/ajinsafro-traveler-home/';
+            $ajth_url = defined('AJTH_URL')
+                ? AJTH_URL
+                : plugins_url('ajinsafro-traveler-home/');
+
+            $new_css = $ajth_dir . 'assets/css/reservation-recap.css';
+            $new_js  = $ajth_dir . 'assets/js/reservation-recap.js';
+
             if (file_exists($new_css)) {
                 wp_enqueue_style(
                     'ajth-reservation-recap-css',
-                    AJTH_URL . 'assets/css/reservation-recap.css',
+                    $ajth_url . 'assets/css/reservation-recap.css',
                     $css_deps,
                     (string) filemtime($new_css)
                 );
             }
+
+            // Bootstrap modal dependency must be registered before the recap JS.
+            if (!wp_script_is('ajtb-bootstrap-bundle', 'enqueued')) {
+                wp_enqueue_script(
+                    'ajtb-bootstrap-bundle',
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                    [],
+                    '5.3.3',
+                    true
+                );
+            }
+
             if (file_exists($new_js)) {
                 wp_enqueue_script(
                     'ajth-reservation-recap-js',
-                    AJTH_URL . 'assets/js/reservation-recap.js',
+                    $ajth_url . 'assets/js/reservation-recap.js',
                     ['ajtb-bootstrap-bundle'],
                     (string) filemtime($new_js),
                     true
@@ -436,16 +456,6 @@ class AJTB_Single_Tour_Page
                     'error' => __('Impossible d’ajouter l’activité pour le moment.', 'ajinsafro-tour-bridge'),
                 ],
             ]);
-
-            if (!wp_script_is('ajtb-bootstrap-bundle', 'enqueued')) {
-                wp_enqueue_script(
-                    'ajtb-bootstrap-bundle',
-                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-                    [],
-                    '5.3.3',
-                    true
-                );
-            }
 
             return;
         }
