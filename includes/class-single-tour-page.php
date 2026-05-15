@@ -330,6 +330,11 @@ class AJTB_Single_Tour_Page
         }
 
         if (self::is_recap_request()) {
+            $recap_template = AJTH_DIR . 'templates/reservation-recap.php';
+            if (file_exists($recap_template)) {
+                return $recap_template;
+            }
+            // Fallback to legacy recap template if new one is missing.
             $recap_template = AJTB_PLUGIN_DIR . 'templates/v1/recap-st_tours.php';
             if (file_exists($recap_template)) {
                 return $recap_template;
@@ -394,6 +399,55 @@ class AJTB_Single_Tour_Page
                     true
                 );
             }
+        }
+
+        // New V2 recap design assets (ajinsafro-traveler-home)
+        if (self::is_recap_request() && defined('AJTH_URL') && defined('AJTH_DIR')) {
+            $new_css = AJTH_DIR . 'assets/css/reservation-recap.css';
+            $new_js = AJTH_DIR . 'assets/js/reservation-recap.js';
+            if (file_exists($new_css)) {
+                wp_enqueue_style(
+                    'ajth-reservation-recap-css',
+                    AJTH_URL . 'assets/css/reservation-recap.css',
+                    $css_deps,
+                    (string) filemtime($new_css)
+                );
+            }
+            if (file_exists($new_js)) {
+                wp_enqueue_script(
+                    'ajth-reservation-recap-js',
+                    AJTH_URL . 'assets/js/reservation-recap.js',
+                    ['ajtb-bootstrap-bundle'],
+                    (string) filemtime($new_js),
+                    true
+                );
+            }
+
+            $post_id = (int) get_queried_object_id();
+            wp_localize_script('ajth-reservation-recap-js', 'ajtbData', [
+                'postId' => $post_id,
+                'tourId' => $post_id,
+                'tourTitle' => $post_id > 0 ? get_the_title($post_id) : '',
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'activityNonce' => wp_create_nonce('ajtb_v1_activity_toggle'),
+                'reservationNonce' => wp_create_nonce('ajtb_v1_create_reservation'),
+                'activityMessages' => [
+                    'added' => __('Activité ajoutée à votre programme.', 'ajinsafro-tour-bridge'),
+                    'error' => __('Impossible d’ajouter l’activité pour le moment.', 'ajinsafro-tour-bridge'),
+                ],
+            ]);
+
+            if (!wp_script_is('ajtb-bootstrap-bundle', 'enqueued')) {
+                wp_enqueue_script(
+                    'ajtb-bootstrap-bundle',
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                    [],
+                    '5.3.3',
+                    true
+                );
+            }
+
+            return;
         }
 
         $tour_css_version = file_exists(AJTB_PLUGIN_DIR . 'assets/css/tour.css')
