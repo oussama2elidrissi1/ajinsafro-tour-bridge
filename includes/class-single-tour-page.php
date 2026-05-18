@@ -423,6 +423,14 @@ class AJTB_Single_Tour_Page
             }
 
             // Bootstrap modal dependency must be registered before the recap JS.
+            if (!wp_style_is('ajtb-bootstrap-css', 'enqueued')) {
+                wp_enqueue_style(
+                    'ajtb-bootstrap-css',
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+                    [],
+                    '5.3.3'
+                );
+            }
             if (!wp_script_is('ajtb-bootstrap-bundle', 'enqueued')) {
                 wp_enqueue_script(
                     'ajtb-bootstrap-bundle',
@@ -475,6 +483,14 @@ class AJTB_Single_Tour_Page
         );
 
         // Bootstrap modal is used on recap for credentials display.
+        if (!wp_style_is('ajtb-bootstrap-css', 'enqueued')) {
+            wp_enqueue_style(
+                'ajtb-bootstrap-css',
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+                [],
+                '5.3.3'
+            );
+        }
         if (!wp_script_is('ajtb-bootstrap-bundle', 'enqueued')) {
             wp_enqueue_script(
                 'ajtb-bootstrap-bundle',
@@ -635,6 +651,20 @@ class AJTB_Single_Tour_Page
         $extras = json_decode($extras_json, true);
         if (!is_array($extras)) {
             $extras = [];
+        }
+
+        $expectedTravelers = $adults + $children;
+        $receivedTravelers = count($passengers);
+        if ($receivedTravelers !== $expectedTravelers) {
+            wp_send_json_error([
+                'message' => sprintf(
+                    __('Nombre de voyageurs incoherent : %d attendu (adultes %d + enfants %d), %d recu.', 'ajinsafro-tour-bridge'),
+                    $expectedTravelers,
+                    $adults,
+                    $children,
+                    $receivedTravelers
+                ),
+            ], 422);
         }
 
         $table_travel_dates = self::first_table([
