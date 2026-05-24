@@ -136,9 +136,25 @@ if (empty($search_date_options) && $search_date !== '') {
         'display' => $search_date,
     ];
 }
+
+$requested_search_date = '';
+foreach (['date_depart', 'departure_date', 'depart_date'] as $date_query_key) {
+    if (isset($_GET[$date_query_key])) {
+        $candidate_date = sanitize_text_field(wp_unslash($_GET[$date_query_key]));
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $candidate_date)) {
+            $requested_search_date = $candidate_date;
+            break;
+        }
+    }
+}
+
 $selected_search_date = !empty($search_date_options) ? (string) $search_date_options[0]['value'] : '';
 foreach ($search_date_options as $date_option) {
-    if ((string) $date_option['value'] === $search_date || (string) $date_option['display'] === $search_date) {
+    if (
+        ($requested_search_date !== '' && (string) $date_option['value'] === $requested_search_date)
+        || (string) $date_option['value'] === $search_date
+        || (string) $date_option['display'] === $search_date
+    ) {
         $selected_search_date = (string) $date_option['value'];
         break;
     }
